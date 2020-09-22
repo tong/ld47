@@ -2,33 +2,51 @@ package arm.scene;
 
 class Title extends Trait {
 
-	var sound : AudioChannel;
+	//var sound : AudioChannel;
 
 	public function new() {
 		super();
 		notifyOnInit( () -> {
 
-            trace("Title");
-			tron.Log.info( 'Title' );
+			Log.info( 'Title' );
 
 			Input.init();
-            
-            var keyboard = Input.keyboard;
-            var mouse = Input.mouse;
-            var gamepad = Input.gamepads[0];
 
-			Data.getSound( 'title.ogg', s -> {
-				var sound = Audio.play( s, false, true );
-				notifyOnUpdate( () -> {
-					if( keyboard.started( Space ) || keyboard.started( Return )
-						|| mouse.left.started
-						|| gamepad.started("a") ) {
-						sound.stop();
-						Scene.setActive( 'Game' );
-					}
+			Data.getImage( 'title.png', img -> {
+
+				notifyOnUpdate( update );
+
+				notifyOnRender2D( g -> {
+					final sw = System.windowWidth();
+	            	final sh = System.windowHeight();
+                    g.end();
+                    g.color = 0xff000000;
+                    g.fillRect( 0, 0, sw, sh );
+                    g.color = 0xffffffff;
+                    g.drawImage( img, sw/2 - img.width/2, sh/2 - img.height/2 );
+                    g.begin( false );
 				});
 			});
         });
+	}
+
+	function update() {
+
+		var keyboard = Input.keyboard;
+        var mouse = Input.mouse;
+		var gamepad = Input.gamepads[0];
+
+		if( keyboard.started( Escape ) ) {
+			System.stop();
+			return;
+		}
+
+		if( keyboard.started( Space ) || keyboard.started( Return )
+			|| mouse.left.started
+			|| gamepad.started("a") ) {
+			//sound.stop();
+			Scene.setActive( 'Game' );
+		}
 	}
 
 }

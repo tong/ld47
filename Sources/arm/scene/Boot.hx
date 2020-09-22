@@ -11,8 +11,7 @@ class Boot extends Trait {
 		super();
 		notifyOnInit( () -> {
 
-            trace("Boot");
-            tron.Log.info( 'Boot' );
+            Log.info( 'Boot' );
 
             Input.init();
             
