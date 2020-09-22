@@ -1,4 +1,4 @@
-package arm;
+package ld47;
 
 class Game extends Trait {
 

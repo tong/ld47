@@ -1,4 +1,4 @@
-package arm;
+package ld47;
 
 class Boot extends Trait {
 
@@ -42,7 +42,7 @@ class Boot extends Trait {
             });
 
             Tween.timer( 0.1, () -> {
-                Data.getSound( 'boot.ogg', s -> {
+                Data.getSound( 'boot.wav', s -> {
                     var channel = Audio.play( s, false, true );
                 });
             });

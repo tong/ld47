@@ -1,4 +1,4 @@
-package arm.trait;
+package ld47.trait;
 
 class RotateObject extends Trait {
 	

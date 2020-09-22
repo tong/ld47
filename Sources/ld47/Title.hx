@@ -1,4 +1,4 @@
-package arm;
+package ld47;
 
 class Title extends Trait {
 
@@ -27,6 +27,12 @@ class Title extends Trait {
                     g.begin( false );
 				});
 			});
+
+			/* Tween.timer( 0.1, () -> {
+                Data.getSound( 'title.wav', s -> {
+                    var channel = Audio.play( s, false, true );
+                });
+            }); */
         });
 	}
 

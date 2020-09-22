@@ -1,4 +1,4 @@
-package arm;
+package ld47;
 
 import kha.math.FastMatrix3;
 
@@ -33,6 +33,7 @@ class HUD extends Trait {
         
         g.end();
 
+        /*
         final fontSize = 16;
         final textWidth = font.width( fontSize, text ) ;
         
@@ -43,6 +44,11 @@ class HUD extends Trait {
         g.font = font;
 		g.fontSize = fontSize;
         g.drawString( text, 0, 0 ); 
+        */
+
+
+        g.color = 0xff0000ff;
+        g.fillRect( 0, 0, 100, 100 );
 
 		g.begin( false );
 	}
