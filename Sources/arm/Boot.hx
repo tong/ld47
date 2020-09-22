@@ -1,4 +1,4 @@
-package arm.scene;
+package arm;
 
 class Boot extends Trait {
 

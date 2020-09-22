@@ -1,4 +1,4 @@
-package arm.scene;
+package arm;
 
 class Game extends Trait {
 

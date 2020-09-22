@@ -7,12 +7,12 @@ project.addLibrary("/home/tong/sdk/armsdk/iron");
 project.addLibrary("/home/tong/sdk/armsdk/lib/haxebullet");
 project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.js", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.wasm", { notinlist: true });
-project.addParameter('arm.scene.Boot');
-project.addParameter("--macro keep('arm.scene.Boot')");
-project.addParameter('arm.scene.Game');
-project.addParameter("--macro keep('arm.scene.Game')");
-project.addParameter('arm.scene.Title');
-project.addParameter("--macro keep('arm.scene.Title')");
+project.addParameter('arm.Boot');
+project.addParameter("--macro keep('arm.Boot')");
+project.addParameter('arm.Title');
+project.addParameter("--macro keep('arm.Title')");
+project.addParameter('arm.HUD');
+project.addParameter("--macro keep('arm.HUD')");
 project.addParameter('armory.trait.physics.bullet.PhysicsWorld');
 project.addParameter("--macro keep('armory.trait.physics.bullet.PhysicsWorld')");
 project.addParameter('armory.trait.WalkNavigation');
@@ -23,6 +23,8 @@ project.addParameter('armory.trait.internal.Bridge');
 project.addParameter("--macro keep('armory.trait.internal.Bridge')");
 project.addParameter('arm.trait.RotateObject');
 project.addParameter("--macro keep('arm.trait.RotateObject')");
+project.addParameter('arm.Game');
+project.addParameter("--macro keep('arm.Game')");
 project.addShaders("build_ld47/compiled/Shaders/*.glsl", { noembed: false});
 project.addAssets("build_ld47/compiled/Assets/**", { notinlist: true });
 project.addAssets("build_ld47/compiled/Shaders/*.arm", { notinlist: true });
@@ -62,15 +64,23 @@ project.addDefine('arm_debug');
 project.addDefine('arm_ui');
 project.addDefine('arm_skin');
 project.addDefine('arm_particles');
-console.info("--- LD47 ---");
+
+const RELEASE = false;
+
+console.info(project.name+" "+project.version);
 
 project.addLibrary("tron");
+
+if (RELEASE) {
+    project.addParameter("-dce full");
+    project.addParameter("--no-traces");
+    project.addDefine("analyzer-optimize");
+}
 
 if (platform === Platform.HTML5) {
     project.addAssets("Assets/html5/**");
     project.targetOptions.html5.disableContextMenu = true;
     project.targetOptions.html5.canvasId = "viewport";
-    //project.targetOptions.html5.scriptName = appName;
 }
 
 
