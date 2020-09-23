@@ -1,3 +1,6 @@
 _*
 *.blend[0-9]
 /build*
+khafile.js
+Sources/Main.hx
+
