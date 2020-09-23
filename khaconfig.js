@@ -3,7 +3,7 @@ const RELEASE = false;
 
 console.info(project.name+" "+project.version);
 
-project.addLibrary("tron");
+//project.addLibrary("tron");
 
 if (RELEASE) {
     project.addParameter("-dce full");
