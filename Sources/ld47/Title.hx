@@ -118,7 +118,7 @@ class Title extends Trait {
 		var gamepad = Input.gamepads[0];
 
 		if( keyboard.started( Escape ) ) {
-			System.stop();
+			Scene.setActive( 'Quit' );
 			return;
 		}
 
