@@ -7,7 +7,7 @@ class HUD extends Trait {
     public var visible = true;
     
     var font : kha.Font;
-    var text : String;
+    var text = "";
 
 	public function new() {
 		super();
@@ -30,7 +30,7 @@ class HUD extends Trait {
 	function render( g : kha.graphics2.Graphics ) {
 
         if( !visible ) return;
-        
+
         g.end();
 
         final fontSize = 16;
@@ -44,6 +44,6 @@ class HUD extends Trait {
 		g.fontSize = fontSize;
         g.drawString( text, 0, 0 ); 
 
-		g.begin( false );
+        g.begin( false );
 	}
 }
