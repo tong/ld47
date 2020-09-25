@@ -4,7 +4,7 @@ const RELEASE = false;
 console.info(project.name+" "+project.version);
 
 //project.addLibrary("tron");
-project.addParameter("-main ld47.App");
+//project.addParameter("-main ld47.App");
 //project.addParameter("--macro include('ld47.App')");
 
 if (RELEASE) {

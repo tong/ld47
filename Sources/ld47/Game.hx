@@ -19,7 +19,7 @@ class Game extends Trait {
 
 			time = 0;
 			timeStart = Time.time();
-			
+
 			notifyOnUpdate( update );
         });
 	}
@@ -35,6 +35,7 @@ class Game extends Trait {
 
 		if( keyboard.started( Escape ) ) {
 			Scene.setActive( "Title" );
+			return;
 		}
 	}
 }

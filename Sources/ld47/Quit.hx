@@ -10,7 +10,7 @@ class Quit extends Trait {
 		notifyOnInit( () -> {
 			Log.info( 'Quit' );
             if( Input.mouse.locked ) Input.mouse.unlock();
-            Data.getImage( 'zod.png', img -> {
+            Data.getImage( 'quit.png', img -> {
                 function render(g:Graphics) {
                     final sw = System.windowWidth();
                     final sh = System.windowHeight();
