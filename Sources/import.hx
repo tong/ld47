@@ -11,6 +11,11 @@ import sys.io.File;
 import js.lib.Promise;
 #end
 
+import armory.system.Event;
+// import armory.trait.internal.CanvasScript;
+// import armory.trait.physics.PhysicsWorld;
+// import armory.trait.physics.RigidBody;
+
 import iron.Scene;
 import iron.Trait;
 import iron.data.Data;
