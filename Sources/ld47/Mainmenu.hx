@@ -3,7 +3,7 @@ package ld47;
 import zui.*;
 import zui.Themes;
 
-class Title extends Trait {
+class Mainmenu extends Trait {
 
 	static var THEME : TTheme = cast {
 		NAME: "LevelSelectMenu",
@@ -88,6 +88,9 @@ class Title extends Trait {
 						if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
 							if( ui.button( 'PLAY', Left ) ) {
 								Scene.setActive( 'Game' );
+							}
+							if( ui.button( 'EXIT', Left ) ) {
+								Scene.setActive( 'Quit' );
 							}
 						}
 						ui.end();

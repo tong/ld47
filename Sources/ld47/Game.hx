@@ -8,7 +8,7 @@ class Game extends Trait {
 	public var paused(default,null) = false;
 
 	var timeStart : Null<Float>;
-	var timePauseStart : Float;
+	var timePauseStart : Null<Float>;
 
 	public function new() {
 		super();
@@ -37,7 +37,7 @@ class Game extends Trait {
 	public function resume() {
 		if( paused ) {
 			paused = false;
-			timeStart += time - timePauseStart;
+			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
 			Event.send( 'game_pause' );
 		}
@@ -45,7 +45,7 @@ class Game extends Trait {
 
 	public function end() {
 		Event.send( 'game_end' );
-		Scene.setActive( "Title" );
+		Scene.setActive( "Mainmenu" );
 	}
 
 	function update() {
