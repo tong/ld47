@@ -13,7 +13,7 @@ class Quit extends Trait {
                     final sw = System.windowWidth();
                     final sh = System.windowHeight();
                     g.end();
-                    g.color = 0xff0000ff;
+                    g.color = 0xff000000;
                     g.fillRect( 0, 0, sw, sh );
                     g.color = 0xffffffff;
 					g.drawImage( img, sw/2 - img.width/2, sh/2 - img.height/2 );
@@ -24,7 +24,8 @@ class Quit extends Trait {
                     removeRender2D( render );
                     System.stop();
                 });
-            });
+            }); 
 		});
-	}
+    }
+    
 }
