@@ -80,9 +80,12 @@ class HUD extends Trait {
 			//trace(distance);
 			
 			var px = Std.int( (sw/2) + sw * v.x / 2 );
-			var py = Std.int( (sh/2) - sh * v.y / 2 );
+            var py = Std.int( (sh/2) - sh * v.y / 2 );
             
-            g.drawString( 'ATOM '+i, px, py ); 
+            var text = 'A'+i;
+            final textWidth = UI.font.width( fontSize, text );
+            
+            g.drawString( text, px - textWidth/2, py - fontSize/2 ); 
         }
 
         g.begin( false );
