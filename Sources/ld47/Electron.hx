@@ -1,5 +1,7 @@
 package ld47;
 
+import iron.data.MaterialData;
+
 enum Feature
 {
     None;
@@ -7,6 +9,8 @@ enum Feature
 }
 
 class Electron extends Trait {
+
+    public static var defaultColor = new Vec4( 0, 1, 0 );
 
     public var player(default,null) : Player;
     public var atom(default,null) : Atom;
@@ -18,6 +22,9 @@ class Electron extends Trait {
         super();
         this.player = player;
         this.features = features;
+        notifyOnInit( () -> {
+            Uniforms.externalVec3Links.push( vec3Link );
+        });
     }
 
     public function update() {
@@ -40,5 +47,17 @@ class Electron extends Trait {
             atom = null;
             velocity=v;
         }
+    
+    function vec3Link( object : Object, mat : MaterialData, link : String ) : Vec4 {
+        if( link == "RGB" && object == this.object ) {
+            if( player == null ) {
+                return defaultColor;
+            } else {
+                var c : Color = player.color;
+                return new Vec4( c.R, c.G, c.B );
+            }
+        }
+        return null;
+    }
   
 }
