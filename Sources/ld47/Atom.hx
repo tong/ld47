@@ -12,16 +12,17 @@ class Atom extends Trait {
     public var orbitRadius : Float = 2;
     public var player(default,null) : Player;
     
+    var isSelected : Bool;
     var lastSpawn : Float;
     var spawnTime : Float = 10.0;
+    var marker : MeshObject;
 
     public function new() {
         super();
         lastSpawn = Game.active.time;
+        isSelected = false;
         notifyOnInit( () -> {
-            //var mesh : MeshObject = cast object;
-            //trace(mesh.materials.length );
-            //mesh.materialIndex = 1;
+            marker = cast object.getChild('Marker');            
             Uniforms.externalVec3Links.push( vec3Link );
         });
     }
@@ -35,7 +36,6 @@ class Atom extends Trait {
     public function setPostion( v : Vec2 ) {
         object.transform.loc.x = v.x;
 		object.transform.loc.y = v.y;
-		//object.transform.loc.z = 0;
 		object.transform.buildMatrix();
     }
 
@@ -52,6 +52,21 @@ class Atom extends Trait {
         }
     }
 
+    public function fire() {
+
+        if (electrons.length>0)
+            {
+                var electron = electrons[0];
+                
+
+            }
+        
+
+        Data.getSound( 'fire_electron.ogg', s -> {
+			var channel = Audio.play( s );
+		}); 
+    }
+
     public function update() {
         
         object.transform.rotate( new Vec4(0,0,1), rotationSpeed );
@@ -64,23 +79,26 @@ class Atom extends Trait {
         }  
     }
 
+    public function deselect()
+        {
+            isSelected = false;
+            marker.visible = false;
+        }
+
+    public function select()
+        {
+            isSelected = true;
+            marker.visible = true;
+        }
+
     public function spawnElectrons()
         {
             lastSpawn = Game.active.time;
             
-            // var spawnerCount = electrons.filter( (e:Electron) -> return e.features.contains(ld47.Electron.Feature.Spawner) ).length;
-            var spawnerCount = 0;
-            for( e in electrons ) {
-                
-                for( f in e.features ) {
-                    if(  f == Electron.Feature.Spawner ) {
-                        spawnerCount++;
-                    }
-                }                
-            }            
+            var spawnerCount = electrons.filter( (e:Electron) -> return e.features.contains(Electron.Feature.Spawner) ).length;                      
 
             var spawnCount = Std.int( Math.min(numSlots - electrons.length, spawnerCount) );
-            trace('spawn ' + spawnCount + ' new electrons');
+            //trace('spawn ' + spawnCount + ' new electrons');
             for( index in 0...spawnCount )
                 {
                     var newElectron = new Electron(player, new Array<ld47.Electron.Feature>());
@@ -104,7 +122,7 @@ class Atom extends Trait {
             });
 
             electron.setPostion( pos );
-            trace('added elektron at position' + pos);
+            //trace('added elektron at position' + pos);
         }
 
     private function getElectronPosition(count:Int)

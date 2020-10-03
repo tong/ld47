@@ -34,11 +34,11 @@ class Game extends Trait {
 				new Player(0, 'tong', 0xffff0000),
 				new Player(1, 'shadow', 0xff0000ff)
 			];
-			for (p in players) {
+			/* for (p in players) {
 				p.onNavigate = (direction) -> {
 					trace("Player wants to navigate " + direction);
 				}
-			}
+			} */
 
 			atoms = [];
 			var atomPositions = getAtomPositions(10);

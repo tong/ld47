@@ -14,6 +14,7 @@ class Electron extends Trait {
 
     public var player(default,null) : Player;
     public var atom(default,null) : Atom;
+    
     public var velocity : Vec4;    
     public var features : Array<Feature>;
   
