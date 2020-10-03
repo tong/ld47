@@ -58,7 +58,8 @@ class Atom extends Trait {
 
         if (electrons.length>0)
             {
-                var electron = electrons.pop();
+                var electron = electrons[0];
+                var index = 0;//hier sollte der index des selektierten elektrons stehen
                 //move electron object in 
                 
 
