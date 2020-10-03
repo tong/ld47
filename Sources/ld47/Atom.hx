@@ -1,6 +1,10 @@
 package ld47;
 
+import iron.data.MaterialData;
+
 class Atom extends Trait {
+
+    static var defaultColor = new Vec4( 1, 1, 1 );
 
     public var rotationSpeed : Float;
     public var numSlots : Int=10;
@@ -14,6 +18,12 @@ class Atom extends Trait {
     public function new() {
         super();
         lastSpawn = Game.active.time;
+        notifyOnInit( () -> {
+            //var mesh : MeshObject = cast object;
+            //trace(mesh.materials.length );
+            //mesh.materialIndex = 1;
+            Uniforms.externalVec3Links.push( vec3Link );
+        });
     }
 
     public function setPlayer(p:Player) {
@@ -99,4 +109,16 @@ class Atom extends Trait {
             var angle = 2*Math.PI*count/numSlots;
             return new Vec2( orbitRadius* Math.sin(angle), orbitRadius* Math.cos(angle) );
         }
+    
+    function vec3Link( object : Object, mat : MaterialData, link : String ) : Vec4 {
+        if( link == "RGB" && object == this.object ) {
+            if( player == null ) {
+                return defaultColor;
+            } else {
+                var c : Color = player.color;
+                return new Vec4( c.R, c.G, c.B );
+            }
+        }
+        return null;
+    }
 }
