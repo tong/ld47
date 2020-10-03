@@ -41,12 +41,14 @@ class Boot extends Trait {
                         g.begin( false );
                     });
 
+                    #if kha_krom
                     Tween.timer( 0.5, () -> {
                         proceed();
                         /* Data.getSound( 'boot.wav', s -> {
                             var channel = Audio.play( s, false, true );
                         }); */
                     });
+                    #end
                 });
             });
 		});
