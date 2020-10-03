@@ -6,7 +6,7 @@ class Atom extends Trait {
 
     static var defaultColor = new Vec4( 1, 1, 1 );
 
-    public var rotationSpeed : Float;
+    public var rotationSpeed = 0.01;
     public var numSlots : Int=10;
     public var electrons : Array<Electron> = [];
     public var orbitRadius : Float = 2;
@@ -54,13 +54,14 @@ class Atom extends Trait {
 
     public function update() {
         
+        object.transform.rotate( new Vec4(0,0,1), rotationSpeed );
+
         for( electron in electrons ) {
             electron.update();
         }
         if (Game.active.time - lastSpawn>=spawnTime) {                
             spawnElectrons();
-        }     
-        
+        }  
     }
 
     public function spawnElectrons()
