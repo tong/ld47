@@ -23,7 +23,7 @@ class Mainmenu extends Trait {
 		ELEMENT_OFFSET: 0,
 		ELEMENT_W: 100,
 		FILL_ACCENT_BG: false,
-		FILL_BUTTON_BG: true,
+		FILL_BUTTON_BG: false,
 		FILL_WINDOW_BG: false,
 		FONT_SIZE: 60,
 		HIGHLIGHT_COL: 0xff205d9c,
@@ -58,6 +58,7 @@ class Mainmenu extends Trait {
 				Data.getFont( "helvetica_neue_85.ttf", font -> {
 					ui = new Zui( { font : font, theme: THEME } );
 					notifyOnRender2D( g -> {
+
 						g.end();
 
 						//g.color = 0xff000000;
@@ -83,6 +84,7 @@ class Mainmenu extends Trait {
 						//trace(textWidth);
 
 						ui.begin( g );
+						g.opacity = 1;
 						if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
 							if( ui.button( 'PLAY', Left ) ) {
 								loadGame();
@@ -96,20 +98,12 @@ class Mainmenu extends Trait {
 							}
 						}
 						ui.end();
-
 						//g.color = 0xffffffff;
 						//g.drawImage( img, sw/2 - img.width/2, 140 );
-					
 						g.begin( false );
 					});
 				});
 			});
-			
-			/* Tween.timer( 0.1, () -> {
-                Data.getSound( 'title.wav', s -> {
-                    var channel = Audio.play( s, false, true );
-                });
-			}); */
 
 			notifyOnUpdate( update );
 
@@ -121,8 +115,6 @@ class Mainmenu extends Trait {
 			#end
 			*/
 		});
-		
-		//Music.play( 'stapletapewormsonmypenis', 1.0, true, false );
 	}
 
 	function update() {
