@@ -10,60 +10,60 @@ class HUD extends Trait {
 
 	public function new() {
 		super();
-		//backbuffer = kha.Image.createRenderTarget(272, 480);
-		//System.notifyOnFrames(game.render)
 		notifyOnInit( () -> {
-           /*  Data.getFont( 'mono.ttf', f -> {
-                font = f;
-                notifyOnUpdate( update );
-                notifyOnRender2D( render );
-            }); */
-            notifyOnUpdate( update );
+            //notifyOnUpdate( update );
             notifyOnRender2D( render );
 		});
 	}
 
 	function update() {
-        var game = Game.active;
-        text =  "LD47 "+Std.int( (game.time*100) )/100;
-        /* var str = "";
-        for( player in game.players ) {
-            str += player.name' ';
-        } */
 	}
 
 	function render( g : kha.graphics2.Graphics ) {
 
         if( !visible ) return;
 
+        final game = Game.active;
+        final sw = System.windowWidth();
+        final sh = System.windowHeight();
+        final fontSize = 16;
+        final padding = 4;
+
         g.end();
 
-        final fontSize = 16;
-        final textWidth = UI.font.width( fontSize, text );
-        
-        g.color = 0xff0000ff;
+        g.font = UI.font;
+		g.fontSize = fontSize;
+        g.color = 0xffffffff;
+
+       /* 
+       g.color = 0xff0000ff;
         g.fillRect( 0, 0, textWidth, fontSize );
-       
         g.color = 0xffffffff;
         g.font = UI.font;
 		g.fontSize = fontSize;
-        g.drawString( text, 0, 0 ); 
-
-        /*
-        var px = 0;
+        g.drawString( text, 0, 0 );  */
+        
+        var px = 0.0;
         for( player in game.players ) {
-            var txt = 'PLAYER:'+player.name;
-            var w = UI.font.width( fontSize, txt );
-            px += w;
+            var txt = player.name.toUpperCase();
+            var numElectrons = 0;
+            var numAtoms = 0;
+            for( atom in Game.active.atoms ) {
+                if( atom.player == player ) {
+                    numAtoms++;
+                    numElectrons += atom.electrons.length;
+                }
+            }
+            txt += ' A$numAtoms E$numElectrons';
+            var txtWidth = UI.font.width( fontSize, txt );
             g.color = player.color;
-            g.drawString( txt, px, 0 ); 
+            g.fillRect( px, 0, txtWidth + padding*2, fontSize + padding*2 );
+            g.color = 0xffffffff;
+            g.drawString( txt, px+padding, padding ); 
+            px += txtWidth + padding*2;
         }
-        */
 
-        final sw = System.windowWidth();
-        final sh = System.windowHeight();
         final cam = Scene.active.camera;
-
         g.color = 0xff000000;
 
         for( i in 0...Game.active.atoms.length ) {
