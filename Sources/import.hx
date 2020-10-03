@@ -33,7 +33,7 @@ import iron.object.SpeakerObject;
 import iron.object.Transform;
 import iron.object.Uniforms;
 import iron.system.Audio;
-//import iron.system.Input;
+import iron.system.Input;
 import iron.system.Time;
 import iron.system.Tween;
 
@@ -47,7 +47,7 @@ import kha.audio1.AudioChannel;
 import kha.input.KeyCode;
 import kha.math.FastMatrix3;
 
-import tron.Input;
+//import tron.Input;
 import tron.Log;
 import tron.MathTools;
 import tron.MathTools.PI;

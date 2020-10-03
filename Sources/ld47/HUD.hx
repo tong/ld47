@@ -26,6 +26,10 @@ class HUD extends Trait {
 	function update() {
         var game = Game.active;
         text =  "LD47 "+Std.int( (game.time*100) )/100;
+        /* var str = "";
+        for( player in game.players ) {
+            str += player.name' ';
+        } */
 	}
 
 	function render( g : kha.graphics2.Graphics ) {
@@ -35,7 +39,7 @@ class HUD extends Trait {
         g.end();
 
         final fontSize = 16;
-        final textWidth = UI.font.width( fontSize, text ) ;
+        final textWidth = UI.font.width( fontSize, text );
         
         g.color = 0xff0000ff;
         g.fillRect( 0, 0, textWidth, fontSize );
@@ -44,6 +48,17 @@ class HUD extends Trait {
         g.font = UI.font;
 		g.fontSize = fontSize;
         g.drawString( text, 0, 0 ); 
+
+        /*
+        var px = 0;
+        for( player in game.players ) {
+            var txt = 'PLAYER:'+player.name;
+            var w = UI.font.width( fontSize, txt );
+            px += w;
+            g.color = player.color;
+            g.drawString( txt, px, 0 ); 
+        }
+        */
 
         g.begin( false );
 	}
