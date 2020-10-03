@@ -12,9 +12,11 @@ class Atom extends Trait {
     public var orbitRadius : Float = 2;
     public var player(default,null) : Player;
     
-    var isSelected : Bool;
+    
     var lastSpawn : Float;
     var spawnTime : Float = 10.0;
+
+    var isSelected : Bool;
     var marker : MeshObject;
 
     public function new() {
@@ -22,7 +24,7 @@ class Atom extends Trait {
         lastSpawn = Game.active.time;
         isSelected = false;
         notifyOnInit( () -> {
-            marker = cast object.getChild('Marker');            
+            marker = cast object.getChild('AtomMarker');            
             Uniforms.externalVec3Links.push( vec3Link );
         });
     }
@@ -56,7 +58,8 @@ class Atom extends Trait {
 
         if (electrons.length>0)
             {
-                var electron = electrons[0];
+                var electron = electrons.pop();
+                //move electron object in 
                 
 
             }

@@ -17,6 +17,9 @@ class Electron extends Trait {
     
     public var velocity : Vec4;    
     public var features : Array<Feature>;
+
+    var isSelected : Bool;
+    var marker : MeshObject;
   
 
     public function new( player : Player, features : Array<Feature>)  {
@@ -24,6 +27,7 @@ class Electron extends Trait {
         this.player = player;
         this.features = features;
         notifyOnInit( () -> {
+            marker = cast object.getChild('ElectronMarker');            
             Uniforms.externalVec3Links.push( vec3Link );
         });
     }
@@ -37,6 +41,19 @@ class Electron extends Trait {
 		//object.transform.loc.z = 0;
 		object.transform.buildMatrix();
     }
+
+    
+    public function deselect()
+        {
+            isSelected = false;
+            marker.visible = false;
+        }
+
+    public function select()
+        {
+            isSelected = true;
+            marker.visible = true;
+        }
 
     public function setAtom(a:Atom) {
         atom = a;
