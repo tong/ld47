@@ -3,7 +3,6 @@ package ld47;
 import ld47.Electron.Feature;
 
 class Game extends Trait {
-
 	public static var active(default, null):Game;
 
 	public var time:Float;
@@ -25,34 +24,30 @@ class Game extends Trait {
 		super();
 		Game.active = this;
 		notifyOnInit(() -> {
-
 			Log.info('Game');
 
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 
-			players = [
-				new Player(0, 'tong', 0xffff0000),
-				new Player(1, 'shadow', 0xff0000ff)
-			];
+			players = [new Player(0, 'tong'), new Player(1, 'shadow')];
 
-			spawnMap( 10, true, () -> {
-
+			spawnMap(10, true, () -> {
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
-				
-				for( i in 3...atoms.length ) atoms[i].setPlayer(players[0]);
-				
-				atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
-				atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
-				atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
-			} );
+
+				for (i in 3...atoms.length)
+					atoms[i].setPlayer(players[0]);
+
+				atoms[0].addElectron(new Electron(players[0], [Feature.Spawner]));
+				atoms[1].addElectron(new Electron(players[1], [Feature.Spawner]));
+				atoms[1].addElectron(new Electron(players[1], [Feature.None]));
+			});
 
 			notifyOnUpdate(update);
-/* 
-			Tween.timer( 1.5, () -> {
-				clearMap();
-			}); */
+			/* 
+				Tween.timer( 1.5, () -> {
+					clearMap();
+			});*/
 		});
 	}
 
@@ -85,7 +80,7 @@ class Game extends Trait {
 	}
 
 	public function spawnElectron() {
-		for( atom in atoms ) {
+		for (atom in atoms) {
 			atom.spawnElectrons();
 		}
 		// var atom = new Atom();
@@ -94,35 +89,38 @@ class Game extends Trait {
 	}
 
 	public function clearMap() {
-		if( atoms != null ) {
-			for( a in atoms ) {
-				a.destroy(); //TODO
-				//a.object.remove();
+		if (atoms != null) {
+			for (a in atoms) {
+				a.destroy(); // TODO
+				// a.object.remove();
 			}
 		}
 		atoms = [];
 	}
 
-	public function spawnMap( numAtoms : Int, clear = true, cb : Void->Void ) {
-		if( clear ) clearMap();
+	public function spawnMap(numAtoms:Int, clear = true, cb:Void->Void) {
+		if (clear)
+			clearMap();
 		atoms = [];
-		var positions = getAtomPositions( numAtoms );
+		var positions = getAtomPositions(numAtoms);
 		function spawnNext() {
-			spawnAtom( positions[atoms.length], a -> {
-				if( atoms.length == numAtoms ) cb();
-				else spawnNext();
+			spawnAtom(positions[atoms.length], a -> {
+				if (atoms.length == numAtoms)
+					cb();
+				else
+					spawnNext();
 			});
 		}
 		spawnNext();
 	}
 
-	public function spawnAtom( pos : Vec2 , cb : Atom->Void ) {
-		Scene.active.spawnObject( 'Atom', atomContainer, obj -> {
+	public function spawnAtom(pos:Vec2, cb:Atom->Void) {
+		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom();
 			obj.addTrait(atom);
-			atom.setPostion( pos );
+			atom.setPostion(pos);
 			atoms.push(atom);
-			cb( atom );
+			cb(atom);
 		});
 	}
 
@@ -133,80 +131,70 @@ class Game extends Trait {
 	function update() {
 		var keyboard = Input.getKeyboard();
 		if (paused) {
-			if( keyboard.started("escape") ) {
+			if (keyboard.started("escape")) {
 				resume();
 				return;
 			}
-			for( i in 0...4 ) {
-				var gp = Input.getGamepad( i );
-				if( gp.started('start') ) {
+			for (i in 0...4) {
+				var gp = Input.getGamepad(i);
+				if (gp.started('start')) {
 					resume();
 					return;
 				}
 			}
 		} else {
-
 			var now = Time.time();
 			time = now - timeStart;
 
-			if(keyboard.started("escape") ) {
+			if (keyboard.started("escape")) {
 				pause();
 				return;
 			}
 			/*
-			for( gp in Input.gamepads ) {
-				if( gp.started('start') ) {
-					pause();
-					return;
+				for( gp in Input.gamepads ) {
+					if( gp.started('start') ) {
+						pause();
+						return;
+					}
 				}
-			}
-			*/
+			 */
 
 			for (player in players) {
 				player.update();
 			}
-			
+
 			for (atom in atoms) {
 				atom.update();
-			} 
+			}
 		}
 	}
 
-	private function getAtomPositions(count:Int) : Array<Vec2>
-		{
-			trace('###########');
-			var vectors = new Array<Vec2>();
-			for (index in 0...count)
-				{	
-					var hasTooCloseExistingVector = false;
-					var vector = new Vec2();
+	private function getAtomPositions(count:Int):Array<Vec2> {
+		trace('###########');
+		var vectors = new Array<Vec2>();
+		for (index in 0...count) {
+			var hasTooCloseExistingVector = false;
+			var vector = new Vec2();
 
-					do
-						{
-							vector = new Vec2((0.5 - Math.random()) * worldSizeX, (0.5 - Math.random() ) * worldSizeY );
-							hasTooCloseExistingVector = false;
-							for ( existingVector in vectors)
-							{
-								var distance = vector.distanceTo(existingVector);
-								//trace('compare ' + vector + ' to vector' + existingVector + ' distance = ' + distance);
-								
-								if (distance <= minAtomDistance)
-									{
-										//trace('too near');
-										hasTooCloseExistingVector = true;
-										break;
-									}
-							}						
-							
-						}
-						while(hasTooCloseExistingVector);
+			do {
+				vector = new Vec2((0.5 - Math.random()) * worldSizeX, (0.5 - Math.random()) * worldSizeY);
+				hasTooCloseExistingVector = false;
+				for (existingVector in vectors) {
+					var distance = vector.distanceTo(existingVector);
+					// trace('compare ' + vector + ' to vector' + existingVector + ' distance = ' + distance);
 
-						vectors.push(vector);
-						trace('added vector ' + vector + ' now we have' + vectors.length);
+					if (distance <= minAtomDistance) {
+						// trace('too near');
+						hasTooCloseExistingVector = true;
+						break;
+					}
 				}
+			} while (hasTooCloseExistingVector);
 
-				return vectors;
+			vectors.push(vector);
+			trace('added vector ' + vector + ' now we have' + vectors.length);
 		}
 
-	
+		return vectors;
+	}
 }
