@@ -15,14 +15,40 @@ class Atom extends Trait {
 	var spawnTime:Float = 10.0;
 
 	var isSelected:Bool;
-	var marker:MeshObject;
+	// var marker:MeshObject;
+	var marker:Marker;
 
 	public function new() {
 		super();
+
 		lastSpawn = Game.active.time;
 
 		notifyOnInit(() -> {
-			marker = cast object.getChild('AtomMarker');
+			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
+			object.transform.buildMatrix();
+
+			Tween.to({
+				props: {x: 1, y: 1, z: 1},
+				duration: 0.5,
+				target: object.transform.scale,
+				ease: Ease.QuartOut,
+				tick: () -> {
+					object.transform.buildMatrix();
+				},
+				done: () -> {
+					// object.remove();
+				}
+			});
+
+			var markerObject = cast object.getChild('AtomMarker');
+			marker = new Marker();
+			markerObject.addTrait(marker);
+
+			// marker.show();
+
+			if (player != null)
+				marker.color = player.color;
+
 			Uniforms.externalVec3Links.push(vec3Link);
 		});
 
@@ -31,7 +57,10 @@ class Atom extends Trait {
 
 	public function setPlayer(p:Player) {
 		if (player != null) {}
-		return player = p;
+		player = p;
+		if (marker != null) {
+			marker.color = player.color;
+		}
 	}
 
 	public function setPostion(v:Vec2) {
@@ -79,16 +108,18 @@ class Atom extends Trait {
 	public function select() {
 		isSelected = true;
 		if (marker != null) {
-			marker.visible = true;
-			//Twwen.to;
-			//trace(marker.materials.length);
+			// marker.object.visible = true;
+
+			marker.show();
+			// Twwen.to;
+			// trace(marker.materials.length);
 		}
 	}
 
 	public function deselect() {
 		isSelected = false;
 		if (marker != null) {
-			marker.visible = false;
+			marker.object.visible = false;
 		}
 	}
 
