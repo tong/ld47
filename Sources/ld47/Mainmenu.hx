@@ -39,7 +39,7 @@ class Mainmenu extends Trait {
 		WINDOW_TINT_COL: 0xffffffff,
 	};
 
-	//var sound : AudioChannel;
+	var sound : AudioChannel;
 	var ui : Zui;
 
 	public function new() {
@@ -85,7 +85,11 @@ class Mainmenu extends Trait {
 						ui.begin( g );
 						if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
 							if( ui.button( 'PLAY', Left ) ) {
-								Scene.setActive( 'Game' );
+								loadGame();
+								/* Scene.active.notifyOnInit( () -> {
+									trace("SCENE.init");
+								}); */
+								//Scene.active.addTrait( new Game() );
 							}
 							if( ui.button( 'QUIT', Left ) ) {
 								Scene.setActive( 'Quit' );
@@ -109,30 +113,36 @@ class Mainmenu extends Trait {
 
 			notifyOnUpdate( update );
 
+			/*
+			#if ld47_release
+			Data.getSound( 'mainmenu_ambient.ogg', s -> {
+				sound = Audio.play( s );
+			});
+			#end
+			*/
 		});
 		
 		//Music.play( 'stapletapewormsonmypenis', 1.0, true, false );
 	}
 
 	function update() {
-
 		var keyboard = Input.getKeyboard();
-       // var mouse = Input.mouse;
-		//var gamepad = Input.gamepads[0];
-
 		if( keyboard.started( "escape" ) ) {
 			Scene.setActive( 'Quit' );
 			return;
 		}
-
-		/*
-		if( keyboard.started( Space ) || keyboard.started( Return )
-			|| mouse.left.started
-			|| gamepad.started("a") ) {
-			//sound.stop();
-			Scene.setActive( 'Game' );
+		for( i in 0...4 ) {
+			var gp = Input.getGamepad(i);
+			if( gp.started( 'options' ) ) {
+				loadGame();
+				return;
+			}
 		}
-		*/
+	}
+
+	function loadGame() {
+		if( sound != null ) sound.stop();
+		Scene.setActive( 'Game' );
 	}
 
 }
