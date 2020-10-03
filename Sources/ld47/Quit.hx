@@ -8,8 +8,6 @@ class Quit extends Trait {
 		super();
 		//gamma.renderpath.Postprocess.camera_uniforms[10] = 0.0;
 		notifyOnInit( () -> {
-			Log.info( 'Quit' );
-            if( Input.mouse.locked ) Input.mouse.unlock();
             Data.getImage( 'quit.png', img -> {
                 function render(g:Graphics) {
                     final sw = System.windowWidth();

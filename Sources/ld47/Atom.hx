@@ -4,16 +4,16 @@ class Atom extends Trait {
 
     public var rotationSpeed : Float;
     public var numSlots : Int;
-    public var electrons : Array<Electron>;
+    public var electrons : Array<Electron> = [];
     public var orbitRadius : Float;
     public var player(default,null) : Player;
     
     var lastSpawn : Float;
-    var spawnTime : Float;
+    var spawnTime : Float = 10.0;
 
     public function new() {
         super();
-        spawnTime = Game.active.time;
+        lastSpawn = Game.active.time;
     }
 
     public function setPlayer(p:Player) {
@@ -22,14 +22,12 @@ class Atom extends Trait {
         return player = p;
     }
 
-    public function setPostion( x : Float, y : Float ) {
-        object.transform.loc.x = x;
-		object.transform.loc.y = y;
+    public function setPostion( v : Vec2 ) {
+        object.transform.loc.x = v.x;
+		object.transform.loc.y = v.y;
 		//object.transform.loc.z = 0;
 		object.transform.buildMatrix();
     }
-
-
 
     public function hit( electron : Electron ) {
         if (player == null) {
@@ -45,25 +43,35 @@ class Atom extends Trait {
     }
 
     public function update() {
+        /*
         for( electron in electrons ) {
             electron.update();
         }
         if (Game.active.time - lastSpawn>=spawnTime) {                
-             spawnElectrons();
-         }     
+            spawnElectrons();
+        }     
+        */
     }
 
     public function spawnElectrons()
         {
-            lastSpawn = Now();
-            var spawnerCount = electrons.filter(e:electrons -> e.features.contains(Feature.Spawner) ).length;
-            var spawnCount = min(numSlots - electron.length, spawnerCount);
+            lastSpawn = Game.active.time;
+            
+            // var spawnerCount = electrons.filter( (e:Electron) -> return e.features.contains(ld47.Electron.Feature.Spawner) ).length;
+            var spawnerCount = 0;
+            for( e in electrons ) {
+                for( f in e.features ) {
+                    if( Std.is( f, Electron.Feature.Spawner) ) {
+                        spawnerCount++;
+                    }
+                }
+            }
+
+            var spawnCount = Std.int( Math.min(numSlots - electrons.length, spawnerCount) );
             for( index in 0...spawnCount )
                 {
-                        var newElectron = new Electron(player, new Array<Features>(), this);
-                        addElectron(newElectron);
-
-                    } );                    
+                    var newElectron = new Electron(player, new Array<ld47.Electron.Feature>(), this);
+                    addElectron(newElectron);
                 }
         }
 
@@ -71,16 +79,19 @@ class Atom extends Trait {
         {
             electrons.push(electron);
             //move electron object into atom object            
-            electron.object.location = getElectronPosition(electrons.length);
+          //  electron.object.location = getElectronPosition(electrons.length);
+            var pos = getElectronPosition( electrons.length );
+            electron.setPostion( pos );
 
             Scene.active.spawnObject( 'Electron', object, obj -> {
                 trace(obj);                
                 obj.addTrait( electron );
+            });
         }
 
-    private function getElectronPosition(count:int)
+    private function getElectronPosition(count:Int)
         {            
-            var angle = 2*PI*count/numSlots;
-            return new Vetor3D(orbitRadius*sin(angle), orbitRadius*cos(angle),0);
+            var angle = 2*Math.PI*count/numSlots;
+            return new Vec2( orbitRadius* Math.sin(angle), orbitRadius* Math.cos(angle) );
         }
 }

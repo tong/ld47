@@ -14,18 +14,16 @@ class Boot extends Trait {
 
             ld47.UI.init( () -> {
            
-                Input.init();
-                
-                var keyboard = Input.keyboard;
-                var mouse = Input.mouse;
-                var gamepad = Input.gamepads[0];
+                var keyboard = Input.getKeyboard();
+                var mouse = Input.getMouse();
+                //var gamepad = Input.gamepads[0];
     
                 Data.getImage( 'boot.png', img -> {
     
                     notifyOnUpdate( () -> {
-                        if( keyboard.started( Space ) || keyboard.started( Return )
-                            || mouse.left.started
-                        || gamepad.started("a") ) {
+                        if( keyboard.started( "space" ) || keyboard.started( "return" )
+                            || mouse.started("left") ) {
+                       // || gamepad.started("a") ) {
                             proceed();
                         }
                     });

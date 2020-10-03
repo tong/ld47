@@ -9,7 +9,6 @@ class Player {
     public var color(default,null) : Int;
 
     public function new( index : Int, name : String, color : Int ) {
-        super();
         this.index = index;
         this.name = name;
         this.color = color;

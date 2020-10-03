@@ -47,8 +47,6 @@ class Mainmenu extends Trait {
 		notifyOnInit( () -> {
 
 			Log.info( 'Title' );
-
-			Input.init();
 			
 			final sw = System.windowWidth();
 			final sh = System.windowHeight();
@@ -118,11 +116,11 @@ class Mainmenu extends Trait {
 
 	function update() {
 
-		var keyboard = Input.keyboard;
-        var mouse = Input.mouse;
-		var gamepad = Input.gamepads[0];
+		var keyboard = Input.getKeyboard();
+       // var mouse = Input.mouse;
+		//var gamepad = Input.gamepads[0];
 
-		if( keyboard.started( Escape ) ) {
+		if( keyboard.started( "escape" ) ) {
 			Scene.setActive( 'Quit' );
 			return;
 		}
