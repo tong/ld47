@@ -14,19 +14,30 @@ class Player {
 	}
 
 	public function update() {
-		var gp = iron.system.Input.getGamepad(index);
+		var gp = Input.getGamepad(index);
+		var keyboard = Input.getKeyboard();
 		if (gp.started('circle')) {
 			// TODO select electron
 		} else {
+
 			var v = new Vec2();
-			if (gp.started("left"))
-				v.x = -1;
-			else if (gp.started("right"))
-				v.x = 1;
-			if (gp.started("up"))
-				v.y = 1;
-			else if (gp.started("down"))
-				v.y = -1;
+			if (gp.started("left")) v.x = -1;
+			else if (gp.started("right")) v.x = 1;
+			if (gp.started("up")) v.y = 1;
+			else if (gp.started("down")) v.y = -1;
+
+			switch index {
+			case 0:
+				if( keyboard.started('left') ) v.x = -1;
+				else if( keyboard.started('right') ) v.x = 1;
+				if( keyboard.started('up') ) v.y = 1;
+				else if( keyboard.started('down') ) v.y = -1;
+			case 1:
+				if( keyboard.started('a') ) v.x = -1;
+				else if( keyboard.started('d') ) v.x = 1;
+				if( keyboard.started('w') ) v.y = 1;
+				else if( keyboard.started('s') ) v.y = -1;
+			}
 
 			navigateSelectionTowards(v);
 
