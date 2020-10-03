@@ -29,11 +29,11 @@ class Player {
 				else if (gp.started("down"))
 					v.y = 1;
 				// onNavigate( v );
-				shootSelectionTowards(v);
+				navigateSelectionTowards(v);
 			}
 			if (gp.started('cross')) {
-                // TODO fire electron
-                atom.fire();
+				// TODO fire electron
+				atom.fire();
 			}
 		}
 	}
@@ -46,21 +46,37 @@ class Player {
 		atom.select();
 	}
 
-	public function shootSelectionTowards(direction:Vec2) {
-        trace('shoot at ' + direction);
-		var shootDirection = new Vec4(direction.x, direction.y).normalize();
-        var atoms = Game.active.atoms.filter(atom -> return atom.player == this);
-        atoms.sort((a, b) -> {
-			var locA = a.object.transform.loc;
-			var locB = b.object.transform.loc;
-			var locAtom = atom.object.transform.loc;
-			var aDir = locA.normalize().dot(shootDirection) / locA.distanceTo(locAtom);
-			var bDir = locB.normalize().dot(shootDirection) / locB.distanceTo(locAtom);
-			return (aDir > bDir) ? 1 : (aDir == bDir) ? 0 : -1;
-		});
+	public function navigateSelectionTowards(direction:Vec2) {
+        
+        direction=new Vec2(0,0);
 
-		if (atoms.length > 0) {
-			selectAtom(atoms[0]);
+        if (atom == null)
+        {
+            return;
+        }
+        else if (direction.x == 0 && direction.y==0)
+        {
+            return;
+        }
+
+		if (atom != null ) {
+            trace('navigate too ' + direction);
+			var shootDirection = new Vec4(direction.x, direction.y).normalize();
+			var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
+			atoms.sort((a, b) -> {
+				var locA = a.object.transform.loc;
+				var locB = b.object.transform.loc;
+				var locAtom = atom.object.transform.loc;
+				var aDir = locA.normalize().dot(shootDirection) / locA.distanceTo(locAtom);
+				var bDir = locB.normalize().dot(shootDirection) / locB.distanceTo(locAtom);
+				return (aDir > bDir) ? 1 : (aDir == bDir) ? 0 : -1;
+            });
+            
+            trace('found x atoms for player ' + atoms.length);
+
+			if (atoms.length > 0) {
+				selectAtom(atoms[0]);
+			}
 		}
 	}
 }

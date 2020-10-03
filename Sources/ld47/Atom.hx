@@ -3,40 +3,39 @@ package ld47;
 import iron.data.MaterialData;
 
 class Atom extends Trait {
+	static var defaultColor = new Vec4(1, 1, 1);
 
-    static var defaultColor = new Vec4( 1, 1, 1 );
+	public var rotationSpeed = 0.01;
+	public var numSlots:Int = 10;
+	public var electrons:Array<Electron> = [];
+	public var orbitRadius:Float = 2;
+	public var player(default, null):Player;
 
-    public var rotationSpeed = 0.01;
-    public var numSlots : Int=10;
-    public var electrons : Array<Electron> = [];
-    public var orbitRadius : Float = 2;
-    public var player(default,null) : Player;
-    
-    
-    var lastSpawn : Float;
-    var spawnTime : Float = 10.0;
+	var lastSpawn:Float;
+	var spawnTime:Float = 10.0;
 
-    var isSelected : Bool;
-    var marker : MeshObject;
+	var isSelected:Bool;
+	var marker:MeshObject;
 
-    public function new() {
-        super();
-        lastSpawn = Game.active.time;
-        isSelected = false;
-        notifyOnInit( () -> {
-            marker = cast object.getChild('AtomMarker');            
-            Uniforms.externalVec3Links.push( vec3Link );
-        });
-    }
+	public function new() {
+		super();
+		lastSpawn = Game.active.time;
 
-    public function setPlayer(p:Player) {
-        if( player != null ) {
-        }
-        return player = p;
-    }
+		notifyOnInit(() -> {
+			marker = cast object.getChild('AtomMarker');
+			Uniforms.externalVec3Links.push(vec3Link);
+		});
 
-    public function setPostion( v : Vec2 ) {
-        object.transform.loc.x = v.x;
+		deselect();
+	}
+
+	public function setPlayer(p:Player) {
+		if (player != null) {}
+		return player = p;
+	}
+
+	public function setPostion(v:Vec2) {
+		object.transform.loc.x = v.x;
 		object.transform.loc.y = v.y;
 		object.transform.buildMatrix();
     }

@@ -33,6 +33,10 @@ class Electron extends Trait {
     }
 
     public function update() {
+        if (velocity != null)
+            {
+                //object.transform.translate(velocity.x, velocity.y,0);
+            }
     } 
 
     public function setPostion( v : Vec2 ) {
