@@ -39,8 +39,9 @@ class Game extends Trait {
 
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
+				atoms[2].setPlayer(players[1]);
 				
-				for( i in 2...atoms.length ) atoms[i].setPlayer(players[0]);
+				for( i in 3...atoms.length ) atoms[i].setPlayer(players[0]);
 				
 				atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
 				atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
@@ -48,6 +49,10 @@ class Game extends Trait {
 			} );
 
 			notifyOnUpdate(update);
+/* 
+			Tween.timer( 1.5, () -> {
+				clearMap();
+			}); */
 		});
 	}
 
@@ -91,8 +96,8 @@ class Game extends Trait {
 	public function clearMap() {
 		if( atoms != null ) {
 			for( a in atoms ) {
-				//a.destroy(); //TODO
-				a.object.remove();
+				a.destroy(); //TODO
+				//a.object.remove();
 			}
 		}
 		atoms = [];

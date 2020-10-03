@@ -76,6 +76,15 @@ class Atom extends Trait {
 		}
 	}
 
+	public function select() {
+		isSelected = true;
+		if (marker != null) {
+			marker.visible = true;
+			//Twwen.to;
+			//trace(marker.materials.length);
+		}
+	}
+
 	public function deselect() {
 		isSelected = false;
 		if (marker != null) {
@@ -83,11 +92,20 @@ class Atom extends Trait {
 		}
 	}
 
-	public function select() {
-		isSelected = true;
-		if (marker != null) {
-			marker.visible = true;
-		}
+	public function destroy() {
+		var scale = 0.1;
+		Tween.to({
+			props: {x: scale, y: scale, z: scale},
+			duration: 1.0,
+			target: object.transform.scale,
+			ease: Ease.QuartIn,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
+			done: () -> {
+				object.remove();
+			}
+		});
 	}
 
 	public function spawnElectrons() {
