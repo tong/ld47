@@ -14,11 +14,10 @@ class Electron extends Trait {
     public var features : Array<Feature>;
   
 
-    public function new( player : Player, features : Array<Feature>, atom : Atom)  {
+    public function new( player : Player, features : Array<Feature>)  {
         super();
         this.player = player;
         this.features = features;
-        setAtom( atom );
     }
 
     public function update() {

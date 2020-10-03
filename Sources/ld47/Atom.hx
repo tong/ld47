@@ -3,9 +3,9 @@ package ld47;
 class Atom extends Trait {
 
     public var rotationSpeed : Float;
-    public var numSlots : Int;
+    public var numSlots : Int=10;
     public var electrons : Array<Electron> = [];
-    public var orbitRadius : Float;
+    public var orbitRadius : Float = 2;
     public var player(default,null) : Player;
     
     var lastSpawn : Float;
@@ -70,23 +70,28 @@ class Atom extends Trait {
             var spawnCount = Std.int( Math.min(numSlots - electrons.length, spawnerCount) );
             for( index in 0...spawnCount )
                 {
-                    var newElectron = new Electron(player, new Array<ld47.Electron.Feature>(), this);
+                    var newElectron = new Electron(player, new Array<ld47.Electron.Feature>());
                     addElectron(newElectron);
                 }
         }
 
     public function addElectron(electron:Electron)
         {
+            electron.setAtom(this);
             electrons.push(electron);
             //move electron object into atom object            
           //  electron.object.location = getElectronPosition(electrons.length);
             var pos = getElectronPosition( electrons.length );
-            electron.setPostion( pos );
+            
 
             Scene.active.spawnObject( 'Electron', object, obj -> {
-                trace(obj);                
+                //trace(obj);                
                 obj.addTrait( electron );
+                //electron.setPostion( pos );
             });
+
+            electron.setPostion( pos );
+            trace('added elektron at position' + pos);
         }
 
     private function getElectronPosition(count:Int)

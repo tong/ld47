@@ -17,7 +17,7 @@ class Game extends Trait {
 
 	var worldSizeX = 20;
 	var worldSizeY = 12;
-	var minAtomDistance = 8;
+	var minAtomDistance = 4;
 
 	var atomContainer:Object;
 
@@ -41,16 +41,19 @@ class Game extends Trait {
 			}
 
 			atoms = [];
+			var atomPositions = getAtomPositions(10);
+
 			for (i in 0...10) {
-				spawnAtom();
+				spawnAtom(atomPositions[i]);
 			}
-			/*
+			
 
 			atoms[0].setPlayer(players[0]);
 			atoms[1].setPlayer(players[1]);
-			atoms[0].addElectron( new Electron(players[0], [Feature.Spawner], atoms[0] ) );
-			atoms[0].addElectron( new Electron(players[1], [Feature.Spawner], atoms[1] ) ); // Input.init();
-			*/
+			atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
+			atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
+			atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
+			
 
 			notifyOnUpdate(update);
 		});
@@ -93,14 +96,10 @@ class Game extends Trait {
 		// return atom;
 	}
 
-	public function spawnAtom() {
+	public function spawnAtom(pos:Vec2) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom();
 			obj.addTrait(atom);
-			trace("#################################");
-			var pos = getNextAtomPosition();
-			trace(pos);
-			//atom.setPostion( new Vec2(0,6) );
 			atom.setPostion( pos );
 			atoms.push(atom);
 		});
@@ -152,49 +151,41 @@ class Game extends Trait {
 		}
 	}
 
-	private function getNextAtomPosition() : Vec2 {
-		
-		while( true ) {
-			var vector = new Vec4( (0.5 - Math.random()) * worldSizeX, (0.5 - Math.random() ) * worldSizeY );
-			var hasTooCloseAtom = false;
-			for( atom in atoms ) {
-				var v = atom.object.transform.loc.sub(vector).length();
-				if( v <= minAtomDistance ) {
-					//trace("TOCLOSE");
-					hasTooCloseAtom = true;
-					break;
-				} 
-				
-			}
-			if( !hasTooCloseAtom ) {
-				trace("VALID "+vector  );
-				return new Vec2( vector.x, vector.y );
-			}
-		}
-		return null;
+	private function getAtomPositions(count:Int) : Array<Vec2>
+		{
+			trace('###########');
+			var vectors = new Array<Vec2>();
+			for (index in 0...count)
+				{	
+					var hasTooCloseExistingVector = false;
+					var vector = new Vec2();
 
-		/*
-		var vector : Vec4 = null; //= new Vec4(0, 0, 0, 0);
-		var tooCloseAtoms : Int = el;
-		do {
-			//vector = new Vec4( Math.random() * worldSizeX, Math.random() * worldSizeY, 0 );
-			vector = new Vec4( (0.5 - Math.random()) * worldSizeX, (0.5 - Math.random() ) * worldSizeY );
-			for( atom in atoms ) {
-				var v = atom.object.transform.loc.sub(vector).length();
-				if( v <= minAtomDistance ) [
-					break;
-				]
-			}
-			/*
-			tooCloseAtoms = atoms.filter( (f:Atom) -> {
-				var v = f.object.transform.loc.sub(vector).length();
-				trace(v);
-				return v <= minAtomDistance;
-			}).length;
-			* /
-			
-		} while (true);
-		return new Vec2( vector.x, vector.y );
-		*/
-	}
+					do
+						{
+							vector = new Vec2((0.5 - Math.random()) * worldSizeX, (0.5 - Math.random() ) * worldSizeY );
+							hasTooCloseExistingVector = false;
+							for ( existingVector in vectors)
+							{
+								var distance = vector.distanceTo(existingVector);
+								//trace('compare ' + vector + ' to vector' + existingVector + ' distance = ' + distance);
+								
+								if (distance <= minAtomDistance)
+									{
+										//trace('too near');
+										hasTooCloseExistingVector = true;
+										break;
+									}
+							}						
+							
+						}
+						while(hasTooCloseExistingVector);
+
+						vectors.push(vector);
+						trace('added vector ' + vector + ' now we have' + vectors.length);
+				}
+
+				return vectors;
+		}
+
+	
 }
