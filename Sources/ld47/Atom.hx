@@ -85,13 +85,20 @@ class Atom extends Trait {
     public function deselect()
         {
             isSelected = false;
-            marker.visible = false;
+            if (marker != null)
+            {
+                marker.visible = false;
+            }
+            
         }
 
     public function select()
         {
             isSelected = true;
-            marker.visible = true;
+            if (marker != null)
+                {
+                    marker.visible = true;
+                }
         }
 
     public function spawnElectrons()

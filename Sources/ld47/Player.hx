@@ -35,7 +35,16 @@ class Player {
 				// TODO fire electron
 				atom.fire();
 			}
-		}
+        }
+        
+        if (atom == null)
+            {
+                var atoms = Game.active.atoms.filter(a -> return a.player == this);
+                if (atoms.length >0)
+                    {
+                        selectAtom(atoms[0]);
+                    }
+            }
 	}
 
 	public function selectAtom(newAtom:Atom) {

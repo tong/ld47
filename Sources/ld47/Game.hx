@@ -51,9 +51,6 @@ class Game extends Trait {
 			atoms[0].setPlayer(players[0]);
 			atoms[1].setPlayer(players[1]);
 
-			players[0].selectAtom(atoms[0]);
-			players[1].selectAtom(atoms[1]);
-
 			atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
 			atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
 			atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
