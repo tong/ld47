@@ -14,25 +14,8 @@ class Marker extends Trait {
 
 	public function show() {
 		object.visible = true;
-		/* object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
-			object.transform.buildMatrix();
-
-			Tween.to({
-				props: {x: 1, y: 1, z: 1},
-				duration: 0.5,
-				target: object.transform.scale,
-				ease: Ease.QuartOut,
-				tick: () -> {
-					object.transform.buildMatrix();
-				},
-				done: () -> {
-					// object.remove();
-				}
-		});*/
-
 		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
 		object.transform.buildMatrix();
-
 		Tween.to({
 			props: {x: 1, y: 1, z: 1},
 			duration: 0.5,

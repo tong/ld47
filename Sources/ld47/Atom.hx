@@ -5,10 +5,10 @@ import iron.data.MaterialData;
 class Atom extends Trait {
 	static var defaultColor = new Vec4(1, 1, 1);
 
-	public var rotationSpeed = 0.01;
-	public var numSlots:Int = 10;
+	public var rotationSpeed:Float;
+	public var numSlots:Int;
 	public var electrons:Array<Electron> = [];
-	public var orbitRadius:Float = 2;
+	public var orbitRadius:Float = 1.8;
 	public var player(default, null):Player;
 
 	var lastSpawn:Float;
@@ -18,8 +18,10 @@ class Atom extends Trait {
 	// var marker:MeshObject;
 	var marker:Marker;
 
-	public function new() {
+	public function new(numSlots:Int) {
 		super();
+		this.numSlots = numSlots;
+		this.rotationSpeed = numSlots / 360; // * size;
 
 		lastSpawn = Game.active.time;
 
@@ -27,8 +29,10 @@ class Atom extends Trait {
 			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
 			object.transform.buildMatrix();
 
+			var scale = 10.0 / numSlots;
+
 			Tween.to({
-				props: {x: 1, y: 1, z: 1},
+				props: {x: scale, y: scale, z: scale},
 				duration: 0.5,
 				target: object.transform.scale,
 				ease: Ease.QuartOut,
@@ -43,7 +47,6 @@ class Atom extends Trait {
 			var markerObject = cast object.getChild('AtomMarker');
 			marker = new Marker();
 			markerObject.addTrait(marker);
-
 			// marker.show();
 
 			if (player != null)
@@ -179,8 +182,12 @@ class Atom extends Trait {
 			if (player == null) {
 				return defaultColor;
 			} else {
+				// TODO
 				var c:Color = player.color;
-				return new Vec4(c.R, c.G, c.B);
+				var c2 = Color.fromBytes( c.Rb, c.Gb, c.Bb );
+				//var c2 = Color.fromBytes( c.Rb, c.Gb, c.Bb );
+				return new Vec4( c2.R, c2.G, c2.B, 0.0 );
+				//return new Vec4( Player._COLORS[0][0], Player._COLORS[0][1], Player._COLORS[0][2] );
 			}
 		}
 		return null;

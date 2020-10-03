@@ -27,7 +27,7 @@ class HUD extends Trait {
         final sw = System.windowWidth();
         final sh = System.windowHeight();
         //final fontSize = 16;
-        final padding = 4;
+        final padding = 2;
 
         g.end();
 
@@ -42,6 +42,8 @@ class HUD extends Trait {
         g.font = UI.font;
 		g.fontSize = fontSize;
         g.drawString( text, 0, 0 );  */
+
+        //TODO scale player fields to num atoms they own
         
         var px = 0.0;
         for( player in game.players ) {
@@ -56,8 +58,10 @@ class HUD extends Trait {
             }
             txt += ' A$numAtoms E$numElectrons';
             var txtWidth = UI.font.width( UI.fontSize, txt );
-            g.color = player.color;
+            //g.color =  Color.fromBytes( player.color.Rb, player.color.Gb, player.color.Bb ) ;//player.color;
+            g.color = Player.COLORS[player.index];
             g.fillRect( px, 0, txtWidth + padding*2, UI.fontSize + padding*2 );
+            //g.fillRect( px, 0, 40, UI.fontSize );
             g.color = 0xffffffff;
             g.drawString( txt, px+padding, padding ); 
             px += txtWidth + padding*2;

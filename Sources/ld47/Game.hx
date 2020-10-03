@@ -35,7 +35,7 @@ class Game extends Trait {
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
 
-				for (i in 3...atoms.length)
+				for (i in 3...atoms.length-2)
 					atoms[i].setPlayer(players[0]);
 
 				atoms[0].addElectron(new Electron(players[0], [Feature.Spawner]));
@@ -98,13 +98,13 @@ class Game extends Trait {
 		atoms = [];
 	}
 
-	public function spawnMap(numAtoms:Int, clear = true, cb:Void->Void) {
+	public function spawnMap( numAtoms : Int, clear = true, cb:Void->Void) {
 		if (clear)
 			clearMap();
 		atoms = [];
 		var positions = getAtomPositions(numAtoms);
 		function spawnNext() {
-			spawnAtom(positions[atoms.length], a -> {
+			spawnAtom(positions[atoms.length], 5 + Std.int(Math.random()*10), a -> {
 				if (atoms.length == numAtoms)
 					cb();
 				else
@@ -114,9 +114,9 @@ class Game extends Trait {
 		spawnNext();
 	}
 
-	public function spawnAtom(pos:Vec2, cb:Atom->Void) {
+	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
-			var atom = new Atom();
+			var atom = new Atom( numSlots );
 			obj.addTrait(atom);
 			atom.setPostion(pos);
 			atoms.push(atom);

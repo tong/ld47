@@ -1,12 +1,15 @@
 package ld47;
 
 class Player {
-	public static final COLORS = [0xF50057, 0x00B0FF, 0xFFEA00, 0xFF3D00];
+	//public static final COLORS = [0xFFF50057, 0xFF00B0FF, 0xFFFFEA00, 0xFFFF3D00];
+	//public static final COLORS : Array<Color> = [0xff00B0FF,0xffF50057, 0xffFFEA00, 0xffFF3D00];
+	//public static final COLORS = [0xff0000,0x00ff00, 0x0000ff, 0xFF3D00];
+	public static final COLORS : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
+	//public static final COLORS24 : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
 
-	// public dynamic function onNavigate( direction : Float ) {}
 	public var index(default, null):Int;
 	public var name(default, null):String;
-	public var color(default, null):Int;
+	public var color(default, null):Color;
 	public var atom(default, null):Atom;
 
 	public function new(index:Int, name:String) {
