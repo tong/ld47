@@ -41,20 +41,17 @@ class Game extends Trait {
 			} */
 
 			atoms = [];
-			var atomPositions = getAtomPositions(10);
+			spawnMap( 10,  () -> {
 
-			for (i in 0...10) {
-				spawnAtom(atomPositions[i]);
-				atoms[i].setPlayer(players[0]);
-			}			
+				atoms[0].setPlayer(players[0]);
+				atoms[1].setPlayer(players[1]);
 
-			atoms[0].setPlayer(players[0]);
-			atoms[1].setPlayer(players[1]);
+				for( i in 2...atoms.length ) atoms[i].setPlayer(players[0]);
 
-			atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
-			atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
-			atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
-			
+				atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
+				atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
+				atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
+			} );
 
 			notifyOnUpdate(update);
 		});
@@ -97,12 +94,26 @@ class Game extends Trait {
 		// return atom;
 	}
 
-	public function spawnAtom(pos:Vec2) {
-		Scene.active.spawnObject('Atom', atomContainer, obj -> {
+	public function spawnMap( numAtoms : Int, cb : Void->Void ) {
+		//for( a in atoms ) a.destroy();
+		atoms = [];
+		var positions = getAtomPositions( numAtoms );
+		function spawnNext() {
+			spawnAtom( positions[atoms.length], a -> {
+				if( atoms.length == numAtoms ) cb();
+				else spawnNext();
+			});
+		}
+		spawnNext();
+	}
+
+	public function spawnAtom( pos : Vec2 , cb : Atom->Void ) {
+		Scene.active.spawnObject( 'Atom', atomContainer, obj -> {
 			var atom = new Atom();
 			obj.addTrait(atom);
 			atom.setPostion( pos );
 			atoms.push(atom);
+			cb( atom );
 		});
 	}
 
