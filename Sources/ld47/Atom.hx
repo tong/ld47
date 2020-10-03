@@ -98,7 +98,7 @@ class Atom extends Trait {
         {
             lastSpawn = Game.active.time;
             
-            var spawnerCount = electrons.filter( (e:Electron) -> return e.features.contains(Electron.Feature.Spawner) ).length;                      
+            var spawnerCount = electrons.filter( (e:Electron) -> return e.features.filter(f -> f == Electron.Feature.Spawner).length > 0 ).length;                      
 
             var spawnCount = Std.int( Math.min(numSlots - electrons.length, spawnerCount) );
             //trace('spawn ' + spawnCount + ' new electrons');
