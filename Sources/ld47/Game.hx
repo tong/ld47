@@ -34,20 +34,14 @@ class Game extends Trait {
 				new Player(0, 'tong', 0xffff0000),
 				new Player(1, 'shadow', 0xff0000ff)
 			];
-			/* for (p in players) {
-				p.onNavigate = (direction) -> {
-					trace("Player wants to navigate " + direction);
-				}
-			} */
 
-			atoms = [];
-			spawnMap( 10,  () -> {
+			spawnMap( 10, true, () -> {
 
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
-
+				
 				for( i in 2...atoms.length ) atoms[i].setPlayer(players[0]);
-
+				
 				atoms[0].addElectron( new Electron(players[0], [Feature.Spawner] ) );
 				atoms[1].addElectron( new Electron(players[1], [Feature.Spawner] ) ); // Input.init();
 				atoms[1].addElectron( new Electron(players[1], [Feature.None] ) ); // Input.init();
@@ -94,8 +88,18 @@ class Game extends Trait {
 		// return atom;
 	}
 
-	public function spawnMap( numAtoms : Int, cb : Void->Void ) {
-		//for( a in atoms ) a.destroy();
+	public function clearMap() {
+		if( atoms != null ) {
+			for( a in atoms ) {
+				//a.destroy(); //TODO
+				a.object.remove();
+			}
+		}
+		atoms = [];
+	}
+
+	public function spawnMap( numAtoms : Int, clear = true, cb : Void->Void ) {
+		if( clear ) clearMap();
 		atoms = [];
 		var positions = getAtomPositions( numAtoms );
 		function spawnNext() {
