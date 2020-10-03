@@ -26,13 +26,13 @@ class HUD extends Trait {
         final game = Game.active;
         final sw = System.windowWidth();
         final sh = System.windowHeight();
-        final fontSize = 16;
+        //final fontSize = 16;
         final padding = 4;
 
         g.end();
 
         g.font = UI.font;
-		g.fontSize = fontSize;
+		g.fontSize = UI.fontSize;
         g.color = 0xffffffff;
 
        /* 
@@ -55,9 +55,9 @@ class HUD extends Trait {
                 }
             }
             txt += ' A$numAtoms E$numElectrons';
-            var txtWidth = UI.font.width( fontSize, txt );
+            var txtWidth = UI.font.width( UI.fontSize, txt );
             g.color = player.color;
-            g.fillRect( px, 0, txtWidth + padding*2, fontSize + padding*2 );
+            g.fillRect( px, 0, txtWidth + padding*2, UI.fontSize + padding*2 );
             g.color = 0xffffffff;
             g.drawString( txt, px+padding, padding ); 
             px += txtWidth + padding*2;
@@ -83,9 +83,9 @@ class HUD extends Trait {
             var py = Std.int( (sh/2) - sh * v.y / 2 );
             
             var text = 'A'+i;
-            final textWidth = UI.font.width( fontSize, text );
+            final textWidth = UI.font.width( UI.fontSize, text );
             
-            g.drawString( text, px - textWidth/2, py - fontSize/2 ); 
+            g.drawString( text, px - textWidth/2, py - UI.fontSize/2 ); 
         }
 
         g.begin( false );

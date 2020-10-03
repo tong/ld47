@@ -41,7 +41,7 @@ class UI {
 	};
 
 	public static var font : kha.Font;
-	public static var fontSize = 13; // Jetbrain mono
+	public static var fontSize = 16; // Jetbrain mono
 	//public static var fontSize = 11; // Anonymou Pro
 
 	public static function init( done : Void->Void ) {
