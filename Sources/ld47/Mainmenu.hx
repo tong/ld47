@@ -89,7 +89,7 @@ class Mainmenu extends Trait {
 							if( ui.button( 'PLAY', Left ) ) {
 								Scene.setActive( 'Game' );
 							}
-							if( ui.button( 'EXIT', Left ) ) {
+							if( ui.button( 'QUIT', Left ) ) {
 								Scene.setActive( 'Quit' );
 							}
 						}
@@ -111,7 +111,9 @@ class Mainmenu extends Trait {
 
 			notifyOnUpdate( update );
 
-        });
+		});
+		
+		//Music.play( 'stapletapewormsonmypenis', 1.0, true, false );
 	}
 
 	function update() {
