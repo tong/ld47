@@ -60,6 +60,31 @@ class HUD extends Trait {
         }
         */
 
+        final sw = System.windowWidth();
+        final sh = System.windowHeight();
+        final cam = Scene.active.camera;
+
+        g.color = 0xff000000;
+
+        for( i in 0...Game.active.atoms.length ) {
+
+            var atom = Game.active.atoms[i];
+
+            var loc = atom.object.transform.world.getLoc();
+			var v = new Vec4();
+			v.setFrom( loc );
+			v.applyproj( cam.V );
+            v.applyproj( cam.P );
+            
+            final distance = Std.int( cam.transform.world.getLoc().distanceTo( loc ) * 100 ) / 100;
+			//trace(distance);
+			
+			var px = Std.int( (sw/2) + sw * v.x / 2 );
+			var py = Std.int( (sh/2) - sh * v.y / 2 );
+            
+            g.drawString( 'ATOM '+i, px, py ); 
+        }
+
         g.begin( false );
 	}
 }
