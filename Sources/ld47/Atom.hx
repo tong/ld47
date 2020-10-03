@@ -53,14 +53,14 @@ class Atom extends Trait {
     }
 
     public function update() {
-        /*
+        
         for( electron in electrons ) {
             electron.update();
         }
         if (Game.active.time - lastSpawn>=spawnTime) {                
             spawnElectrons();
         }     
-        */
+        
     }
 
     public function spawnElectrons()
@@ -70,14 +70,16 @@ class Atom extends Trait {
             // var spawnerCount = electrons.filter( (e:Electron) -> return e.features.contains(ld47.Electron.Feature.Spawner) ).length;
             var spawnerCount = 0;
             for( e in electrons ) {
+                
                 for( f in e.features ) {
-                    if( Std.is( f, Electron.Feature.Spawner) ) {
+                    if(  f == Electron.Feature.Spawner ) {
                         spawnerCount++;
                     }
-                }
-            }
+                }                
+            }            
 
             var spawnCount = Std.int( Math.min(numSlots - electrons.length, spawnerCount) );
+            trace('spawn ' + spawnCount + ' new electrons');
             for( index in 0...spawnCount )
                 {
                     var newElectron = new Electron(player, new Array<ld47.Electron.Feature>());
