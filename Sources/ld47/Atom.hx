@@ -62,13 +62,7 @@ class Atom extends Trait {
 	}
 
 	public function setPlayer(p:Player) {
-		if (player != null) {}
 		player = p;
-		/*
-		if (marker != null) {
-			marker.color = player.color;
-		}
-		*/
 	}
 
 	public function setPostion(v:Vec2) {
@@ -89,22 +83,27 @@ class Atom extends Trait {
 			trace('we got a hit on a enemy atom');
 			var e = electrons.pop();
 			e.object.remove();
-			e.object.remove();
+
+			if (electrons.length == 0){
+				setPlayer(null);
+			}
+
 		}
 	}
 
 	public function fire() {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
-			var index = oldCount-1; // hier sollte der index des selektierten elektrons stehen			
-			var electron = electrons[index];			
-			//electron.object.remove();
+			var index = 0; // hier sollte der index des selektierten elektrons stehen			
+			var electron = electrons[index];						
+			
 			var wlocElectron = new Vec2(electron.object.transform.worldx(),
 										 electron.object.transform.worldy());
 
 			var wlocAtom = new Vec2(object.transform.worldx(),
 									object.transform.worldy());
 			
+			object.removeChild(electron.object);
 			Scene.active.root.addChild(electron.object);
 			electron.setPostion(wlocElectron);
 			electrons.splice(index,1);
@@ -112,10 +111,16 @@ class Atom extends Trait {
 			trace('shot electron from ' + wlocElectron );
 			// move electron object in
 			var locElectron = electron.object.transform.loc.clone();
-			//var locAtom = object.transform.loc.clone();
+			
 			var direction = new Vec4(wlocElectron.x - wlocAtom.x,
-								     wlocElectron.y - wlocAtom.y );
+								     wlocElectron.y - wlocAtom.y ).normalize();
 			electron.setVelocity(direction);
+
+			if (electrons.length == 0){
+				player.navigateSelectionTowards(new Vec2(direction.x,direction.y));
+				setPlayer(null);
+			}
+
 
 			soundFire.play();
 		}
