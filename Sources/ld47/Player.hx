@@ -1,6 +1,6 @@
 package ld47;
 
-class Player {
+class Player extends Trait {
 	//public static final COLORS = [0xFFF50057, 0xFF00B0FF, 0xFFFFEA00, 0xFFFF3D00];
 	//public static final COLORS : Array<Color> = [0xff00B0FF,0xffF50057, 0xffFFEA00, 0xffFF3D00];
 	//public static final COLORS = [0xff0000,0x00ff00, 0x0000ff, 0xFF3D00];
@@ -8,17 +8,21 @@ class Player {
 	//public static final COLORS24 : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
 
 	public var index(default, null):Int;
-	public var name(default, null):String;
+	//public var name(default, null):String;
 	public var color(default, null):Color;
 	public var atom(default, null):Atom;
 
-	public function new(index:Int, name:String) {
+	public function new(index:Int) {
+		super();
 		this.index = index;
-		this.name = name;
+		//this.name = name;
 		this.color = COLORS[index];
+		notifyOnInit(() -> {
+			notifyOnUpdate(update);
+		});
 	}
 
-	public function update() {
+	function update() {
 		var gp = Input.getGamepad(index);
 		var keyboard = Input.getKeyboard();
 		if (gp.started('circle')) {
@@ -69,6 +73,14 @@ class Player {
 				selectAtom(atoms[0]);
 			}
 		}
+		if (atom != null) {
+			final t = atom.object.transform;
+			final s = 1.3;
+			object.transform.scale.x = t.scale.x * s;
+			object.transform.scale.y = t.scale.y * s;
+			object.transform.scale.z = t.scale.z * s;
+			object.transform.buildMatrix();
+		}
 	}
 
 	public function selectAtom(newAtom:Atom) {
@@ -77,6 +89,19 @@ class Player {
 		}
 		atom = newAtom;
 		atom.select();
+
+		final loc = atom.object.transform.world.getLoc(); 
+		Tween.to({
+			props: {x: loc.x, y: loc.y, z: loc.z},
+			duration: 0.5,
+			target: object.transform.loc,
+			ease: Ease.QuartOut,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
+			done: () -> {
+			}
+		});
 	}
 
 	public function navigateSelectionTowards(direction:Vec2) {

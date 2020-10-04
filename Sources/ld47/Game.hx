@@ -33,7 +33,10 @@ class Game extends Trait {
 
 			players = [];
 			for( i in 0...numPlayers) {
-				players.push( new Player( i, 'P'+i ) );
+				var player = new Player( i );
+				var playerObject = Scene.active.getMesh( 'Player'+i );
+				playerObject.addTrait( player );
+				players.push( player );
 			}
 
 			spawnMap(10, true, () -> {
@@ -162,13 +165,14 @@ class Game extends Trait {
 				}
 			 */
 
-			for (player in players) {
+			/* for (player in players) {
 				player.update();
 			}
-
+			
 			for (atom in atoms) {
 				atom.update();
 			}
+			*/
 
 			for (electron in flyingElectrons){
 				electron.update();

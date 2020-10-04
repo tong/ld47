@@ -16,7 +16,7 @@ class Atom extends Trait {
 
 	var isSelected:Bool;
 	// var marker:MeshObject;
-	var marker:Marker;
+//	var marker:Marker;
 	var soundFire : AudioChannel;
 
 	public function new(numSlots:Int) {
@@ -30,7 +30,7 @@ class Atom extends Trait {
 			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
 			object.transform.buildMatrix();
 
-			var scale = (numSlots/20);
+			final scale = (numSlots/20);
 
 			Tween.to({
 				props: {x: scale, y: scale, z: scale},
@@ -45,13 +45,13 @@ class Atom extends Trait {
 				}
 			});
 
-			var markerObject = cast object.getChild('AtomMarker');
+			/* var markerObject = cast object.getChild('AtomMarker');
 			marker = new Marker();
 			markerObject.addTrait(marker);
 			// marker.show();
 
 			if (player != null)
-				marker.color = player.color;
+				marker.color = player.color; */
 
 			Data.getSound('fire_electron.ogg', s -> {
 				soundFire = Audio.play(s, false, false);
@@ -59,6 +59,8 @@ class Atom extends Trait {
 			});
 
 			Uniforms.externalVec3Links.push(vec3Link);
+
+			notifyOnUpdate(update);
 		});
 
 		deselect();
@@ -67,9 +69,11 @@ class Atom extends Trait {
 	public function setPlayer(p:Player) {
 		if (player != null) {}
 		player = p;
+		/*
 		if (marker != null) {
 			marker.color = player.color;
 		}
+		*/
 	}
 
 	public function setPostion(v:Vec2) {
@@ -117,7 +121,7 @@ class Atom extends Trait {
 		
 	}
 
-	public function update() {
+	function update() {
 		object.transform.rotate(new Vec4(0, 0, 1), rotationSpeed);
 
 		for (electron in electrons) {
@@ -130,20 +134,20 @@ class Atom extends Trait {
 
 	public function select() {
 		isSelected = true;
-		if (marker != null) {
+		/* if (marker != null) {
 			// marker.object.visible = true;
 
 			marker.show();
 			// Twwen.to;
 			// trace(marker.materials.length);
-		}
+		} */
 	}
 
 	public function deselect() {
 		isSelected = false;
-		if (marker != null) {
+		/* if (marker != null) {
 			marker.object.visible = false;
-		}
+		} */
 	}
 
 	public function destroy() {
