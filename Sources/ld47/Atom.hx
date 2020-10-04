@@ -141,7 +141,7 @@ class Atom extends Trait {
 			object.removeChild(electron.object);
 			Scene.active.root.addChild(electron.object);
 			electron.setPostion(wlocElectron);
-			electrons.splice(electron.index,1);
+			electrons.splice(electron.atomIndex,1);
 			Game.active.flyingElectrons.push(electron);
 			trace('shot electron from ' + wlocElectron );
 			// move electron object in
@@ -154,10 +154,11 @@ class Atom extends Trait {
 			if (electrons.length == 0){
 				player.navigateSelectionTowards(new Vec2(direction.x,direction.y));
 				setPlayer(null);
+				selectElectron(null);
 			}
-
-			
-
+			else{
+				selectElectron(getNextElectron(electron));
+			}
 
 			soundFire.play();
 		}
@@ -275,11 +276,12 @@ class Atom extends Trait {
 				if (index>numSlots) {index=0;}
 				for (electron in electrons) {if (electron.atomIndex == index) return electron;}
 			}
-			while();
+			while(true);
 		}		
 	}
 
 	private function selectElectron(electron:Electron){
+		trace('change selection');
 		var loc = new Vec4();
 		selectedElectron = electron;		
 
