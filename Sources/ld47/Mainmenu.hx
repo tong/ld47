@@ -55,12 +55,10 @@ class Mainmenu extends Trait {
 				color: Player.COLORS[i]
 			}];
 
-			Data.getImage( 'title.png', img -> {
-				Data.getFont( "helvetica_neue_85.ttf", font -> {
-					ui = new Zui( { font : font, theme: THEME } );
-					notifyOnUpdate( update );
-					notifyOnRender2D( render2D );
-				});
+			Data.getFont( "helvetica_neue_85.ttf", font -> {
+				ui = new Zui( { font : font, theme: THEME } );
+				notifyOnUpdate( update );
+				notifyOnRender2D( render2D );
 			});
 			
 			/*
