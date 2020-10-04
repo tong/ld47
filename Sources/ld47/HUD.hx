@@ -5,18 +5,12 @@ import kha.math.FastMatrix3;
 class HUD extends Trait {
 
     public var visible = true;
-    
-    var text = "";
 
 	public function new() {
 		super();
 		notifyOnInit( () -> {
-            //notifyOnUpdate( update );
             notifyOnRender2D( render );
 		});
-	}
-
-	function update() {
 	}
 
 	function render( g : kha.graphics2.Graphics ) {
@@ -26,8 +20,7 @@ class HUD extends Trait {
         final game = Game.active;
         final sw = System.windowWidth();
         final sh = System.windowHeight();
-        //final fontSize = 16;
-        final paddingX = 2;
+        final paddingX = 4;
         final paddingY = 1;
 
         g.end();
@@ -36,43 +29,44 @@ class HUD extends Trait {
 		g.fontSize = UI.fontSize;
         g.color = 0xffffffff;
 
-       /* 
-       g.color = 0xff0000ff;
-        g.fillRect( 0, 0, textWidth, fontSize );
-        g.color = 0xffffffff;
-        g.font = UI.font;
-		g.fontSize = fontSize;
-        g.drawString( text, 0, 0 );  */
-
-        //TODO scale player fields to num atoms they own
-
         var transform = FastMatrix3.rotation( MathTools.degToRad(-90) );
-        //transform._20 = -100;
         transform._21 = sh;
 		g.pushTransformation( transform );
         
         var px = 0.0;
-        for( player in game.players ) {
+        for( i in 0...game.players.length ) {
+            var player = game.players[i];
+            var playerColor = Player.COLORS[player.index];
             var txt = player.name.toUpperCase();
             var numElectrons = 0;
             var numAtoms = 0;
-            for( atom in Game.active.atoms ) {
+
+            for( atom in game.atoms ) {
                 if( atom.player == player ) {
                     numAtoms++;
                     numElectrons += atom.electrons.length;
                 }
             }
             txt += ' A$numAtoms E$numElectrons';
-            var txtWidth = UI.font.width( UI.fontSize, txt );
-            //g.color =  Color.fromBytes( player.color.Rb, player.color.Gb, player.color.Bb ) ;//player.color;
-            g.color = Player.COLORS[player.index];
-            g.fillRect( px, 0, txtWidth + paddingX*2, UI.fontSize + paddingY*2 );
-            //g.fillRect( px, 0, 40, UI.fontSize );
+
+            var percentAtoms = numAtoms/game.atoms.length;
+            final width = sh*percentAtoms;
+
+            g.color = playerColor;
+            g.fillRect( px, 0, sh*percentAtoms, UI.fontSize + paddingY*2 );
+
             g.color = 0xff000000;
-            g.drawString( txt, px+paddingX, paddingY ); 
-            px += txtWidth + paddingX*2;
+            g.drawString( txt, px + paddingX, paddingY ); 
+
+            px += width;
         }
+
+        //g.color = 0xff000000;
+        //g.fillRect( px, 0, sh-px, UI.fontSize );
+
         g.popTransformation();
+
+        // Atom label
 
         final cam = Scene.active.camera;
         g.color = 0xff000000;
