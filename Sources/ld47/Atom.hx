@@ -17,11 +17,12 @@ class Atom extends Trait {
 	var isSelected:Bool;
 	// var marker:MeshObject;
 	var marker:Marker;
+	var soundFire : AudioChannel;
 
 	public function new(numSlots:Int) {
 		super();
 		this.numSlots = numSlots;
-		this.rotationSpeed = numSlots / 360; // * size;
+		this.rotationSpeed = 1 / numSlots / 10; // * size;
 
 		lastSpawn = Game.active.time;
 
@@ -29,7 +30,7 @@ class Atom extends Trait {
 			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
 			object.transform.buildMatrix();
 
-			var scale = 10.0 / numSlots;
+			var scale = (numSlots/20);
 
 			Tween.to({
 				props: {x: scale, y: scale, z: scale},
@@ -51,6 +52,10 @@ class Atom extends Trait {
 
 			if (player != null)
 				marker.color = player.color;
+
+			Data.getSound('fire_electron.ogg', s -> {
+				soundFire = Audio.play(s);
+			});
 
 			Uniforms.externalVec3Links.push(vec3Link);
 		});
@@ -97,9 +102,7 @@ class Atom extends Trait {
 			var direction = object.transform.look();			
 			electron.setVelocity(direction);
 
-			Data.getSound('fire_electron.ogg', s -> {
-				var channel = Audio.play(s);
-			});
+			soundFire.play();
 		}
 		else
 		{
