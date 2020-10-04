@@ -76,9 +76,8 @@ class Player extends Trait {
 		if (atom != null) {
 			final t = atom.object.transform;
 			final s = 1.3;
-			object.transform.scale.x = t.scale.x * s;
-			object.transform.scale.y = t.scale.y * s;
-			object.transform.scale.z = t.scale.z * s;
+			final scaleFactor = atom.scale * s;
+			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
 			object.transform.buildMatrix();
 		}
 	}
@@ -91,6 +90,12 @@ class Player extends Trait {
 		atom.select();
 
 		final loc = atom.object.transform.world.getLoc(); 
+		final s = 1.3;
+		final scaleFactor = atom.scale * s;
+
+		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
+		object.transform.buildMatrix();
+		
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},
 			duration: 0.5,
@@ -101,6 +106,12 @@ class Player extends Trait {
 			},
 			done: () -> {
 			}
+		});
+		Tween.to({
+			props: {x: scaleFactor, y: scaleFactor, z: scaleFactor},
+			duration: 0.5,
+			target: object.transform.scale,
+			ease: Ease.QuartOut,
 		});
 	}
 

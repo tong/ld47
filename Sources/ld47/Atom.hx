@@ -10,48 +10,43 @@ class Atom extends Trait {
 	public var electrons:Array<Electron> = [];
 	public var orbitRadius:Float = 1.8;
 	public var player(default, null):Player;
+	public var scale(default, null):Float;
 
 	var lastSpawn:Float;
 	var spawnTime:Float = 10.0;
 
 	var isSelected:Bool;
-	// var marker:MeshObject;
-//	var marker:Marker;
+	var mesh : MeshObject;
 	var soundFire : AudioChannel;
 
 	public function new(numSlots:Int) {
 		super();
 		this.numSlots = numSlots;
 		this.rotationSpeed = 1 / numSlots / 10; // * size;
-
+		this.scale = (numSlots/20);
+		
 		lastSpawn = Game.active.time;
-
+		
 		notifyOnInit(() -> {
-			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
-			object.transform.buildMatrix();
 
-			final scale = (numSlots/20);
-
-			Tween.to({
+			mesh = cast object.getChild('AtomMesh');
+			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
+			mesh.transform.buildMatrix();
+			
+			/* Tween.to({
 				props: {x: scale, y: scale, z: scale},
 				duration: 0.5,
-				target: object.transform.scale,
+				target: atomMesh.transform.scale,
+				//target: object.transform.scale,
 				ease: Ease.QuartOut,
 				tick: () -> {
-					object.transform.buildMatrix();
+					atomMesh.transform.buildMatrix();
 				},
 				done: () -> {
 					// object.remove();
 				}
 			});
-
-			/* var markerObject = cast object.getChild('AtomMarker');
-			marker = new Marker();
-			markerObject.addTrait(marker);
-			// marker.show();
-
-			if (player != null)
-				marker.color = player.color; */
+ 			*/
 
 			Data.getSound('fire_electron.ogg', s -> {
 				soundFire = Audio.play(s, false, false);
@@ -151,6 +146,7 @@ class Atom extends Trait {
 	}
 
 	public function destroy() {
+		/*
 		var scale = 0.1;
 		Tween.to({
 			props: {x: scale, y: scale, z: scale},
@@ -164,6 +160,8 @@ class Atom extends Trait {
 				object.remove();
 			}
 		});
+		*/
+		object.remove();
 	}
 
 	public function spawnElectrons() {
@@ -204,7 +202,7 @@ class Atom extends Trait {
 	}
 
 	function vec3Link(object:Object, mat:MaterialData, link:String):Vec4 {
-		if (link == "RGB" && object == this.object) {
+		if (link == "RGB" && object == mesh) {
 			if (player == null) {
 				return defaultColor;
 			} else {
