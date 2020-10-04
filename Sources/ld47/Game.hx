@@ -269,7 +269,7 @@ class Game extends Trait {
 			var trys = 0;
 			do {
 				trys++;
-				vector = new Vec2((0.5 - Math.random()) * (worldSizeX - minAtomDistance/2) , (0.5 - Math.random()) * (worldSizeY - minAtomDistance/2));
+				vector = new Vec2((0.5 - Math.random()) * (worldSizeX - minAtomDistance/1.5) , (0.5 - Math.random()) * (worldSizeY - minAtomDistance/1.5));
 				hasTooCloseExistingVector = false;
 				for (existingVector in vectors) {
 					var distance = vector.distanceTo(existingVector);

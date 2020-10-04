@@ -19,9 +19,6 @@ class Electron extends Trait {
     public var velocity : Vec4;    
     public var features : Array<Feature>;
 
-    var isSelected : Bool;
-    var marker:Marker;
-
     public function new( player : Player, features : Array<Feature>)  {
         super();
         this.player = player;
@@ -29,14 +26,11 @@ class Electron extends Trait {
         notifyOnInit( () -> {
 
             mesh = cast object.getChild('ElectronMesh');
-            var markerObject = cast object.getChild('ElectronMarker');
-            marker = new Marker(player.color);            
-			markerObject.addTrait(marker);          
+                  
 
             DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {
                 var mesh : MeshObject = cast object;
-                mesh.materials = m;
-                markerObject.materials = m;
+                mesh.materials = m;                
             }); 
         });
     }
@@ -55,15 +49,6 @@ class Electron extends Trait {
 		object.transform.buildMatrix();
     }
 
-    public function select() {
-        isSelected = true;
-        marker.show();
-    }
-    
-    public function deselect() {
-        isSelected = false;
-        marker.hide();
-    }
 
     public function setAtom(a:Atom, index:Int) {
         trace('attach electron to atom of player ' + a.player.name + ' at index ' + index);

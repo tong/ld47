@@ -11,6 +11,7 @@ class Atom extends Trait {
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
 	public var mesh(default, null) : MeshObject;
+	var marker:Marker;
 
 	var lastIntervalledSpawn:Float;
 	var spawnTime:Float = 10.0;
@@ -19,6 +20,7 @@ class Atom extends Trait {
 	var soundFire : AudioChannel;
 	var materials : haxe.ds.Vector<MaterialData>;
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
+	var selectedElectron : Electron;
 
 	public function new(numSlots:Int) {
 		super();
@@ -33,7 +35,13 @@ class Atom extends Trait {
 			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
 			mesh.transform.buildMatrix();
 
+			var markerObject = cast object.getChild('ElectronMarker');
+            marker = new Marker();                        
+			markerObject.addTrait(marker);  			
+            marker.hide();  
+
 			defaultMaterials = mesh.materials;
+			
 
 			if( materials != null ) mesh.materials = materials;
 		//	if( player != null ) mesh.materials = player.materials;
@@ -73,11 +81,16 @@ class Atom extends Trait {
 		*/
 		if( player != null ) {
 			trace("SET  MATTERIAL Player"+player.index);
+			marker.show();
+			var markerObject = cast object.getChild('ElectronMarker');
+			
 			DataTools.loadMaterial('Game', 'Player'+player.index, m -> {
 				materials = m;
+				markerObject.materials = m;
 				if( mesh != null ) mesh.materials = m;
 			});
 		} else {
+			marker.hide();
 			materials = null;
 			mesh.materials = defaultMaterials;
 			//mesh.materials = new haxe.ds.Vector(1);
@@ -116,9 +129,8 @@ class Atom extends Trait {
 	public function fire() {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
-			player.addToScore(Score.fired);
-			var index = 0; // hier sollte der index des selektierten elektrons stehen			
-			var electron = electrons[index];						
+			player.addToScore(Score.fired);			
+			var electron = selectedElectron;						
 			
 			var wlocElectron = new Vec2(electron.object.transform.worldx(),
 										 electron.object.transform.worldy());
@@ -129,7 +141,7 @@ class Atom extends Trait {
 			object.removeChild(electron.object);
 			Scene.active.root.addChild(electron.object);
 			electron.setPostion(wlocElectron);
-			electrons.splice(index,1);
+			electrons.splice(electron.index,1);
 			Game.active.flyingElectrons.push(electron);
 			trace('shot electron from ' + wlocElectron );
 			// move electron object in
@@ -143,6 +155,8 @@ class Atom extends Trait {
 				player.navigateSelectionTowards(new Vec2(direction.x,direction.y));
 				setPlayer(null);
 			}
+
+			
 
 
 			soundFire.play();
@@ -230,21 +244,60 @@ class Atom extends Trait {
 		spawnNext();
 	}
 
+	
+
 	public function spawnElectron(features : Array<Electron.Feature>, ?cb:Void->Void) {
 		Scene.active.spawnObject('Electron', object, obj -> {	
 			var electron = new Electron(player, features);
 			electron.notifyOnInit(()-> {
 				electron.setAtom(this, getFirstFreeElectronIndex());		
-				electrons.push(electron);
 				var pos = getElectronPosition(electron);
 				var direction = new Vec4(pos.x,pos.y,0,1).normalize();
 				electron.setPostion(pos);
 				electron.setDirection(direction);
+				if (electrons.length == 0) {selectElectron(electron);}
+				electrons.push(electron);
 				if (cb != null) cb();
 			});
 			obj.addTrait(electron);
 		});			
 		// trace('added elektron at position' + pos);
+	}
+
+	private function getNextElectron(electron:Electron) : Electron{		
+		if (electrons.length == 1){
+			return electrons[0];
+		}
+		else {
+			var index = selectedElectron.atomIndex;
+			do{
+				index++;
+				if (index>numSlots) {index=0;}
+				for (electron in electrons) {if (electron.atomIndex == index) return electron;}
+			}
+			while();
+		}		
+	}
+
+	private function selectElectron(electron:Electron){
+		var loc = new Vec4();
+		selectedElectron = electron;		
+
+		if (electron != null){
+			loc = electron.object.transform.loc;
+		}
+
+		Tween.to({			
+			props: {x: loc.x, y: loc.y, z: loc.z},
+			duration: 0.5,
+			target: marker.object.transform.loc,
+			ease: Ease.QuartOut,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
+			done: () -> {
+			}
+		});
 	}
 
 	private function getFirstFreeElectronIndex(): Int{			
