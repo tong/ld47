@@ -67,21 +67,20 @@ class Game extends Trait {
 				atoms[2].setPlayer(players[1]);
 
 				atoms[0].spawnElectrons( 2, [Feature.Spawner], () -> {
-					notifyOnUpdate(update);
-					atoms[1].spawnElectrons( 1, [Feature.Spawner], () -> {
-						notifyOnUpdate(update);
+					atoms[1].spawnElectrons( 2, [Feature.Spawner], () -> {
 						atoms[2].spawnElectrons( 1, [Feature.None], () -> {
 							notifyOnUpdate(update);
 							start();
 						} );
 					} );
 				} );
-
 			});
 		});
 	}
 
 	public function start() {
+
+		trace('Starting game');
 		
 		time = 0;
 		timeStart = Time.time();
@@ -154,6 +153,7 @@ class Game extends Trait {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom( numSlots );
 			atom.notifyOnInit(()->{
+				if( atom.mesh == null ) trace("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
 				cb(atom);
 			});
 			obj.addTrait(atom);
