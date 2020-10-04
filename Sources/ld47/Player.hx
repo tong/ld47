@@ -96,8 +96,10 @@ class Player {
 				var bestDistance = 0.0;
 
 				for (a in atoms) {
-					var distance = atom.object.transform.loc.distanceTo(a.object.transform.loc);
-					var direction = new Vec2(a.object.transform.loc.x - atom.object.transform.loc.x, a.object.transform.loc.y - atom.object.transform.loc.y).normalize();
+					var locA = a.object.transform.loc;
+					var locAtom = atom.object.transform.loc;
+					var distance = locAtom.distanceTo(locA);
+					var direction = new Vec2(locA.x - locAtom.x, locA.y - locAtom.y).normalize();
 					var score = Math.pow(direction.dot(shootDirection),1) / (distance+10);					
 
 					if (score > bestScore) {						

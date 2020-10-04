@@ -100,7 +100,9 @@ class Atom extends Trait {
 			Game.active.flyingElectrons.push(electron);
 			trace('shot electron with index ' + index + ' of ' + oldCount + ' electrons now there are only ' + electrons.length);
 			// move electron object in
-			var direction = object.transform.look();			
+			var locElectron = electron.object.transform.loc.clone();
+			var locAtom = object.transform.loc.clone();
+			var direction = locElectron.sub(locAtom).normalize();		
 			electron.setVelocity(direction);
 
 			soundFire.play();
