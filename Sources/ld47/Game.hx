@@ -3,6 +3,10 @@ package ld47;
 import ld47.Electron.Feature;
 import ld47.renderpath.Postprocess;
 
+typedef MapData = {
+	var atoms : Array<{ features: Array<Electron.Feature> }>;
+}
+
 typedef PlayerData = {
 	var name : String;
 	var enabled : Bool;
@@ -28,7 +32,7 @@ class Game extends Trait {
 	var minAtomDistance = 3;
 	var atomContainer:Object;
 
-	public function new( playerData : Array<PlayerData> ) {
+	public function new( playerData : Array<PlayerData>, mapData : MapData ) {
 		super();
 		Game.active = this;
 		notifyOnInit(() -> {
@@ -53,21 +57,26 @@ class Game extends Trait {
 				}
 			}
 
+			trace("Creating map "+mapData );
+			//TODO
+
 			spawnMap(10, true, () -> {
 				
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
-				
-				atoms[0].addElectron( [Feature.Spawner]);
-				atoms[0].addElectron( [Feature.Spawner]);
-				atoms[1].addElectron( [Feature.Spawner]);				
-				atoms[1].addElectron( [Feature.None]);				
-				atoms[2].addElectron( [Feature.None]);
-				
-				notifyOnUpdate(update);
 
-				start();
+				atoms[0].spawnElectrons( 2, [Feature.Spawner], () -> {
+					notifyOnUpdate(update);
+					atoms[1].spawnElectrons( 1, [Feature.Spawner], () -> {
+						notifyOnUpdate(update);
+						atoms[2].spawnElectrons( 1, [Feature.None], () -> {
+							notifyOnUpdate(update);
+							start();
+						} );
+					} );
+				} );
+
 			});
 		});
 	}
@@ -115,15 +124,6 @@ class Game extends Trait {
 		Scene.setActive("Mainmenu");
 	}
 
-	public function spawnElectron() {
-		for (atom in atoms) {
-			atom.spawnElectrons();
-		}
-		// var atom = new Atom();
-		// atoms.push( atom );
-		// return atom;
-	}
-
 	public function clearMap() {
 		if (atoms != null) {
 			for (a in atoms) {
@@ -153,10 +153,12 @@ class Game extends Trait {
 	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom( numSlots );
+			atom.notifyOnInit(()->{
+				cb(atom);
+			});
 			obj.addTrait(atom);
 			atom.setPostion(pos);
-			atoms.push(atom);
-			cb(atom);
+			atoms.push(atom);			
 		});
 	}
 
@@ -195,29 +197,19 @@ class Game extends Trait {
 				}
 			 */
 
-			/* for (player in players) {
-				player.update();
-			}
-			
-			for (atom in atoms) {
-				atom.update();
-			}
-			*/
-			
-			
-
 			var newFlyingElectrons = new Array<Electron>();
 
 			for (electron in flyingElectrons){	
 				//trace('check flying electron from player ' + electron.player.name);
 				var locElectron = new Vec4(electron.object.transform.worldx(), electron.object.transform.worldy());
-				var radiusElectron = electron.object.transform.radius/2;				
+				var radiusElectron = electron.mesh.transform.dim.x/2;							
+				
 				electron.update();
 				var electronOK = true;
 
 				for (atom in atoms){
 					var distance = atom.object.transform.loc.distanceTo(locElectron);
-					var radiusAtom = atom.collisionRadius/2;
+					var radiusAtom = atom.mesh.transform.dim.x/2;
 					//trace('test atom in a distance of '+ distance + ' with radius of ' + radiusAtom + ' and in e-radius of ' + radiusElectron );
 
 					if (distance < radiusAtom+radiusElectron)
@@ -230,7 +222,7 @@ class Game extends Trait {
 						electron.player.addToScore(Score.hit);
 						atom.hit(electron);	
 
-					}else if (distance < radiusAtom*10 && 
+					}else if (distance < radiusAtom*4 && 
 							  atom.player != electron.player &&
 							  atom.electrons.length>0){
 						trace('elektron from player ' + electron.player.name + ' is in the outter area of an atom, lets check its electrons');
@@ -251,10 +243,8 @@ class Game extends Trait {
 							}								
 						}						
 					}
-
 					if (!electronOK) {break;}
 				}
-
 				if (worldSizeX < Math.abs(locElectron.x) || 
 					worldSizeY < Math.abs(locElectron.y)){
 						//the electron leaves the game area
@@ -262,14 +252,11 @@ class Game extends Trait {
 						object.removeChild(electron.object);
 						electron.object.remove();						
 				}
-
-
 				if (electronOK){
 					newFlyingElectrons.push(electron);
 				}
 			}
 			flyingElectrons=newFlyingElectrons;
-			
 		}
 	}
 
@@ -280,7 +267,6 @@ class Game extends Trait {
 			var hasTooCloseExistingVector = false;
 			var vector = new Vec2();
 			var trys = 0;
-
 			do {
 				trys++;
 				vector = new Vec2((0.5 - Math.random()) * (worldSizeX - minAtomDistance/2) , (0.5 - Math.random()) * (worldSizeY - minAtomDistance/2));

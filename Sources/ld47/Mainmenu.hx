@@ -1,5 +1,6 @@
 package ld47;
 
+import ld47.Game.MapData;
 import ld47.Game.PlayerData;
 import zui.*;
 import zui.Themes;
@@ -41,7 +42,7 @@ class Mainmenu extends Trait {
 
 	var sound : AudioChannel;
 	var ui : Zui;
-	var players : Array<PlayerData>;
+	var playerData : Array<PlayerData>;
 
 	public function new() {
 		super();
@@ -49,7 +50,7 @@ class Mainmenu extends Trait {
 
 			Log.info( 'Title' );
 			
-			players = [for(i in 0...4) {
+			playerData = [for(i in 0...4) {
 				name: 'P'+(i+1),
 				enabled: i < 2,
 				color: Player.COLORS[i]
@@ -115,17 +116,17 @@ class Mainmenu extends Trait {
 
 			//ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
 
-			ui.ops.theme.TEXT_COL = players[0].color;
-			players[0].enabled = ui.check(Id.handle( { selected: players[0].enabled } ), players[0].name );
+			ui.ops.theme.TEXT_COL = playerData[0].color;
+			playerData[0].enabled = ui.check(Id.handle( { selected: playerData[0].enabled } ), playerData[0].name );
 			
-			ui.ops.theme.TEXT_COL = players[1].color;
-			players[1].enabled = ui.check(Id.handle( { selected: players[1].enabled } ), players[1].name );
+			ui.ops.theme.TEXT_COL = playerData[1].color;
+			playerData[1].enabled = ui.check(Id.handle( { selected: playerData[1].enabled } ), playerData[1].name );
 			
-			ui.ops.theme.TEXT_COL = players[2].color;
-			players[2].enabled = ui.check(Id.handle( { selected: players[2].enabled } ), players[2].name );
+			ui.ops.theme.TEXT_COL = playerData[2].color;
+			playerData[2].enabled = ui.check(Id.handle( { selected: playerData[2].enabled } ), playerData[2].name );
 			
-			ui.ops.theme.TEXT_COL = players[3].color;
-			players[3].enabled = ui.check(Id.handle( { selected: players[3].enabled } ), players[3].name );
+			ui.ops.theme.TEXT_COL = playerData[3].color;
+			playerData[3].enabled = ui.check(Id.handle( { selected: playerData[3].enabled } ), playerData[3].name );
 			
 			ui.ops.theme.TEXT_COL = 0xffffffff;
 			
@@ -149,7 +150,7 @@ class Mainmenu extends Trait {
 
 	function getNumEnabledPlayers() : Int {
 		var n = 0;
-		for( p in players ) if( p.enabled ) n++;
+		for( p in playerData ) if( p.enabled ) n++;
 		return n;
 	}
 
@@ -159,8 +160,16 @@ class Mainmenu extends Trait {
 		
 		final numEnabledPlayers = getNumEnabledPlayers();
 		if( numEnabledPlayers >= 2 ) {
+
+			var mapData : MapData = {
+				atoms: [
+					{ features: [None] },
+					{ features: [Spawner] },
+				]
+			}
+
 			Scene.setActive( 'Game' );
-			var game = new Game( players );
+			var game = new Game( playerData, mapData );
 			Scene.active.root.addTrait( game );
 		}
 	}

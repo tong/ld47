@@ -2,8 +2,7 @@ package ld47;
 
 import iron.data.MaterialData;
 
-enum Feature
-{
+enum Feature {
     None;
     Spawner;
 }
@@ -15,6 +14,7 @@ class Electron extends Trait {
     public var player(default,null) : Player;
     public var atom(default,null) : Atom;
     public var atomIndex(default,null): Int;
+    public var mesh(default, null) : MeshObject;
     
     public var velocity : Vec4;    
     public var features : Array<Feature>;
@@ -28,8 +28,9 @@ class Electron extends Trait {
         this.features = features;
         notifyOnAdd( () -> {
 
+            mesh = cast object.getChild('ElectronMesh');
             var markerObject = cast object.getChild('ElectronMarker');
-			marker = new Marker(player.color);
+            marker = new Marker(player.color);            
 			markerObject.addTrait(marker);          
 
             DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {
@@ -65,7 +66,7 @@ class Electron extends Trait {
     }
 
     public function setAtom(a:Atom, index:Int) {
-        trace('attach electron to atom at index ' + index);
+        trace('attach electron to atom of player ' + a.player.name + ' at index ' + index);
         atom = a;
         atomIndex=index;
         velocity = null;

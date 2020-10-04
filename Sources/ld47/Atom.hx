@@ -7,14 +7,12 @@ class Atom extends Trait {
 
 	public var rotationSpeed:Float;
 	public var numSlots:Int;
-	public var electrons:Array<Electron> = [];
-	public var orbitRadius:Float;
-	public var collisionRadius:Float;	
+	public var electrons:Array<Electron> = [];	
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
 	public var mesh(default, null) : MeshObject;
 
-	var lastSpawn:Float;
+	var lastIntervalledSpawn:Float;
 	var spawnTime:Float = 10.0;
 
 	var isSelected:Bool;
@@ -26,10 +24,8 @@ class Atom extends Trait {
 		super();
 		this.numSlots = numSlots;
 		this.rotationSpeed = 1 / numSlots / 10; // * size;
-		this.scale = (numSlots/20);
-		collisionRadius=this.scale*1.8;
-		orbitRadius=collisionRadius+0.2;
-		lastSpawn = Game.active.time;
+		this.scale = (numSlots/20);				
+		lastIntervalledSpawn = Game.active.time;
 		
 		notifyOnInit(() -> {
 
@@ -99,10 +95,10 @@ class Atom extends Trait {
 			trace('we got a hit on a neutral atom');
 			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
-			addElectron(electron.features);
+			spawnElectron(electron.features);
 		} else if (player == electron.player) {
 			trace('we got a hit on a own atom');
-			addElectron(electron.features);
+			spawnElectron(electron.features);
 
 		} else {
 			trace('we got a hit on a enemy atom');
@@ -167,8 +163,18 @@ class Atom extends Trait {
 		for (electron in electrons) {
 			electron.update();
 		}
-		if (Game.active.time - lastSpawn >= spawnTime) {
-			spawnElectrons();
+
+		if (Game.active.time - lastIntervalledSpawn >= spawnTime) {			
+			lastIntervalledSpawn = Game.active.time;
+			
+			var spawnerCount = electrons.filter((e:Electron) -> return e.features.filter(f -> f == Electron.Feature.Spawner).length > 0).length;
+			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));				
+			//trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
+
+			if (num > 0){
+				//trace('time for auto spawn of ' + num + ' electrons');
+				spawnElectrons(num, [Electron.Feature.None]);
+			}
 		}
 	}
 
@@ -209,60 +215,59 @@ class Atom extends Trait {
 		object.remove();
 	}
 
-	public function spawnElectrons() {
-		lastSpawn = Game.active.time;
-		var spawnerCount = electrons.filter((e:Electron) -> return e.features.filter(f -> f == Electron.Feature.Spawner).length > 0).length;
-		var spawnCount = Std.int(Math.min(numSlots - electrons.length, spawnerCount));		
-		
-		for (index in 0...spawnCount) {			
-			player.addToScore(Score.spawned);
-			addElectron(new Array<Electron.Feature>());
+	public function spawnElectrons( num : Int, features : Array<Electron.Feature>, ?cb: Void -> Void) {		
+		var numSpawned = 0;
+		function spawnNext() {			
+			spawnElectron(features, () -> {
+				if (++ numSpawned == num )	{
+					player.addToScore(Score.spawned);
+					if (cb != null) { cb(); }
+				} else{
+					spawnNext();
+				}
+			});
 		}
+		spawnNext();
 	}
 
-	public function addElectron(features : Array<Electron.Feature>) {
-		var electron = new Electron(player, features);
-
-		electron.setAtom(this, getFirstFreeElectronIndex());		
-
-		electrons.push(electron);
-		var pos = getElectronPosition(electron.atomIndex);
-		var direction = new Vec4(pos.x,pos.y,0,1).normalize();
-
-		Scene.active.spawnObject('Electron', object, obj -> {
-			// trace(obj);
+	public function spawnElectron(features : Array<Electron.Feature>, ?cb:Void->Void) {
+		Scene.active.spawnObject('Electron', object, obj -> {	
+			var electron = new Electron(player, features);
+			electron.notifyOnInit(()-> {
+				if (cb != null){
+					cb();
+				}				
+			});
 			obj.addTrait(electron);
-
-
-			// electron.setPostion( pos );
-		});
-
-		electron.setPostion(pos);
-		electron.setDirection(direction);
+			electron.setAtom(this, getFirstFreeElectronIndex());		
+			electrons.push(electron);
+			var pos = getElectronPosition(electron);
+			var direction = new Vec4(pos.x,pos.y,0,1).normalize();
+			electron.setPostion(pos);
+			electron.setDirection(direction);
+		});			
 		// trace('added elektron at position' + pos);
 	}
 
-	private function getFirstFreeElectronIndex(): Int{		
-		for (i in 0...(numSlots)){
+	private function getFirstFreeElectronIndex(): Int{			
+		for (i in 0...numSlots ){
 			var isFree=true;
 			for (electron in electrons){
 				if (electron.atomIndex == i){
 					isFree=false;
 					break;
 				}
-
 			}
-
 			if (isFree){
 				return i;
 			}
 		}
-
 		return null;	 
 	}
 
-	private function getElectronPosition(index:Int) :Vec2{
-		var angle = 2 * Math.PI * index / numSlots;
+	private function getElectronPosition(electron:Electron) :Vec2{
+		var angle = 2 * Math.PI * electron.atomIndex / numSlots;
+		var orbitRadius = mesh.transform.dim.x/2 + electron.mesh.transform.dim.x*2;
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));
 	}
 
