@@ -10,6 +10,7 @@ class Game extends Trait {
 
 	public var players(default, null):Array<Player>;
 	public var atoms(default, null):Array<Atom>;
+	public var flyingElectrons(default,null):Array<Electron>;
 
 	var timeStart:Null<Float>;
 	var timePauseStart:Null<Float>;
@@ -27,6 +28,8 @@ class Game extends Trait {
 			Log.info('Game');
 
 			atomContainer = Scene.active.getEmpty('AtomContainer');
+
+			flyingElectrons = new Array<Electron>();
 
 			players = [new Player(0, 'tong'), new Player(1, 'shadow')];
 
@@ -165,6 +168,10 @@ class Game extends Trait {
 
 			for (atom in atoms) {
 				atom.update();
+			}
+
+			for (electron in flyingElectrons){
+				electron.update();
 			}
 		}
 	}

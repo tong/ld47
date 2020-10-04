@@ -107,10 +107,15 @@ class Player {
 					}
 				}
 
-				trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore + ' and a distance of ' + bestDistance);
+				
 
 				if (bestAtom != null) {
+					trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore + ' and a distance of ' + bestDistance);
 					selectAtom(bestAtom);
+				}
+				else
+				{
+					trace('no good atom to navigate to');
 				}
 			}
 		}

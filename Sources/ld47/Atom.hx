@@ -88,9 +88,10 @@ class Atom extends Trait {
 	public function fire() {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
-			var index = 0; // hier sollte der index des selektierten elektrons stehen			
+			var index = oldCount-1; // hier sollte der index des selektierten elektrons stehen			
 			var electron = electrons[index];			
 			electrons.splice(index,1);
+			Game.active.flyingElectrons.push(electron);
 			trace('shot electron with index ' + index + ' of ' + oldCount + ' electrons now there are only ' + electrons.length);
 			// move electron object in
 			var direction = object.transform.look();			
