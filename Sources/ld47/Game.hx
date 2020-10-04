@@ -55,14 +55,14 @@ class Game extends Trait {
 			spawnMap(10, true, () -> {
 				
 				atoms[0].setPlayer(players[0]);
-				atoms[1].setPlayer(players[0]);
+				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
-				atoms[3].setPlayer(players[1]);
 				
-				atoms[0].addElectron(new Electron(players[0], [Feature.Spawner]));
-				atoms[1].addElectron(new Electron(players[0], [Feature.None]));				
-				atoms[1].addElectron(new Electron(players[0], [Feature.None]));		
-				atoms[2].addElectron(new Electron(players[1], [Feature.None]));		
+				atoms[0].addElectron( [Feature.Spawner]);
+				atoms[0].addElectron( [Feature.Spawner]);
+				atoms[1].addElectron( [Feature.Spawner]);				
+				atoms[1].addElectron( [Feature.None]);				
+				atoms[2].addElectron( [Feature.None]);
 				
 				notifyOnUpdate(update);
 			});
@@ -185,20 +185,64 @@ class Game extends Trait {
 				atom.update();
 			}
 			*/
+			
+			
+
 			var newFlyingElectrons = new Array<Electron>();
-			for (electron in flyingElectrons){				
+
+			for (electron in flyingElectrons){	
+				//trace('check flying electron from player ' + electron.player.name);
+				var locElectron = new Vec4(electron.object.transform.worldx(), electron.object.transform.worldy());
+				var radiusElectron = electron.object.transform.radius/2;				
 				electron.update();
 				var electronOK = true;
+
 				for (atom in atoms){
-					var distance = atom.object.transform.loc.distanceTo(electron.object.transform.loc);
-					if (distance < atom.orbitRadius)
-					{
-						
-						electronOK = false;
-						electron.object.remove();						
-						atom.hit(electron);						
+					var distance = atom.object.transform.loc.distanceTo(locElectron);
+					var radiusAtom = atom.collisionRadius/2;
+					//trace('test atom in a distance of '+ distance + ' with radius of ' + radiusAtom + ' and in e-radius of ' + radiusElectron );
+
+					if (distance < radiusAtom+radiusElectron)
+					{		
+						//the electron hits an atom				
+						trace('elektron from player ' + electron.player.name + ' hit an atom');
+						electronOK = false;						
+						object.removeChild(electron.object);
+						electron.object.remove();
+						atom.hit(electron);	
+
+					}else if (distance < radiusAtom*10 && 
+							  atom.player != electron.player &&
+							  atom.electrons.length>0){
+						trace('elektron from player ' + electron.player.name + ' is in the outter area of an atom, lets check its electrons');
+
+						for (targetElectron in atom.electrons){
+							var locTarget = new Vec4(targetElectron.object.transform.worldx(),
+													 targetElectron.object.transform.worldy());
+							var distElectron = locTarget.distanceTo(locElectron);
+
+							if (distElectron < radiusElectron*2){
+								//the electron hits an enemy electron attached to an atom
+								trace('elektron from player ' + electron.player.name + ' hit an enemy electron orbiting an atom');
+								electronOK = false;								
+								object.removeChild(electron.object);
+								electron.object.remove();
+								break;
+							}								
+						}						
 					}
+
+					if (!electronOK) {break;}
 				}
+
+				if (worldSizeX < Math.abs(locElectron.x) || 
+					worldSizeY < Math.abs(locElectron.y)){
+						//the electron leaves the game area
+						electronOK=false;
+						object.removeChild(electron.object);
+						electron.object.remove();						
+				}
+
 
 				if (electronOK){
 					newFlyingElectrons.push(electron);

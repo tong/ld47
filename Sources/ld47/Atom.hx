@@ -8,7 +8,8 @@ class Atom extends Trait {
 	public var rotationSpeed:Float;
 	public var numSlots:Int;
 	public var electrons:Array<Electron> = [];
-	public var orbitRadius:Float = 1.8;
+	public var orbitRadius:Float;
+	public var collisionRadius:Float;	
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
 	public var mesh(default, null) : MeshObject;
@@ -26,7 +27,8 @@ class Atom extends Trait {
 		this.numSlots = numSlots;
 		this.rotationSpeed = 1 / numSlots / 10; // * size;
 		this.scale = (numSlots/20);
-		
+		collisionRadius=this.scale*1.8;
+		orbitRadius=collisionRadius+0.2;
 		lastSpawn = Game.active.time;
 		
 		notifyOnInit(() -> {
@@ -96,10 +98,10 @@ class Atom extends Trait {
 		if (player == null) {
 			trace('we got a hit on a neutral atom');
 			setPlayer(electron.player);
-			addElectron(electron);
+			addElectron(electron.features);
 		} else if (player == electron.player) {
 			trace('we got a hit on a own atom');
-			addElectron(electron);
+			addElectron(electron.features);
 
 		} else {
 			trace('we got a hit on a enemy atom');
@@ -211,14 +213,14 @@ class Atom extends Trait {
 
 		var spawnCount = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
 		// trace('spawn ' + spawnCount + ' new electrons');
-		for (index in 0...spawnCount) {
-			var newElectron = new Electron(player, new Array<ld47.Electron.Feature>());
-			addElectron(newElectron);
+		for (index in 0...spawnCount) {			
+			addElectron(new Array<Electron.Feature>());
 		}
 	}
 
-	public function addElectron(electron:Electron) {
-		electron.setAtom(this);
+	public function addElectron(features : Array<Electron.Feature>) {
+		var electron = new Electron(player, features);
+		electron.setAtom(this);		
 		electrons.push(electron);
 		// move electron object into atom object
 		//  electron.object.location = getElectronPosition(electrons.length);
