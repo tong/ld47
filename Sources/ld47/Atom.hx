@@ -105,8 +105,8 @@ class Atom extends Trait {
 			trace('shot electron with index ' + index + ' of ' + oldCount + ' electrons now there are only ' + electrons.length);
 			// move electron object in
 			var locElectron = electron.object.transform.loc.clone();
-			var locAtom = object.transform.loc.clone();
-			var direction = locElectron.sub(locAtom).normalize();		
+			//var locAtom = object.transform.loc.clone();
+			var direction = locElectron.normalize();		
 			electron.setVelocity(direction);
 
 			soundFire.play();
@@ -185,6 +185,7 @@ class Atom extends Trait {
 		// move electron object into atom object
 		//  electron.object.location = getElectronPosition(electrons.length);
 		var pos = getElectronPosition(electrons.length);
+		var direction = new Vec4(pos.x,pos.y,0,1).normalize();
 
 		Scene.active.spawnObject('Electron', object, obj -> {
 			// trace(obj);
@@ -193,6 +194,7 @@ class Atom extends Trait {
 		});
 
 		electron.setPostion(pos);
+		electron.setDirection(direction);
 		// trace('added elektron at position' + pos);
 	}
 

@@ -65,11 +65,24 @@ class Electron extends Trait {
     } 
 
     public function setVelocity(v:Vec4)
-        {
-            trace('fire electron of in direction ' + v);
-            atom = null;
-            velocity=v;
-        }
+    {
+        trace('fire electron of in direction ' + v);
+        atom = null;
+        velocity=v;
+    }
+
+    public function setDirection(dir:Vec4){
+        var angleX = Math.atan( dir.z / dir.y );
+
+        if( dir.y < 0 ) angleX = -angleX;
+        
+        var angleZ = Math.atan( dir.y / dir.x ) - HALF_PI;
+        if( dir.x < 0 ) angleZ += Math.PI;
+        
+
+        object.transform.setRotation( angleX, 0, angleZ );
+        object.transform.buildMatrix();
+    }
     
     function vec3Link( object : Object, mat : MaterialData, link : String ) : Vec4 {
         if (link == "RGB" && object == this.object) {
