@@ -21,7 +21,7 @@ class Game extends Trait {
 
 	var atomContainer:Object;
 
-	public function new() {
+	public function new( numPlayers : Int ) {
 		super();
 		Game.active = this;
 		notifyOnInit(() -> {
@@ -31,9 +31,13 @@ class Game extends Trait {
 
 			flyingElectrons = new Array<Electron>();
 
-			players = [new Player(0, 'tong'), new Player(1, 'shadow')];
+			players = [];
+			for( i in 0...numPlayers) {
+				players.push( new Player( i, 'P'+i ) );
+			}
 
 			spawnMap(10, true, () -> {
+				
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
@@ -44,13 +48,9 @@ class Game extends Trait {
 				atoms[0].addElectron(new Electron(players[0], [Feature.Spawner]));
 				atoms[1].addElectron(new Electron(players[1], [Feature.Spawner]));
 				atoms[1].addElectron(new Electron(players[1], [Feature.None]));
+				
+				notifyOnUpdate(update);
 			});
-
-			notifyOnUpdate(update);
-			/* 
-				Tween.timer( 1.5, () -> {
-					clearMap();
-			});*/
 		});
 	}
 

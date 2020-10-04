@@ -41,12 +41,15 @@ class Mainmenu extends Trait {
 
 	var sound : AudioChannel;
 	var ui : Zui;
+	var players : Array<Bool>;
 
 	public function new() {
 		super();
 		notifyOnInit( () -> {
 
 			Log.info( 'Title' );
+			
+			players = [for(i in 0...4)false];
 			
 			final sw = System.windowWidth();
 			final sh = System.windowHeight();
@@ -86,12 +89,15 @@ class Mainmenu extends Trait {
 						ui.begin( g );
 						g.opacity = 1;
 						if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
+							
+							ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
+							players[0] = ui.check(Id.handle( { selected: true } ), "P1");
+							players[1] = ui.check(Id.handle( { selected: true } ), "P2");
+							players[2] = ui.check(Id.handle( { selected: false } ), "P3");
+							players[3] = ui.check(Id.handle( { selected: false } ), "P4");
+							
 							if( ui.button( 'PLAY', Left ) ) {
 								loadGame();
-								/* Scene.active.notifyOnInit( () -> {
-									trace("SCENE.init");
-								}); */
-								//Scene.active.addTrait( new Game() );
 							}
 							if( ui.button( 'QUIT', Left ) ) {
 								Scene.setActive( 'Quit' );
@@ -125,6 +131,9 @@ class Mainmenu extends Trait {
 		}
 		for( i in 0...4 ) {
 			var gp = Input.getGamepad(i);
+			if( gp.started( 'cross' ) ) {
+				
+			}
 			if( gp.started( 'options' ) ) {
 				loadGame();
 				return;
@@ -134,7 +143,13 @@ class Mainmenu extends Trait {
 
 	function loadGame() {
 		if( sound != null ) sound.stop();
+		
+		var numPlayers = 0;
+		for( p in players ) if(p) numPlayers++;
+
 		Scene.setActive( 'Game' );
+		var game = new Game( numPlayers );
+		Scene.active.root.addTrait( game );
 	}
 
 }
