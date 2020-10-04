@@ -173,10 +173,27 @@ class Game extends Trait {
 				atom.update();
 			}
 			*/
-
-			for (electron in flyingElectrons){
+			var newFlyingElectrons = new Array<Electron>();
+			for (electron in flyingElectrons){				
 				electron.update();
+				var electronOK = true;
+				for (atom in atoms){
+					var distance = atom.object.transform.loc.distanceTo(electron.object.transform.loc);
+					if (distance < atom.orbitRadius)
+					{
+						
+						electronOK = false;
+						electron.object.remove();						
+						atom.hit(electron);						
+					}
+				}
+
+				if (electronOK){
+					newFlyingElectrons.push(electron);
+				}
 			}
+			flyingElectrons=newFlyingElectrons;
+			
 		}
 	}
 

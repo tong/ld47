@@ -77,13 +77,16 @@ class Atom extends Trait {
 		object.transform.buildMatrix();
 	}
 
-	public function hit(electron:Electron) {
+	public function hit(electron:Electron) {		
 		if (player == null) {
+			trace('we got a hit on a neutral atom');
 			setPlayer(electron.player);
 			addElectron(electron);
 		} else if (player == electron.player) {
+			trace('we got a hit on a own atom');
 			addElectron(electron);
 		} else {
+			trace('we got a hit on a enemy atom');
 			var e = electrons.pop();
 			e.object.remove();
 			e.object.remove();
