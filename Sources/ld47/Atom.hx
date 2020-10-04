@@ -234,17 +234,15 @@ class Atom extends Trait {
 		Scene.active.spawnObject('Electron', object, obj -> {	
 			var electron = new Electron(player, features);
 			electron.notifyOnInit(()-> {
-				if (cb != null){
-					cb();
-				}				
+				electron.setAtom(this, getFirstFreeElectronIndex());		
+				electrons.push(electron);
+				var pos = getElectronPosition(electron);
+				var direction = new Vec4(pos.x,pos.y,0,1).normalize();
+				electron.setPostion(pos);
+				electron.setDirection(direction);
+				if (cb != null) cb();
 			});
 			obj.addTrait(electron);
-			electron.setAtom(this, getFirstFreeElectronIndex());		
-			electrons.push(electron);
-			var pos = getElectronPosition(electron);
-			var direction = new Vec4(pos.x,pos.y,0,1).normalize();
-			electron.setPostion(pos);
-			electron.setDirection(direction);
 		});			
 		// trace('added elektron at position' + pos);
 	}
