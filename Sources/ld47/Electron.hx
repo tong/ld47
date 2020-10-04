@@ -35,7 +35,7 @@ class Electron extends Trait {
     public function update() {
         if (velocity != null)
             {
-                //object.transform.translate(velocity.x, velocity.y,0);
+                object.transform.translate(velocity.x, velocity.y,0);
             }
     } 
 
@@ -60,12 +60,15 @@ class Electron extends Trait {
         }
 
     public function setAtom(a:Atom) {
+        trace('attach electron to atom at position ' + a.object.transform.loc);
         atom = a;
         velocity = null;
+
     } 
 
     public function setVelocity(v:Vec4)
         {
+            trace('fire electron of in direction ' + v);
             atom = null;
             velocity=v;
         }

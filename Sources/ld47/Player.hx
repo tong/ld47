@@ -97,15 +97,17 @@ class Player {
 
 				for (a in atoms) {
 					var distance = atom.object.transform.loc.distanceTo(a.object.transform.loc);
-					var direction = new Vec2(a.object.transform.loc.x - atom.object.transform.loc.x, a.object.transform.loc.y - atom.object.transform.loc.y);
-					var score = direction.dot(shootDirection) / distance;
+					var direction = new Vec2(a.object.transform.loc.x - atom.object.transform.loc.x, a.object.transform.loc.y - atom.object.transform.loc.y).normalize();
+					var score = Math.pow(direction.dot(shootDirection),1) / (distance+10);					
 
-					if (score > bestScore) {
+					if (score > bestScore) {						
 						bestScore = score;
 						bestAtom = a;
 						bestDistance = distance;
 					}
 				}
+
+				trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore + ' and a distance of ' + bestDistance);
 
 				if (bestAtom != null) {
 					selectAtom(bestAtom);

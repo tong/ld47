@@ -86,15 +86,28 @@ class Atom extends Trait {
 	}
 
 	public function fire() {
-		if (electrons.length > 0) {
-			var electron = electrons[0];
-			var index = 0; // hier sollte der index des selektierten elektrons stehen
+		var oldCount = electrons.length;
+		if (oldCount > 0) {
+			var index = 0; // hier sollte der index des selektierten elektrons stehen			
+			var electron = electrons[index];			
+			electrons.splice(index,1);
+			trace('shot electron with index ' + index + ' of ' + oldCount + ' electrons now there are only ' + electrons.length);
 			// move electron object in
+			var direction = object.transform.look();			
+			electron.setVelocity(direction);
+
+			Data.getSound('fire_electron.ogg', s -> {
+				var channel = Audio.play(s);
+			});
+		}
+		else
+		{
+			//play sound if no electron is there
 		}
 
-		Data.getSound('fire_electron.ogg', s -> {
-			var channel = Audio.play(s);
-		});
+
+
+		
 	}
 
 	public function update() {
