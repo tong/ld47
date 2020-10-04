@@ -1,7 +1,7 @@
 package ld47;
 
 class Player extends Trait {
-	public static final COLORS : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
+	public static final COLORS : Array<Color> = [0xff268BD2, 0xffDC322F, 0xff859900, 0xffD33682];
 
 	public var index(default, null):Int;
 	public var color(default, null):Color;
