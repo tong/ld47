@@ -24,7 +24,7 @@ class Game extends Trait {
 	var timeStart:Null<Float>;
 	var timePauseStart:Null<Float>;
 
-	var minAtomDistance = 4;
+	var minAtomDistance = 3;
 	var atomContainer:Object;
 
 	public function new( playerData : Array<PlayerData> ) {
@@ -259,9 +259,11 @@ class Game extends Trait {
 		for (index in 0...count) {
 			var hasTooCloseExistingVector = false;
 			var vector = new Vec2();
+			var trys = 0;
 
 			do {
-				vector = new Vec2((0.5 - Math.random()) * worldSizeX, (0.5 - Math.random()) * worldSizeY);
+				trys++;
+				vector = new Vec2((0.5 - Math.random()) * (worldSizeX - minAtomDistance/2) , (0.5 - Math.random()) * (worldSizeY - minAtomDistance/2));
 				hasTooCloseExistingVector = false;
 				for (existingVector in vectors) {
 					var distance = vector.distanceTo(existingVector);
@@ -273,6 +275,12 @@ class Game extends Trait {
 						break;
 					}
 				}
+
+				if (trys>50){
+					vectors = new Array<Vec2>();
+					hasTooCloseExistingVector=false;
+				}
+
 			} while (hasTooCloseExistingVector);
 
 			vectors.push(vector);
