@@ -7,10 +7,12 @@ class Player extends Trait {
 	public var color(default, null):Color;
 	public var materials(default, null):haxe.ds.Vector<MaterialData>;
 	public var atom(default, null):Atom;
+	public var score(default,null):Score;
 
 	public function new(index:Int) {
 		super();
 		this.index = index;
+		score = Score.empty;
 		this.color = COLORS[index];
 		notifyOnInit(() -> {
 			DataTools.loadMaterial('Game', 'Player$index', m -> {
@@ -21,6 +23,13 @@ class Player extends Trait {
 			notifyOnUpdate(update);
 		});
 	}
+
+	public function addToScore(s:Score){			
+		score = score.combine(s);
+		trace('new score is ' + score);
+		return;
+	}
+
 
 	function update() {
 		var gp = Input.getGamepad(index);

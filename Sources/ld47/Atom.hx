@@ -97,6 +97,7 @@ class Atom extends Trait {
 	public function hit(electron:Electron) {		
 		if (player == null) {
 			trace('we got a hit on a neutral atom');
+			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
 			addElectron(electron.features);
 		} else if (player == electron.player) {
@@ -109,6 +110,7 @@ class Atom extends Trait {
 			e.object.remove();
 
 			if (electrons.length == 0){
+				player.addToScore(Score.lost);
 				setPlayer(null);
 			}
 
@@ -118,6 +120,7 @@ class Atom extends Trait {
 	public function fire() {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
+			player.addToScore(Score.fired);
 			var index = 0; // hier sollte der index des selektierten elektrons stehen			
 			var electron = electrons[index];						
 			
@@ -208,12 +211,11 @@ class Atom extends Trait {
 
 	public function spawnElectrons() {
 		lastSpawn = Game.active.time;
-
 		var spawnerCount = electrons.filter((e:Electron) -> return e.features.filter(f -> f == Electron.Feature.Spawner).length > 0).length;
-
-		var spawnCount = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
-		// trace('spawn ' + spawnCount + ' new electrons');
+		var spawnCount = Std.int(Math.min(numSlots - electrons.length, spawnerCount));		
+		
 		for (index in 0...spawnCount) {			
+			player.addToScore(Score.spawned);
 			addElectron(new Array<Electron.Feature>());
 		}
 	}
@@ -241,7 +243,7 @@ class Atom extends Trait {
 	}
 
 	private function getFirstFreeElectronIndex(): Int{		
-		for (i in 0...(numSlots-1)){
+		for (i in 0...(numSlots)){
 			var isFree=true;
 			for (electron in electrons){
 				if (electron.atomIndex == i){

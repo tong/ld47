@@ -209,6 +209,7 @@ class Game extends Trait {
 						electronOK = false;						
 						object.removeChild(electron.object);
 						electron.object.remove();
+						electron.player.addToScore(Score.hit);
 						atom.hit(electron);	
 
 					}else if (distance < radiusAtom*10 && 
@@ -224,6 +225,7 @@ class Game extends Trait {
 							if (distElectron < radiusElectron*2){
 								//the electron hits an enemy electron attached to an atom
 								trace('elektron from player ' + electron.player.name + ' hit an enemy electron orbiting an atom');
+								electron.player.addToScore(Score.destroyed);
 								electronOK = false;								
 								object.removeChild(electron.object);
 								electron.object.remove();

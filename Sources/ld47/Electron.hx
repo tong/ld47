@@ -65,7 +65,7 @@ class Electron extends Trait {
     }
 
     public function setAtom(a:Atom, index:Int) {
-        trace('attach electron to atom at position ' + a.object.transform.loc);
+        trace('attach electron to atom at index ' + index);
         atom = a;
         atomIndex=index;
         velocity = null;
