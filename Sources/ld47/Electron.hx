@@ -19,15 +19,16 @@ class Electron extends Trait {
     public var features : Array<Feature>;
 
     var isSelected : Bool;
-    var marker : MeshObject;
-  
+    var marker:Marker;
 
     public function new( player : Player, features : Array<Feature>)  {
         super();
         this.player = player;
         this.features = features;
         notifyOnInit( () -> {
-            marker = cast object.getChild('ElectronMarker');            
+            var markerObject = cast object.getChild('ElectronMarker');
+			marker = new Marker(player.color);
+			markerObject.addTrait(marker);          
             Uniforms.externalVec3Links.push( vec3Link );
         });
     }
@@ -46,18 +47,15 @@ class Electron extends Trait {
 		object.transform.buildMatrix();
     }
 
+    public function select() {
+        isSelected = true;
+        marker.show();
+    }
     
-    public function deselect()
-        {
-            isSelected = false;
-            marker.visible = false;
-        }
-
-    public function select()
-        {
-            isSelected = true;
-            marker.visible = true;
-        }
+    public function deselect() {
+        isSelected = false;
+        marker.hide();
+    }
 
     public function setAtom(a:Atom) {
         trace('attach electron to atom at position ' + a.object.transform.loc);
@@ -74,15 +72,13 @@ class Electron extends Trait {
         }
     
     function vec3Link( object : Object, mat : MaterialData, link : String ) : Vec4 {
-        if( link == "RGB" && object == this.object ) {
-            if( player == null ) {
-                return defaultColor;
-            } else {
-                var c : Color = player.color;
-                return new Vec4( c.R, c.G, c.B );
-            }
-        }
-        return null;
+        if (link == "RGB" && object == this.object) {
+			if (player == null)
+				return defaultColor;
+			var c:Color = player.color;
+			return new Vec4(c.R, c.G, c.B);
+		}
+		return null;
     }
   
 }

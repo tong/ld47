@@ -54,7 +54,8 @@ class Atom extends Trait {
 				marker.color = player.color;
 
 			Data.getSound('fire_electron.ogg', s -> {
-				soundFire = Audio.play(s);
+				soundFire = Audio.play(s, false, false);
+				soundFire.pause();
 			});
 
 			Uniforms.externalVec3Links.push(vec3Link);

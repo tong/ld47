@@ -27,7 +27,8 @@ class HUD extends Trait {
         final sw = System.windowWidth();
         final sh = System.windowHeight();
         //final fontSize = 16;
-        final padding = 2;
+        final paddingX = 2;
+        final paddingY = 1;
 
         g.end();
 
@@ -44,6 +45,11 @@ class HUD extends Trait {
         g.drawString( text, 0, 0 );  */
 
         //TODO scale player fields to num atoms they own
+
+        var transform = FastMatrix3.rotation( MathTools.degToRad(-90) );
+        //transform._20 = -100;
+        transform._21 = sh;
+		g.pushTransformation( transform );
         
         var px = 0.0;
         for( player in game.players ) {
@@ -60,16 +66,16 @@ class HUD extends Trait {
             var txtWidth = UI.font.width( UI.fontSize, txt );
             //g.color =  Color.fromBytes( player.color.Rb, player.color.Gb, player.color.Bb ) ;//player.color;
             g.color = Player.COLORS[player.index];
-            g.fillRect( px, 0, txtWidth + padding*2, UI.fontSize + padding*2 );
+            g.fillRect( px, 0, txtWidth + paddingX*2, UI.fontSize + paddingY*2 );
             //g.fillRect( px, 0, 40, UI.fontSize );
-            g.color = 0xffffffff;
-            g.drawString( txt, px+padding, padding ); 
-            px += txtWidth + padding*2;
+            g.color = 0xff000000;
+            g.drawString( txt, px+paddingX, paddingY ); 
+            px += txtWidth + paddingX*2;
         }
+        g.popTransformation();
 
         final cam = Scene.active.camera;
         g.color = 0xff000000;
-
         for( i in 0...Game.active.atoms.length ) {
 
             var atom = Game.active.atoms[i];

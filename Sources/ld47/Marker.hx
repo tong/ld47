@@ -5,8 +5,9 @@ import iron.data.MaterialData;
 class Marker extends Trait {
 	public var color:Color = 0xffffffff;
 
-	public function new() {
+	public function new(color = 0xffffffff) {
 		super();
+		this.color = color;
 		notifyOnInit(() -> {
 			Uniforms.externalVec3Links.push(vec3Link);
 		});
@@ -37,14 +38,6 @@ class Marker extends Trait {
 	function vec3Link(object:Object, mat:MaterialData, link:String):Vec4 {
 		if (link == "RGB" && object == this.object) {
 			return new Vec4(color.R, color.G, color.B);
-			/*
-				if (player == null) {
-					return defaultColor;
-				} else {
-					//var c:Color = player.color;
-					//return new Vec4(c.R, c.G, c.B);
-				}
-			 */
 		}
 		return null;
 	}
