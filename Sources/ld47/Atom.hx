@@ -220,11 +220,11 @@ class Atom extends Trait {
 
 	public function addElectron(features : Array<Electron.Feature>) {
 		var electron = new Electron(player, features);
-		electron.setAtom(this);		
+
+		electron.setAtom(this, getFirstFreeElectronIndex());		
+
 		electrons.push(electron);
-		// move electron object into atom object
-		//  electron.object.location = getElectronPosition(electrons.length);
-		var pos = getElectronPosition(electrons.length);
+		var pos = getElectronPosition(electron.atomIndex);
 		var direction = new Vec4(pos.x,pos.y,0,1).normalize();
 
 		Scene.active.spawnObject('Electron', object, obj -> {
@@ -240,8 +240,27 @@ class Atom extends Trait {
 		// trace('added elektron at position' + pos);
 	}
 
-	private function getElectronPosition(count:Int) {
-		var angle = 2 * Math.PI * count / numSlots;
+	private function getFirstFreeElectronIndex(): Int{		
+		for (i in 0...(numSlots-1)){
+			var isFree=true;
+			for (electron in electrons){
+				if (electron.atomIndex == i){
+					isFree=false;
+					break;
+				}
+
+			}
+
+			if (isFree){
+				return i;
+			}
+		}
+
+		return null;	 
+	}
+
+	private function getElectronPosition(index:Int) :Vec2{
+		var angle = 2 * Math.PI * index / numSlots;
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));
 	}
 

@@ -14,6 +14,7 @@ class Electron extends Trait {
 
     public var player(default,null) : Player;
     public var atom(default,null) : Atom;
+    public var atomIndex(default,null): Int;
     
     public var velocity : Vec4;    
     public var features : Array<Feature>;
@@ -63,9 +64,10 @@ class Electron extends Trait {
         marker.hide();
     }
 
-    public function setAtom(a:Atom) {
+    public function setAtom(a:Atom, index:Int) {
         trace('attach electron to atom at position ' + a.object.transform.loc);
         atom = a;
+        atomIndex=index;
         velocity = null;
     } 
 
