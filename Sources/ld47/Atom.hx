@@ -95,13 +95,23 @@ class Atom extends Trait {
 		if (oldCount > 0) {
 			var index = oldCount-1; // hier sollte der index des selektierten elektrons stehen			
 			var electron = electrons[index];			
+			//electron.object.remove();
+			var wlocElectron = new Vec2(electron.object.transform.worldx(),
+										 electron.object.transform.worldy());
+
+			var wlocAtom = new Vec2(object.transform.worldx(),
+									object.transform.worldy());
+			
+			Scene.active.root.addChild(electron.object);
+			electron.setPostion(wlocElectron);
 			electrons.splice(index,1);
 			Game.active.flyingElectrons.push(electron);
-			trace('shot electron with index ' + index + ' of ' + oldCount + ' electrons now there are only ' + electrons.length);
+			trace('shot electron from ' + wlocElectron );
 			// move electron object in
 			var locElectron = electron.object.transform.loc.clone();
 			//var locAtom = object.transform.loc.clone();
-			var direction = locElectron.normalize();		
+			var direction = new Vec4(wlocElectron.x - wlocAtom.x,
+								     wlocElectron.y - wlocAtom.y );
 			electron.setVelocity(direction);
 
 			soundFire.play();

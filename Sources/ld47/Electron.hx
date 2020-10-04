@@ -36,7 +36,7 @@ class Electron extends Trait {
     public function update() {
         if (velocity != null)
             {
-                object.transform.translate(velocity.x, velocity.y,0);
+                object.transform.translate(velocity.x/5, velocity.y/5,0);
             }
     } 
 
