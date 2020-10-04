@@ -51,7 +51,7 @@ class Mainmenu extends Trait {
 			
 			players = [for(i in 0...4) {
 				name: 'P'+(i+1),
-				enabled: true,
+				enabled: i < 2,
 				color: Player.COLORS[i]
 			}];
 
@@ -103,10 +103,20 @@ class Mainmenu extends Trait {
 		if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
 			
 			ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
-			players[0].enabled = ui.check(Id.handle( { selected: true } ), players[0].name );
-			players[1].enabled = ui.check(Id.handle( { selected: true } ), players[1].name );
-			players[2].enabled = ui.check(Id.handle( { selected: false } ), players[2].name );
-			players[3].enabled = ui.check(Id.handle( { selected: false } ), players[3].name );
+
+			ui.ops.theme.TEXT_COL = players[0].color;
+			players[0].enabled = ui.check(Id.handle( { selected: players[0].enabled } ), players[0].name );
+			
+			ui.ops.theme.TEXT_COL = players[1].color;
+			players[1].enabled = ui.check(Id.handle( { selected: players[1].enabled } ), players[1].name );
+			
+			ui.ops.theme.TEXT_COL = players[2].color;
+			players[2].enabled = ui.check(Id.handle( { selected: players[2].enabled } ), players[2].name );
+			
+			ui.ops.theme.TEXT_COL = players[3].color;
+			players[3].enabled = ui.check(Id.handle( { selected: players[3].enabled } ), players[3].name );
+			
+			ui.ops.theme.TEXT_COL = 0xffffffff;
 			
 			final canPlay = getNumEnabledPlayers() >= 2;
 			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = 0xff999999;
