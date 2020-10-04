@@ -13,6 +13,9 @@ class Game extends Trait {
 
 	public var time(default, null):Float;
 	public var paused(default, null) = false;
+	
+	public var worldSizeX(default,null) : Float;
+	public var worldSizeY(default,null) : Float;
 
 	public var players(default, null):Array<Player>;
 	public var atoms(default, null):Array<Atom>;
@@ -21,10 +24,7 @@ class Game extends Trait {
 	var timeStart:Null<Float>;
 	var timePauseStart:Null<Float>;
 
-	var worldSizeX = 20;
-	var worldSizeY = 12;
 	var minAtomDistance = 4;
-
 	var atomContainer:Object;
 
 	public function new( playerData : Array<PlayerData> ) {
@@ -36,6 +36,10 @@ class Game extends Trait {
 			flyingElectrons = [];
 			players = [];
 			atomContainer = Scene.active.getEmpty('AtomContainer');
+
+			var ground = Scene.active.getMesh('Ground');
+			worldSizeX = Math.floor( ground.transform.dim.x*100 ) / 100;
+			worldSizeY = Math.floor( ground.transform.dim.y*100 ) / 100;
 
 			for( i in 0...playerData.length ) {
 				var raw = playerData[i];
