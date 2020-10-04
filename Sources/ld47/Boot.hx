@@ -18,7 +18,7 @@ class Boot extends Trait {
                 var mouse = Input.getMouse();
                 //var gamepad = Input.gamepads[0];
     
-                Data.getImage( 'boot.png', img -> {
+                Data.getImage( 'process.png', img -> {
     
                     notifyOnUpdate( () -> {
                         if( keyboard.started( "space" ) || keyboard.started( "return" )

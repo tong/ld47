@@ -62,10 +62,11 @@ class Mainmenu extends Trait {
 					notifyOnRender2D( render2D );
 				});
 			});
+			
 			/*
 			#if ld47_release
 			Data.getSound( 'mainmenu_ambient.ogg', s -> {
-				sound = Audio.play( s );
+				sound = Audio.play( s, true, true );
 			});
 			#end
 			*/

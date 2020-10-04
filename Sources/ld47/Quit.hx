@@ -8,7 +8,7 @@ class Quit extends Trait {
 		super();
 		//gamma.renderpath.Postprocess.camera_uniforms[10] = 0.0;
 		notifyOnInit( () -> {
-            Data.getImage( 'quit.png', img -> {
+            Data.getImage( 'topy.png', img -> {
                 function render(g:Graphics) {
                     final sw = System.windowWidth();
                     final sh = System.windowHeight();

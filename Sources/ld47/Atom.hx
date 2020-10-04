@@ -55,7 +55,7 @@ class Atom extends Trait {
 			});
  			*/
 
-			Data.getSound('fire_electron.ogg', s -> {
+			Data.getSound('electron_fire.ogg', s -> {
 				soundFire = Audio.play(s, false, false);
 				soundFire.pause();
 			});

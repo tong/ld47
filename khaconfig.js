@@ -11,6 +11,7 @@ if (RELEASE) {
     project.addParameter("-dce full");
     project.addParameter("--no-traces");
     project.addDefine("analyzer-optimize");
+    project.addDefine("ld47_release");
 }
 
 if (platform === Platform.HTML5) {
