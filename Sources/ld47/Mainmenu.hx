@@ -1,8 +1,8 @@
 package ld47;
 
+import ld47.Game.PlayerData;
 import zui.*;
 import zui.Themes;
-
 class Mainmenu extends Trait {
 
 	static var THEME : TTheme = cast {
@@ -16,8 +16,8 @@ class Mainmenu extends Trait {
 		BUTTON_HOVER_COL: 0xff000000,
 		BUTTON_PRESSED_COL: 0xff000000,
 		BUTTON_TEXT_COL: 0xffffffff,
-		CHECK_SELECT_SIZE: 8,
-		CHECK_SIZE: 15,
+		CHECK_SELECT_SIZE: 40,
+		CHECK_SIZE: 48,
 		CONTEXT_COL: 0xff222222,
 		ELEMENT_H: 68,
 		ELEMENT_OFFSET: 0,
@@ -41,7 +41,7 @@ class Mainmenu extends Trait {
 
 	var sound : AudioChannel;
 	var ui : Zui;
-	var players : Array<Bool>;
+	var players : Array<PlayerData>;
 
 	public function new() {
 		super();
@@ -49,70 +49,19 @@ class Mainmenu extends Trait {
 
 			Log.info( 'Title' );
 			
-			players = [for(i in 0...4)false];
-			
-			final sw = System.windowWidth();
-			final sh = System.windowHeight();
-			final uw = 600;
-			final uh = 600;
-			final fontSize = 32;
+			players = [for(i in 0...4) {
+				name: 'P'+(i+1),
+				enabled: true,
+				color: Player.COLORS[i]
+			}];
 
 			Data.getImage( 'title.png', img -> {
 				Data.getFont( "helvetica_neue_85.ttf", font -> {
 					ui = new Zui( { font : font, theme: THEME } );
-					notifyOnRender2D( g -> {
-
-						g.end();
-
-						//g.color = 0xff000000;
-						//g.fillRect( 0, 0, sw, sh );
-						//g.color = 0xffffffff;
-						//g.drawImage( img, sw/2 - img.width/2, sh/2 - img.height/2 );
-						
-						/*
-						final textWidth = font.width( fontSize, 'PLAY' ) ;
-						ui.begin( g );
-						if( ui.window( Id.handle(), Std.int(sw/2-uw/2), Std.int(sh/2-uh/2), uw, uh, false ) ) {
-							if( ui.button( 'PLAY', Left ) ) {
-								Scene.setActive( 'Game' );
-							}
-						}
-						ui.end();
-						*/
-
-						//g.color = 0xff000000;
-						//g.fillRect( 0, 0, sw, sh );
-
-						//final textWidth = font.width( fontSize, 'PLAY' ) ;
-						//trace(textWidth);
-
-						ui.begin( g );
-						g.opacity = 1;
-						if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
-							
-							ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
-							players[0] = ui.check(Id.handle( { selected: true } ), "P1");
-							players[1] = ui.check(Id.handle( { selected: true } ), "P2");
-							players[2] = ui.check(Id.handle( { selected: false } ), "P3");
-							players[3] = ui.check(Id.handle( { selected: false } ), "P4");
-							
-							if( ui.button( 'PLAY', Left ) ) {
-								loadGame();
-							}
-							if( ui.button( 'QUIT', Left ) ) {
-								Scene.setActive( 'Quit' );
-							}
-						}
-						ui.end();
-						//g.color = 0xffffffff;
-						//g.drawImage( img, sw/2 - img.width/2, 140 );
-						g.begin( false );
-					});
+					notifyOnUpdate( update );
+					notifyOnRender2D( render2D );
 				});
 			});
-
-			notifyOnUpdate( update );
-
 			/*
 			#if ld47_release
 			Data.getSound( 'mainmenu_ambient.ogg', s -> {
@@ -124,13 +73,13 @@ class Mainmenu extends Trait {
 	}
 
 	function update() {
-		var keyboard = Input.getKeyboard();
+		final keyboard = Input.getKeyboard();
 		if( keyboard.started( "escape" ) ) {
 			Scene.setActive( 'Quit' );
 			return;
 		}
 		for( i in 0...4 ) {
-			var gp = Input.getGamepad(i);
+			final gp = Input.getGamepad(i);
 			if( gp.started( 'cross' ) ) {
 				
 			}
@@ -141,15 +90,52 @@ class Mainmenu extends Trait {
 		}
 	}
 
+	function render2D( g : kha.graphics2.Graphics ) {
+
+		final sw = System.windowWidth();
+		final sh = System.windowHeight();
+		final uw = 600;
+		final uh = 600;final fontSize = 32;
+		
+		g.end();
+		ui.begin( g );
+		g.opacity = 1;
+		if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
+			
+			ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
+			players[0].enabled = ui.check(Id.handle( { selected: true } ), players[0].name );
+			players[1].enabled = ui.check(Id.handle( { selected: true } ), players[1].name );
+			players[2].enabled = ui.check(Id.handle( { selected: false } ), players[2].name );
+			players[3].enabled = ui.check(Id.handle( { selected: false } ), players[3].name );
+			
+			final canPlay = getNumEnabledPlayers() >= 2;
+			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = 0xff999999;
+			if( ui.button( 'PLAY', Left ) ) loadGame();
+			ui.ops.theme.BUTTON_TEXT_COL = 0xffffffff;
+			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
+		}
+		ui.end();
+		//g.color = 0xffffffff;
+		//g.drawImage( img, sw/2 - img.width/2, 140 );
+		g.begin( false );
+	}
+
+	function getNumEnabledPlayers() : Int {
+		var n = 0;
+		for( p in players ) if( p.enabled ) n++;
+		return n;
+	}
+
 	function loadGame() {
+
 		if( sound != null ) sound.stop();
 		
-		var numPlayers = 0;
-		for( p in players ) if(p) numPlayers++;
-
-		Scene.setActive( 'Game' );
-		var game = new Game( numPlayers );
-		Scene.active.root.addTrait( game );
+		final numEnabledPlayers = getNumEnabledPlayers();
+		if( numEnabledPlayers >= 2 ) {
+			Scene.setActive( 'Game' );
+			var game = new Game( players );
+			Scene.active.root.addTrait( game );
+		}
 	}
 
 }

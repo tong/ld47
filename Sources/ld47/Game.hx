@@ -2,6 +2,12 @@ package ld47;
 
 import ld47.Electron.Feature;
 
+typedef PlayerData = {
+	var name : String;
+	var enabled : Bool;
+	var color : Color;
+}
+
 class Game extends Trait {
 	public static var active(default, null):Game;
 
@@ -21,22 +27,24 @@ class Game extends Trait {
 
 	var atomContainer:Object;
 
-	public function new( numPlayers : Int ) {
+	public function new( playerData : Array<PlayerData> ) {
 		super();
 		Game.active = this;
 		notifyOnInit(() -> {
 			Log.info('Game');
 
+			flyingElectrons = [];
+			players = [];
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 
-			flyingElectrons = new Array<Electron>();
-
-			players = [];
-			for( i in 0...numPlayers) {
-				var player = new Player( i );
-				var playerObject = Scene.active.getMesh( 'Player'+i );
-				playerObject.addTrait( player );
-				players.push( player );
+			for( i in 0...playerData.length ) {
+				var raw = playerData[i];
+				if( raw.enabled ) {
+					final player = new Player( i );
+					final obj = Scene.active.getMesh( 'Player'+i );
+					obj.addTrait( player );
+					players.push( player );
+				}
 			}
 
 			spawnMap(10, true, () -> {
