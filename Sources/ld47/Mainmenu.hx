@@ -24,7 +24,7 @@ class Mainmenu extends Trait {
 		ELEMENT_W: 100,
 		FILL_ACCENT_BG: false,
 		FILL_BUTTON_BG: false,
-		FILL_WINDOW_BG: false,
+		FILL_WINDOW_BG: true,
 		FONT_SIZE: 60,
 		HIGHLIGHT_COL: 0xff205d9c,
 		LABEL_COL: 0xffc8c8c8,
@@ -79,6 +79,10 @@ class Mainmenu extends Trait {
 			Scene.setActive( 'Quit' );
 			return;
 		}
+		if( keyboard.started( "c" ) ) {
+			Scene.setActive( 'Credits' );
+			return;
+		}
 		for( i in 0...4 ) {
 			final gp = Input.getGamepad(i);
 			if( gp.started( 'cross' ) ) {
@@ -103,6 +107,10 @@ class Mainmenu extends Trait {
 		g.opacity = 1;
 		if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
 			
+			//ui.ops.theme.FONT_SIZE = 120;
+			ui.text('SUPERPOSITION');
+			//ui.ops.theme.FONT_SIZE = 60;
+
 			ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
 
 			ui.ops.theme.TEXT_COL = players[0].color;
@@ -126,8 +134,14 @@ class Mainmenu extends Trait {
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();
-		//g.color = 0xffffffff;
-		//g.drawImage( img, sw/2 - img.width/2, 140 );
+
+		g.color = 0xffffffff;
+		g.font = UI.font;
+		g.fontSize = Std.int(UI.fontSize*0.8);
+		var text = 'v'+Main.projectVersion;
+		var textWidth = UI.font.width( g.fontSize, text );
+		g.drawString( text, sw - (textWidth + g.fontSize/2), sh-(g.fontSize*1.5) ); 
+
 		g.begin( false );
 	}
 
