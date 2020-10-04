@@ -10,7 +10,7 @@ class Credits extends Trait {
             final sw = System.windowWidth();
             final sh = System.windowHeight();
             final keyboard = Input.getKeyboard();
-            var text = "Developed by disktree.net";
+            var text = "Developed by shadow & tong @ disktree.net";
             notifyOnUpdate( () -> {
                 if( keyboard.started('escape') ) {
                     Scene.setActive( 'Mainmenu' );
