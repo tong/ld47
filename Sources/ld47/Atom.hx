@@ -11,13 +11,15 @@ class Atom extends Trait {
 	public var orbitRadius:Float = 1.8;
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
+	public var mesh(default, null) : MeshObject;
 
 	var lastSpawn:Float;
 	var spawnTime:Float = 10.0;
 
 	var isSelected:Bool;
-	var mesh : MeshObject;
 	var soundFire : AudioChannel;
+	var materials : haxe.ds.Vector<MaterialData>;
+	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 
 	public function new(numSlots:Int) {
 		super();
@@ -32,7 +34,12 @@ class Atom extends Trait {
 			mesh = cast object.getChild('AtomMesh');
 			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
 			mesh.transform.buildMatrix();
-			
+
+			defaultMaterials = mesh.materials;
+
+			if( materials != null ) mesh.materials = materials;
+		//	if( player != null ) mesh.materials = player.materials;
+
 			/* Tween.to({
 				props: {x: scale, y: scale, z: scale},
 				duration: 0.5,
@@ -53,8 +60,6 @@ class Atom extends Trait {
 				soundFire.pause();
 			});
 
-			Uniforms.externalVec3Links.push(vec3Link);
-
 			notifyOnUpdate(update);
 		});
 
@@ -63,6 +68,22 @@ class Atom extends Trait {
 
 	public function setPlayer(p:Player) {
 		player = p;
+		//trace(player.materials);
+		//if ( mesh != null  ) mesh.materials = player.materials;
+	/* 	if( player != null )
+			if ( mesh != null  ) mesh.materials = player.materials;
+		*/
+		if( player != null ) {
+			trace("SET  MATTERIAL Player"+player.index);
+			DataTools.loadMaterial('Game', 'Player'+player.index, m -> {
+				materials = m;
+				if( mesh != null ) mesh.materials = m;
+			});
+		} else {
+			materials = null;
+			mesh.materials = defaultMaterials;
+			//mesh.materials = new haxe.ds.Vector(1);
+		}
 	}
 
 	public function setPostion(v:Vec2) {
@@ -79,6 +100,7 @@ class Atom extends Trait {
 		} else if (player == electron.player) {
 			trace('we got a hit on a own atom');
 			addElectron(electron);
+
 		} else {
 			trace('we got a hit on a enemy atom');
 			var e = electrons.pop();
@@ -206,6 +228,8 @@ class Atom extends Trait {
 		Scene.active.spawnObject('Electron', object, obj -> {
 			// trace(obj);
 			obj.addTrait(electron);
+
+
 			// electron.setPostion( pos );
 		});
 
@@ -219,19 +243,4 @@ class Atom extends Trait {
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));
 	}
 
-	function vec3Link(object:Object, mat:MaterialData, link:String):Vec4 {
-		if (link == "RGB" && object == mesh) {
-			if (player == null) {
-				return defaultColor;
-			} else {
-				// TODO
-				var c:Color = player.color;
-				var c2 = Color.fromBytes( c.Rb, c.Gb, c.Bb );
-				//var c2 = Color.fromBytes( c.Rb, c.Gb, c.Bb );
-				return new Vec4( c2.R, c2.G, c2.B, 0.0 );
-				//return new Vec4( Player._COLORS[0][0], Player._COLORS[0][1], Player._COLORS[0][2] );
-			}
-		}
-		return null;
-	}
 }

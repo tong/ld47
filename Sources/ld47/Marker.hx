@@ -9,7 +9,6 @@ class Marker extends Trait {
 		super();
 		this.color = color;
 		notifyOnInit(() -> {
-			Uniforms.externalVec3Links.push(vec3Link);
 		});
 	}
 
@@ -33,12 +32,5 @@ class Marker extends Trait {
 
 	public function hide() {
 		object.visible = false;
-	}
-
-	function vec3Link(object:Object, mat:MaterialData, link:String):Vec4 {
-		if (link == "RGB" && object == this.object) {
-			return new Vec4(color.R, color.G, color.B);
-		}
-		return null;
 	}
 }

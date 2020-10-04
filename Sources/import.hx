@@ -19,6 +19,7 @@ import armory.system.Event;
 import iron.Scene;
 import iron.Trait;
 import iron.data.Data;
+import iron.data.MaterialData;
 import iron.math.Mat4;
 import iron.math.Quat;
 import iron.math.Vec2;
@@ -49,6 +50,7 @@ import kha.math.FastMatrix3;
 
 //import tron.Input;
 import tron.Log;
+import tron.DataTools;
 import tron.MathTools;
 import tron.MathTools.PI;
 import tron.MathTools.PI2;

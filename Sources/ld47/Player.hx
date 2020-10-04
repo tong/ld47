@@ -1,23 +1,23 @@
 package ld47;
 
 class Player extends Trait {
-	//public static final COLORS = [0xFFF50057, 0xFF00B0FF, 0xFFFFEA00, 0xFFFF3D00];
-	//public static final COLORS : Array<Color> = [0xff00B0FF,0xffF50057, 0xffFFEA00, 0xffFF3D00];
-	//public static final COLORS = [0xff0000,0x00ff00, 0x0000ff, 0xFF3D00];
 	public static final COLORS : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
-	//public static final COLORS24 : Array<Color> = [0xfff50057, 0xff00b0ff, 0xffFFEA00, 0xffFF3D00];
 
 	public var index(default, null):Int;
-	//public var name(default, null):String;
 	public var color(default, null):Color;
+	public var materials(default, null):haxe.ds.Vector<MaterialData>;
 	public var atom(default, null):Atom;
 
 	public function new(index:Int) {
 		super();
 		this.index = index;
-		//this.name = name;
 		this.color = COLORS[index];
 		notifyOnInit(() -> {
+			DataTools.loadMaterial('Game', 'Player$index', m -> {
+				materials = m;
+				var mesh : MeshObject = cast object;
+                mesh.materials = m;
+			});
 			notifyOnUpdate(update);
 		});
 	}
@@ -38,7 +38,7 @@ class Player extends Trait {
 			else if (gp.started("down"))
 				v.y = -1;
 
-			switch index {
+			switch this.index {
 				case 0:
 					if (keyboard.started('left'))
 						v.x = -1;
@@ -48,6 +48,8 @@ class Player extends Trait {
 						v.y = 1;
 					else if (keyboard.started('down'))
 						v.y = -1;
+					if (keyboard.started('m'))
+						atom.fire();
 				case 1:
 					if (keyboard.started('a'))
 						v.x = -1;
@@ -57,6 +59,8 @@ class Player extends Trait {
 						v.y = 1;
 					else if (keyboard.started('s'))
 						v.y = -1;
+					if (keyboard.started('f'))
+						atom.fire();
 			}
 
 			navigateSelectionTowards(v);

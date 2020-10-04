@@ -11,7 +11,7 @@ typedef PlayerData = {
 class Game extends Trait {
 	public static var active(default, null):Game;
 
-	public var time:Float;
+	public var time(default, null):Float;
 	public var paused(default, null) = false;
 
 	public var players(default, null):Array<Player>;
@@ -41,8 +41,9 @@ class Game extends Trait {
 				var raw = playerData[i];
 				if( raw.enabled ) {
 					final player = new Player( i );
-					final obj = Scene.active.getMesh( 'Player'+i );
-					obj.addTrait( player );
+					Scene.active.spawnObject( 'Player', null, obj -> {
+						obj.addTrait( player );
+					});
 					players.push( player );
 				}
 			}
@@ -50,11 +51,14 @@ class Game extends Trait {
 			spawnMap(10, true, () -> {
 				
 				atoms[0].setPlayer(players[0]);
-				atoms[1].setPlayer(players[1]);
+				atoms[1].setPlayer(players[0]);
+				atoms[2].setPlayer(players[1]);
+				atoms[3].setPlayer(players[1]);
 				
 				atoms[0].addElectron(new Electron(players[0], [Feature.Spawner]));
-				atoms[1].addElectron(new Electron(players[1], [Feature.None]));				
-				atoms[1].addElectron(new Electron(players[1], [Feature.None]));				
+				atoms[1].addElectron(new Electron(players[0], [Feature.None]));				
+				atoms[1].addElectron(new Electron(players[0], [Feature.None]));		
+				atoms[2].addElectron(new Electron(players[1], [Feature.None]));		
 				
 				notifyOnUpdate(update);
 			});

@@ -25,11 +25,17 @@ class Electron extends Trait {
         super();
         this.player = player;
         this.features = features;
-        notifyOnInit( () -> {
+        notifyOnAdd( () -> {
+
             var markerObject = cast object.getChild('ElectronMarker');
 			marker = new Marker(player.color);
 			markerObject.addTrait(marker);          
-            Uniforms.externalVec3Links.push( vec3Link );
+
+            DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {
+                var mesh : MeshObject = cast object;
+                mesh.materials = m;
+                markerObject.materials = m;
+            }); 
         });
     }
 
@@ -61,7 +67,6 @@ class Electron extends Trait {
         trace('attach electron to atom at position ' + a.object.transform.loc);
         atom = a;
         velocity = null;
-
     } 
 
     public function setVelocity(v:Vec4)
@@ -83,15 +88,4 @@ class Electron extends Trait {
         object.transform.setRotation( angleX, 0, angleZ );
         object.transform.buildMatrix();
     }
-    
-    function vec3Link( object : Object, mat : MaterialData, link : String ) : Vec4 {
-        if (link == "RGB" && object == this.object) {
-			if (player == null)
-				return defaultColor;
-			var c:Color = player.color;
-			return new Vec4(c.R, c.G, c.B);
-		}
-		return null;
-    }
-  
 }
