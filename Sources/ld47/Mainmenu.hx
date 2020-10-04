@@ -101,17 +101,21 @@ class Mainmenu extends Trait {
 		final sh = System.windowHeight();
 		final uw = 600;
 		final uh = 600;final fontSize = 32;
-		
+
 		g.end();
+
+		//g.color = 0xff000000;
+		//g.fillRect( 0, 0, sw, sh );
+
 		ui.begin( g );
 		g.opacity = 1;
-		if( ui.window( Id.handle(), 32, 32, uw, uh, false ) ) {
+		if( ui.window( Id.handle(), 32, 32, sw, sh, false ) ) {
 			
 			//ui.ops.theme.FONT_SIZE = 120;
 			ui.text('SUPERPOSITION');
 			//ui.ops.theme.FONT_SIZE = 60;
 
-			ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
+			//ui.row( [ 1/4, 1/4, 1/4, 1/4 ]);
 
 			ui.ops.theme.TEXT_COL = players[0].color;
 			players[0].enabled = ui.check(Id.handle( { selected: players[0].enabled } ), players[0].name );
@@ -141,7 +145,7 @@ class Mainmenu extends Trait {
 		var text = 'v'+Main.projectVersion;
 		var textWidth = UI.font.width( g.fontSize, text );
 		g.drawString( text, sw - (textWidth + g.fontSize/2), sh-(g.fontSize*1.5) ); 
-
+		
 		g.begin( false );
 	}
 

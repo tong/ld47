@@ -1,6 +1,7 @@
 package ld47;
 
 import ld47.Electron.Feature;
+import ld47.renderpath.Postprocess;
 
 typedef PlayerData = {
 	var name : String;
@@ -65,13 +66,30 @@ class Game extends Trait {
 				atoms[2].addElectron( [Feature.None]);
 				
 				notifyOnUpdate(update);
+
+				start();
 			});
 		});
 	}
 
 	public function start() {
+		
 		time = 0;
 		timeStart = Time.time();
+		
+		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
+		var values = { v : 20.0 };
+		Tween.to({
+			target: values,
+			duration: 0.5,
+			props: { v: 0.01 },
+			ease: QuartOut,
+			tick: () -> {
+				Postprocess.chromatic_aberration_uniforms[0] = values.v;
+			},
+			done: () -> {
+			}
+		});
 		Event.send('game_start');
 	}
 
