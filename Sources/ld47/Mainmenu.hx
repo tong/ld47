@@ -14,7 +14,7 @@ class Mainmenu extends Trait {
 		super();
 		notifyOnInit( () -> {
 
-			Log.info( 'Title' );
+			Log.info( 'Mainmenu' );
 			
 			playerData = [for(i in 0...4) {
 				name: 'P'+(i+1),
@@ -37,20 +37,18 @@ class Mainmenu extends Trait {
 	}
 
 	function update() {
-		final keyboard = Input.getKeyboard();
-		if( keyboard.started( "escape" ) ) {
+		final kb = Input.getKeyboard();
+		if( kb.started( "escape" ) ) {
 			Scene.setActive( 'Quit' );
 			return;
 		}
-		if( keyboard.started( "c" ) ) {
+		if( kb.started( "c" ) ) {
 			Scene.setActive( 'Credits' );
 			return;
 		}
 		for( i in 0...4 ) {
 			final gp = Input.getGamepad(i);
-			if( gp.started( 'cross' ) ) {
-				
-			}
+			//if( gp.started( 'cross' ) ) {}
 			if( gp.started( 'options' ) ) {
 				loadGame();
 				return;
@@ -128,6 +126,7 @@ class Mainmenu extends Trait {
 		final numEnabledPlayers = getNumEnabledPlayers();
 		if( numEnabledPlayers >= 2 ) {
 
+			//TODO
 			var mapData : MapData = {
 				atoms: [
 					{ features: [None] },
