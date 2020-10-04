@@ -26,7 +26,7 @@ class Electron extends Trait {
         super();
         this.player = player;
         this.features = features;
-        notifyOnAdd( () -> {
+        notifyOnInit( () -> {
 
             mesh = cast object.getChild('ElectronMesh');
             var markerObject = cast object.getChild('ElectronMarker');
