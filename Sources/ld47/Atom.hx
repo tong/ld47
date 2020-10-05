@@ -127,14 +127,7 @@ class Atom extends Trait {
 				setPlayer(null);				
 			}
 			
-			if (rotationSpeed<0){
-				selectElectron(getNextElectron(electron));
-			}
-			else{
-				selectElectron(getPreviousElectron(electron));
-			}
-			
-
+			selectElectron(getNextElectron(electron));
 			SoundEffect.play( 'electron_fire' );
 		}
 		else
@@ -258,8 +251,7 @@ class Atom extends Trait {
 			}
 			else{
 				selectElectron(getPreviousElectron(selectedElectron));
-			}
-			
+			}			
 		}
 		else{
 			selectElectron(null);
@@ -267,29 +259,27 @@ class Atom extends Trait {
 	}
 
 
-	private function getNextElectron(electron:Electron) : Electron{		
-		trace('getNextElectron(electron index = ' + electron.atomIndex + ')');
-		if (electrons.length == 0){
-			trace('no more electrons, return null');
+	private function getNextElectron(electron:Electron) : Electron{				
+		trace('getNextElectron for index ' + electron.position);
+		if (electrons.length == 0){			
 			return null;
 		}
-		else if (electrons.length == 1){
-			trace('only one electron, return it');
+		else if (electrons.length == 1){			
 			return electrons[0];
 		}
 		else {
-			var index = electron.atomIndex;
-			trace('find best electron with index better than ' + index);
+			var index = electron.position;			
 			do{
 				index++;
 				if (index>numSlots) {index=0;}
-				for (e in electrons) {if (e.atomIndex == index) return e;}
+				for (e in electrons) {if (e.position == index) return e;}
 			}
 			while(true);
 		}		
 	}
 
 	private function getPreviousElectron(electron:Electron) : Electron{		
+		trace('getPreviousElectron for index ' + electron.position);
 		if (electrons.length == 0){
 			return null;
 		}
@@ -297,11 +287,11 @@ class Atom extends Trait {
 			return electrons[0];
 		}
 		else {
-			var index = electron.atomIndex;
+			var index = electron.position;
 			do{
 				index--;
 				if (index<0) {index=numSlots;}
-				for (e in electrons) {if (e.atomIndex == index) return e;}
+				for (e in electrons) {if (e.position == index) return e;}
 			}
 			while(true);
 		}		
@@ -352,7 +342,7 @@ class Atom extends Trait {
 		for (i in 0...numSlots ){
 			var isFree=true;
 			for (electron in electrons){
-				if (electron.atomIndex == i){
+				if (electron.position == i){
 					isFree=false;
 					break;
 				}
@@ -365,7 +355,7 @@ class Atom extends Trait {
 	}
 
 	private function getElectronPosition(electron:Electron) :Vec2{
-		var angle = 2 * Math.PI * electron.atomIndex / numSlots;
+		var angle = 2 * Math.PI * electron.position / numSlots;
 		if (rotationSpeed < 0) { angle=-angle; }
 		var orbitRadius = mesh.transform.dim.x/2 + electron.mesh.transform.dim.x*2;
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));

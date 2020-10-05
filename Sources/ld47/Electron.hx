@@ -13,7 +13,7 @@ class Electron extends Trait {
 
     public var player(default,null) : Player;
     public var atom(default,null) : Atom;
-    public var atomIndex(default,null): Int;
+    public var position(default,null): Int;
     public var mesh(default, null) : MeshObject;
     
     public var velocity(default, null) : Vec4;    
@@ -58,7 +58,7 @@ class Electron extends Trait {
     public function setAtom(a:Atom, index:Int) {
         trace('attach electron to atom of player ' + a.player.index + ' at index ' + index);
         atom = a;
-        atomIndex=index;
+        position=index;
         velocity = null;
     } 
 
