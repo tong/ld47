@@ -17,7 +17,6 @@ class Atom extends Trait {
 	var spawnTime:Float = 10.0;
 
 	var isSelected:Bool;
-	var soundFire : AudioChannel;
 	var materials : haxe.ds.Vector<MaterialData>;
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var selectedElectron : Electron;
@@ -60,11 +59,6 @@ class Atom extends Trait {
 				}
 			});
  			*/
-
-			Data.getSound('electron_fire.ogg', s -> {
-				soundFire = Audio.play(s, false, false);
-				soundFire.pause();
-			});
 
 			notifyOnUpdate(update);
 		});
@@ -157,16 +151,12 @@ class Atom extends Trait {
 			}
 			
 
-			soundFire.play();
+			SoundEffect.play( 'electron_fire' );
 		}
 		else
 		{
-			//play sound if no electron is there
+			SoundEffect.play( 'electron_fire_deny' );
 		}
-
-
-
-		
 	}
 
 	function update() {

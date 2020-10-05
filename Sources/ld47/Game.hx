@@ -98,6 +98,9 @@ class Game extends Trait {
 			done: () -> {
 			}
 		});
+
+		SoundEffect.play( 'game_start' );
+
 		Event.send('game_start');
 	}
 
@@ -250,7 +253,8 @@ class Game extends Trait {
 						//the electron leaves the game area
 						electronOK=false;
 						object.removeChild(electron.object);
-						electron.object.remove();						
+						electron.object.remove();		
+						SoundEffect.play( 'electron_death' );				
 				}
 				if (electronOK){
 					newFlyingElectrons.push(electron);
