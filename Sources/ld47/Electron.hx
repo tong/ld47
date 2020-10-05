@@ -48,7 +48,7 @@ class Electron extends Trait {
 
 
     public function setAtom(a:Atom, index:Int) {
-        trace('attach electron to atom of player ' + a.player.name + ' at index ' + index);
+        trace('attach electron to atom of player ' + a.player.index + ' at index ' + index);
         atom = a;
         atomIndex=index;
         velocity = null;

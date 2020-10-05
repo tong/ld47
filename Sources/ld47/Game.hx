@@ -140,6 +140,23 @@ class Game extends Trait {
 		Scene.setActive("Mainmenu");
 	}
 
+	public function finish(gameStatus: GameStatus){
+		//hier soll der code rein wenn das game gewonnen/unentschieden beendet wurde
+		
+		var winner = gameStatus.winner;
+		var others = gameStatus.others;
+		if (gameStatus.hasWinner){
+			var score = winner.score;
+			trace('the game is finished, winner is player ' + winner.index + ' with a score of ' + score);
+		}
+		else{
+			trace('the game ended in a draw');
+		}
+		
+
+		end();
+	}
+
 	public function clearMap() {
 		if (atoms != null) {
 			for (a in atoms) {
@@ -223,10 +240,15 @@ class Game extends Trait {
 				}
 			}
 
+			var gameStatus = getGameStatus();
+			if (gameStatus.isFinished){
+				finish(gameStatus);
+			}
+
 			var newFlyingElectrons = new Array<Electron>();
 
 			for (electron in flyingElectrons){	
-				//trace('check flying electron from player ' + electron.player.name);
+				//trace('check flying electron from player ' + electron.player.index);
 				var locElectron = new Vec4(electron.object.transform.worldx(), electron.object.transform.worldy());
 				var radiusElectron = electron.mesh.transform.dim.x/2;							
 				
@@ -241,7 +263,7 @@ class Game extends Trait {
 					if (distance < radiusAtom+radiusElectron)
 					{		
 						//the electron hits an atom				
-						trace('elektron from player ' + electron.player.name + ' hit an atom');
+						trace('elektron from player ' + electron.player.index + ' hit an atom');
 						electronOK = false;						
 						object.removeChild(electron.object);
 						electron.object.remove();
@@ -251,7 +273,7 @@ class Game extends Trait {
 					}else if (distance < radiusAtom*4 && 
 							  atom.player != electron.player &&
 							  atom.electrons.length>0){
-						trace('elektron from player ' + electron.player.name + ' is in the outter area of an atom, lets check its electrons');
+						trace('elektron from player ' + electron.player.index + ' is in the outter area of an atom, lets check its electrons');
 
 						for (targetElectron in atom.electrons){
 							var locTarget = new Vec4(targetElectron.object.transform.worldx(),
@@ -260,7 +282,7 @@ class Game extends Trait {
 
 							if (distElectron < radiusElectron*2){
 								//the electron hits an enemy electron attached to an atom
-								trace('elektron from player ' + electron.player.name + ' hit an enemy electron orbiting an atom');
+								trace('elektron from player ' + electron.player.index + ' hit an enemy electron orbiting an atom');
 								electron.player.addToScore(Score.destroyed);
 								electronOK = false;								
 								object.removeChild(electron.object);
@@ -284,6 +306,38 @@ class Game extends Trait {
 				}
 			}
 			flyingElectrons=newFlyingElectrons;
+
+			
+		}
+	}
+
+	private function getGameStatus():GameStatus{
+		if (atoms.filter(atom -> atom.electrons.length > 0).length == 0 && 
+			flyingElectrons.length == 0){
+			//no electrons left -> everybody looses
+			return GameStatus.draw(players);
+		}
+		else{
+			var winners = players;
+			var loosers = new Array<Player>();
+			for (player in players){
+				
+				if (atoms.filter(atom -> atom.player != null && 
+										 atom.player == player &&
+										 atom.electrons.length > 0).length == 0 &&
+					flyingElectrons.filter(electron -> electron.player == player).length ==0){
+					//player has no electrons left -> he looses					
+					winners.splice(winners.indexOf(player),1);
+					loosers.push(player);
+				}					
+			}
+
+			if (winners.length == 1){
+				return GameStatus.finished(winners[0],loosers);
+			}
+			else{
+				return GameStatus.running(winners);
+			}
 		}
 	}
 
