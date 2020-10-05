@@ -1,6 +1,6 @@
 # Superposition
 
-[LD47](https://ldjam.com/events/ludum-dare/47) ~ Stuck in a loop
+[LD47](https://ldjam.com/events/ludum-dare/47/$213016) ~ Stuck in a loop
 
 http://games.disktree.net/superposition/
 
