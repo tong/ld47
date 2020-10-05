@@ -285,7 +285,7 @@ class Game extends Trait {
 						electronOK=false;
 						object.removeChild(electron.object);
 						electron.object.remove();		
-						SoundEffect.play( 'electron_death' );				
+						SoundEffect.play( 'electron_death', 0.4 );				
 				}
 				if (electronOK){
 					newFlyingElectrons.push(electron);
