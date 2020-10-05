@@ -337,7 +337,7 @@ class Atom extends Trait {
 		});
 	}
 
-	private function getFirstFreeElectronIndex(): Int{			
+	private function getFirstFreeElectronIndex(): Null<Int> {			
 		for (i in 0...numSlots ){
 			var isFree=true;
 			for (electron in electrons){
