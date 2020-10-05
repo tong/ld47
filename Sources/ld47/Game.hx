@@ -181,6 +181,7 @@ class Game extends Trait {
 	}
 	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
+			obj.visible = true;
 			var atom = new Atom( numSlots );
 			atom.notifyOnInit(()->{
 				cb(atom);

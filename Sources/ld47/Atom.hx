@@ -32,6 +32,7 @@ class Atom extends Trait {
 			mesh = cast object.getChild('AtomMesh');
 			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
 			mesh.transform.buildMatrix();
+			mesh.visible = true;
 
 			var markerObject = cast object.getChild('ElectronMarker');
             marker = new Marker();                        

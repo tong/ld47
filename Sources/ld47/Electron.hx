@@ -25,6 +25,7 @@ class Electron extends Trait {
         this.feature = feature;
         notifyOnInit( () -> {
             mesh = cast object.getChild('ElectronMesh');
+            mesh.visible = true;
             DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
                 mesh.materials = m;                
                 switch feature {
