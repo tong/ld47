@@ -37,10 +37,51 @@ class MapStore{
                     { slots: 16, position: new Vec2(8,4) },
                     { slots: 16, position: new Vec2(8,-4) },
                     { slots: 20, position: new Vec2(0,0) }
-                ]
-                
+                ] 
+            });  
+            
+            maps.push( {
+                name: 'hard',
+                atoms: [
+                    {slots: 8, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },
+                    {slots: 8, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(-4,-4)  },
+                    {slots: 8, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(4,-4)  },                    
+                    { slots: 16, position: new Vec2(0,-4) },
+                    { slots: 16, position: new Vec2(2,0) },
+                    { slots: 16, position: new Vec2(-2,0) }                    
+                ] 
+            }); 
 
-            });       
+            maps.push( {
+                name: 'normal',
+                atoms: [
+                    {slots: 6, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },
+                    {slots: 6, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(-4,-4)  },
+                    {slots: 6, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(4,-4)  },                    
+                    { slots: 10, position: new Vec2(0,-4) },
+                    { slots: 10, position: new Vec2(2,0) },
+                    { slots: 10, position: new Vec2(-2,0) },
+                    { slots: 10, position: new Vec2(-2,-2) },
+                    { slots: 10, position: new Vec2(2,-2) },
+                    { slots: 10, position: new Vec2(0,2) }
+                ] 
+            }); 
+
+            maps.push( {
+                name: 'sun',
+                atoms: [
+                    {slots: 6, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },
+                    {slots: 6, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(-5,-4)  },
+                    {slots: 6, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(5,-4)  },                    
+                    { slots: 15, position: new Vec2(0,0) },
+                    { slots: 8, position: new Vec2(2,2) },
+                    { slots: 8, position: new Vec2(-2,2) },
+                    { slots: 8, position: new Vec2(-3,-2) },
+                    { slots: 8, position: new Vec2(-2,-4) },
+                    { slots: 8, position: new Vec2(3,-2) },
+                    { slots: 8, position: new Vec2(2,-4) }
+                ] 
+            }); 
         }
         else if (players == 2){
             maps.push( {
