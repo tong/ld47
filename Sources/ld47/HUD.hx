@@ -22,6 +22,7 @@ class HUD extends Trait {
         final sh = System.windowHeight();
         final paddingX = 4;
         final paddingY = 1;
+        final height = UI.fontSize + paddingY*2;
 
         g.end();
 
@@ -35,39 +36,37 @@ class HUD extends Trait {
         
         var px = 0.0;
         for( i in 0...game.players.length ) {
+
             var player = game.players[i];
-            var playerColor = Player.COLORS[player.index];
-            var txt = player.name.toUpperCase();
-            var numElectrons = 0;
-            var numAtoms = 0;
+            var color = Player.COLORS[player.index];
+            
+            var atoms = game.atoms.filter( a -> a.player == player );
+            var percentAtoms = atoms.length / game.atoms.length;
+            var width = sh * percentAtoms;
+            
+            g.color = color;
+            g.fillRect( px, 0, sh*percentAtoms, height );
+            
+            var text = 'P$i A'+atoms.length;
 
-            for( atom in game.atoms ) {
-                if( atom.player == player ) {
-                    numAtoms++;
-                    numElectrons += atom.electrons.length;
-                }
-            }
-            txt += ' A$numAtoms E$numElectrons';
-
-            var percentAtoms = numAtoms/game.atoms.length;
-            final width = sh*percentAtoms;
-
-            g.color = playerColor;
-            g.fillRect( px, 0, sh*percentAtoms, UI.fontSize + paddingY*2 );
+           /*  g.color = 0xff000000;
+            for( i in 0...atoms.length ) {
+                g.fillRect( px + 20 + paddingX + (i*(UI.fontSize+2)), paddingY, UI.fontSize, UI.fontSize );
+            } */
 
             g.color = 0xff000000;
-            g.drawString( txt, px + paddingX, paddingY ); 
+            g.drawString( text, px + paddingX, paddingY ); 
 
             px += width;
-        }
+          }
 
-        //g.color = 0xff000000;
-        //g.fillRect( px, 0, sh-px, UI.fontSize );
+         // g.color = 0xffffffff;
+          //g.fillRect( px, 0, sh-px, height );
 
         g.popTransformation();
 
+        /*
         // Atom label
-
         final cam = Scene.active.camera;
         g.color = 0xff000000;
         for( i in 0...Game.active.atoms.length ) {
@@ -91,6 +90,7 @@ class HUD extends Trait {
             
             g.drawString( text, px - textWidth/2, py - UI.fontSize/2 ); 
         }
+        */
 
         g.begin( false );
 	}
