@@ -30,13 +30,22 @@ class Electron extends Trait {
                 switch feature {
                 case Spawner:
                     mesh.visible = false;
-                    Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {	
+                    Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {
+                        obj.visible = true;
                         var m : MeshObject = cast obj;
                         m.materials = mesh.materials;
                     });
                 default:
                 }
             }); 
+            object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.01;
+            Tween.to({
+                props: {x: 1, y: 1, z: 1},
+                duration: 1.0,
+                target: object.transform.scale,
+                ease: Ease.ElasticOut,
+                tick: object.transform.buildMatrix
+            });
         });
     }
 

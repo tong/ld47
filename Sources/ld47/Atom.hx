@@ -84,17 +84,21 @@ class Atom extends Trait {
 		} else if (player == electron.player) {
 			trace('we got a hit on a own atom');
 			spawnElectron(electron.feature);
-
 		} else {
 			trace('we got a hit on a enemy atom');
 			var e = electrons.pop();
-			e.object.remove();
-
+			Tween.to({
+                props: {x: 0.01, y: 0.01, z: 0.01},
+                duration: 1.0,
+                target: e.mesh.transform.scale,
+                ease: Ease.ElasticOut,
+				tick: e.mesh.transform.buildMatrix,
+				done: () -> e.object.remove()
+            });
 			if (electrons.length == 0){
 				player.addToScore(Score.lost);
 				setPlayer(null);
 			}
-
 		}
 	}
 
