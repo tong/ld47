@@ -124,8 +124,7 @@ class Atom extends Trait {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
 			player.addToScore(Score.fired);			
-			var electron = selectedElectron;	
-			selectNextElectron();
+			var electron = selectedElectron;				
 			var wlocElectron = new Vec2(electron.object.transform.worldx(),
 										 electron.object.transform.worldy());
 
@@ -135,9 +134,9 @@ class Atom extends Trait {
 			object.removeChild(electron.object);
 			Scene.active.root.addChild(electron.object);
 			electron.setPostion(wlocElectron);
-			electrons.splice(electron.atomIndex,1);
+			electrons.splice(electrons.indexOf(electron),1);
 			Game.active.flyingElectrons.push(electron);
-			trace('shot electron from ' + wlocElectron );
+			trace('shot electron from ' + wlocElectron + ' now only ' + electrons.length + ' electrons left');
 			// move electron object in
 			var locElectron = electron.object.transform.loc.clone();
 			
@@ -150,6 +149,7 @@ class Atom extends Trait {
 				setPlayer(null);				
 			}
 			
+			selectElectron(getNextElectron(electron));
 
 			SoundEffect.play( 'electron_fire' );
 		}
@@ -243,7 +243,7 @@ class Atom extends Trait {
 			electron.notifyOnInit(()-> {
 				electron.setAtom(this, getFirstFreeElectronIndex());		
 				var pos = getElectronPosition(electron);
-				var direction = new Vec4(pos.x,pos.y,0,1).normalize();
+				var direction = new Vec4(pos.x,pos.y);
 				electron.setPostion(pos);
 				electron.setDirection(direction);
 				if (electrons.length == 0) {selectElectron(electron);}
@@ -275,45 +275,60 @@ class Atom extends Trait {
 
 
 	private function getNextElectron(electron:Electron) : Electron{		
-		if (electrons.length == 1){
+		trace('getNextElectron(electron index = ' + electron.atomIndex + ')');
+		if (electrons.length == 0){
+			trace('no more electrons, return null');
+			return null;
+		}
+		else if (electrons.length == 1){
+			trace('only one electron, return it');
 			return electrons[0];
 		}
 		else {
-			var index = selectedElectron.atomIndex;
+			var index = electron.atomIndex;
+			trace('find best electron with index better than ' + index);
 			do{
 				index++;
 				if (index>numSlots) {index=0;}
-				for (electron in electrons) {if (electron.atomIndex == index) return electron;}
+				for (e in electrons) {if (e.atomIndex == index) return e;}
 			}
 			while(true);
 		}		
 	}
 
 	private function getPreviousElectron(electron:Electron) : Electron{		
-		if (electrons.length == 1){
+		if (electrons.length == 0){
+			return null;
+		}
+		else if (electrons.length == 1){
 			return electrons[0];
 		}
 		else {
-			var index = selectedElectron.atomIndex;
+			var index = electron.atomIndex;
 			do{
 				index--;
 				if (index<0) {index=numSlots;}
-				for (electron in electrons) {if (electron.atomIndex == index) return electron;}
+				for (e in electrons) {if (e.atomIndex == index) return e;}
 			}
 			while(true);
 		}		
 	}
 
 	private function selectElectron(electron:Electron){
-		trace('change selection');
+		
 		var loc = new Vec4();
 		var rot = new Quat();
 		selectedElectron = electron;		
 
 		if (electron != null){
-			loc = electron.object.transform.loc;
+			loc = electron.object.transform.loc;			
 			rot = electron.object.transform.rot;
+			trace('change selection to electron at ' + loc + ' with rot=' + rot);
 		}
+		else{
+			trace('change selection to null ' + electron);
+		}
+			
 
 		Tween.to({			
 			props: {x: loc.x, y: loc.y, z: loc.z},
@@ -328,7 +343,7 @@ class Atom extends Trait {
 		});
 
 		Tween.to({			
-			props: {x: rot.x, y: rot.y, z: rot.z},
+			props: {x: rot.x, y: rot.y, z: rot.z, w: rot.w},
 			duration: 0.5,
 			target: marker.object.transform.rot,
 			ease: Ease.QuartOut,

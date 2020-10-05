@@ -66,8 +66,8 @@ class Game extends Trait {
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
 
-				atoms[0].spawnElectrons( 2, [Feature.Spawner], () -> {
-					atoms[1].spawnElectrons( 2, [Feature.Spawner], () -> {
+				atoms[0].spawnElectrons( 1, [Feature.Spawner], () -> {
+					atoms[1].spawnElectrons( 2, [Feature.None], () -> {
 						atoms[2].spawnElectrons( 1, [Feature.None], () -> {
 							notifyOnUpdate(update);
 							start();
@@ -246,8 +246,8 @@ class Game extends Trait {
 					}
 					if (!electronOK) {break;}
 				}
-				if (worldSizeX < Math.abs(locElectron.x) || 
-					worldSizeY < Math.abs(locElectron.y)){
+				if (worldSizeX/2 < Math.abs(locElectron.x) || 
+					worldSizeY/2 < Math.abs(locElectron.y)){
 						//the electron leaves the game area
 						electronOK=false;
 						object.removeChild(electron.object);
