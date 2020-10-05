@@ -78,6 +78,14 @@ class Player extends Trait {
 				// TODO fire electron
 				atom.fire();
 			}
+			else if (gp.started('l1')) {
+				// TODO fire electron
+				atom.selectNextElectron();
+			}
+			else if (gp.started('r1')) {
+				// TODO fire electron
+				atom.selectPreviousElectron();
+			}
 		}
 
 		if (atom == null) {

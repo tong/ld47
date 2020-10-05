@@ -130,8 +130,8 @@ class Atom extends Trait {
 		var oldCount = electrons.length;
 		if (oldCount > 0) {
 			player.addToScore(Score.fired);			
-			var electron = selectedElectron;						
-			
+			var electron = selectedElectron;	
+			selectNextElectron();
 			var wlocElectron = new Vec2(electron.object.transform.worldx(),
 										 electron.object.transform.worldy());
 
@@ -153,12 +153,9 @@ class Atom extends Trait {
 
 			if (electrons.length == 0){
 				player.navigateSelectionTowards(new Vec2(direction.x,direction.y));
-				setPlayer(null);
-				selectElectron(null);
+				setPlayer(null);				
 			}
-			else{
-				selectElectron(getNextElectron(electron));
-			}
+			
 
 			soundFire.play();
 		}
@@ -265,6 +262,25 @@ class Atom extends Trait {
 		// trace('added elektron at position' + pos);
 	}
 
+	public function selectPreviousElectron(){
+		if (electrons.length>0){
+			selectElectron(getPreviousElectron(selectedElectron));
+		}
+		else{
+			selectElectron(null);
+		}
+	}
+
+	public function selectNextElectron(){
+		if (electrons.length>0){
+			selectElectron(getNextElectron(selectedElectron));
+		}
+		else{
+			selectElectron(null);
+		}
+	}
+
+
 	private function getNextElectron(electron:Electron) : Electron{		
 		if (electrons.length == 1){
 			return electrons[0];
@@ -280,19 +296,48 @@ class Atom extends Trait {
 		}		
 	}
 
+	private function getPreviousElectron(electron:Electron) : Electron{		
+		if (electrons.length == 1){
+			return electrons[0];
+		}
+		else {
+			var index = selectedElectron.atomIndex;
+			do{
+				index--;
+				if (index<0) {index=numSlots;}
+				for (electron in electrons) {if (electron.atomIndex == index) return electron;}
+			}
+			while(true);
+		}		
+	}
+
 	private function selectElectron(electron:Electron){
 		trace('change selection');
 		var loc = new Vec4();
+		var rot = new Quat();
 		selectedElectron = electron;		
 
 		if (electron != null){
 			loc = electron.object.transform.loc;
+			rot = electron.object.transform.rot;
 		}
 
 		Tween.to({			
 			props: {x: loc.x, y: loc.y, z: loc.z},
 			duration: 0.5,
 			target: marker.object.transform.loc,
+			ease: Ease.QuartOut,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
+			done: () -> {
+			}
+		});
+
+		Tween.to({			
+			props: {x: rot.x, y: rot.y, z: rot.z},
+			duration: 0.5,
+			target: marker.object.transform.rot,
 			ease: Ease.QuartOut,
 			tick: () -> {
 				object.transform.buildMatrix();

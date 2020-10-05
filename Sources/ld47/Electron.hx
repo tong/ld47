@@ -24,12 +24,9 @@ class Electron extends Trait {
         this.player = player;
         this.features = features;
         notifyOnInit( () -> {
+            mesh = cast object.getChild('ElectronMesh');                 
 
-            mesh = cast object.getChild('ElectronMesh');
-                  
-
-            DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {
-                var mesh : MeshObject = cast object;
+            DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
                 mesh.materials = m;                
             }); 
         });
