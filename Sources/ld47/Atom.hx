@@ -24,7 +24,8 @@ class Atom extends Trait {
 	public function new(numSlots:Int) {
 		super();
 		this.numSlots = numSlots;
-		this.rotationSpeed = 1 / numSlots / 10; // * size;
+		var random = Math.random();
+		this.rotationSpeed = Math.pow(-1,Math.floor(10*random))*(1 + random) / numSlots / 20; // * size;
 		this.scale = (numSlots/20);				
 		lastIntervalledSpawn = Game.active.time;
 		
@@ -149,7 +150,13 @@ class Atom extends Trait {
 				setPlayer(null);				
 			}
 			
-			selectElectron(getNextElectron(electron));
+			if (rotationSpeed>0){
+				selectElectron(getNextElectron(electron));
+			}
+			else{
+				selectElectron(getPreviousElectron(electron));
+			}
+			
 
 			SoundEffect.play( 'electron_fire' );
 		}
@@ -257,7 +264,12 @@ class Atom extends Trait {
 
 	public function selectPreviousElectron(){
 		if (electrons.length>0){
-			selectElectron(getPreviousElectron(selectedElectron));
+			if (rotationSpeed<0){
+				selectElectron(getNextElectron(selectedElectron));
+			}
+			else{
+				selectElectron(getPreviousElectron(selectedElectron));
+			}
 		}
 		else{
 			selectElectron(null);
@@ -266,7 +278,13 @@ class Atom extends Trait {
 
 	public function selectNextElectron(){
 		if (electrons.length>0){
-			selectElectron(getNextElectron(selectedElectron));
+			if (rotationSpeed>0){
+				selectElectron(getNextElectron(selectedElectron));
+			}
+			else{
+				selectElectron(getPreviousElectron(selectedElectron));
+			}
+			
 		}
 		else{
 			selectElectron(null);
