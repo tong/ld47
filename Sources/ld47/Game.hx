@@ -24,6 +24,7 @@ class Game extends Trait {
 
 	public var time(default, null):Float;
 	public var paused(default, null) = false;
+	public var finished(default, null) = false;
 	
 	public var worldSizeX(default,null) : Float;
 	public var worldSizeY(default,null) : Float;
@@ -69,7 +70,6 @@ class Game extends Trait {
 				trace("Map spawned");
 				notifyOnUpdate(update);
 				start();
-
 			});
 
 			/*
@@ -119,7 +119,7 @@ class Game extends Trait {
 	}
 
 	public function pause() {
-		if (!paused) {
+		if (!finished && !paused) {
 			paused = true;
 			timePauseStart = Time.time();
 			Event.send('game_pause');
@@ -127,7 +127,7 @@ class Game extends Trait {
 	}
 
 	public function resume() {
-		if (paused) {
+		if (!finished && paused) {
 			paused = false;
 			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
@@ -141,20 +141,18 @@ class Game extends Trait {
 	}
 
 	public function finish(gameStatus: GameStatus){
-		//hier soll der code rein wenn das game gewonnen/unentschieden beendet wurde
-		
+		finished = true;
 		var winner = gameStatus.winner;
 		var others = gameStatus.others;
 		if (gameStatus.hasWinner){
 			var score = winner.score;
 			trace('the game is finished, winner is player ' + winner.index + ' with a score of ' + score);
-		}
-		else{
+		} else {
 			trace('the game ended in a draw');
 		}
-		
-
-		end();
+		var menu = new ResultMenu( gameStatus );
+		Scene.active.root.addTrait( menu );
+		//end();
 	}
 
 	public function clearMap() {
