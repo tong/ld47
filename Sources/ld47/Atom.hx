@@ -160,6 +160,9 @@ class Atom extends Trait {
 	}
 
 	function update() {
+		
+		if( Game.active.paused ) return;
+
 		object.transform.rotate(new Vec4(0, 0, 1), rotationSpeed);
 
 		for (electron in electrons) {
