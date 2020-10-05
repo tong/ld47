@@ -81,19 +81,26 @@ class Game extends Trait {
 		
 		time = 0;
 		timeStart = Time.time();
+
+		var cam = Scene.active.camera;
+		cam.transform.loc.z = 0;
+		cam.transform.buildMatrix();
 		
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
-		var values = { v : 20.0 };
+		var values = { chromatic : 20.0, camZ: 0.0 };
 		Tween.to({
 			target: values,
-			duration: 0.5,
-			props: { v: 0.01 },
+			duration: 0.6,
+			props: { chromatic: 0.01, camZ: 102.0 },
 			ease: QuartOut,
-			tick: () -> {
-				Postprocess.chromatic_aberration_uniforms[0] = values.v;
-			},
-			done: () -> {
-			}
+			tick: () -> Postprocess.chromatic_aberration_uniforms[0] = values.chromatic,
+		});
+		Tween.to({
+			target: cam.transform.loc,
+			duration: 0.7,
+			props: { z: 102 },
+			ease: QuartOut,
+			tick: cam.transform.buildMatrix,
 		});
 
 		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
