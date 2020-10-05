@@ -7,7 +7,7 @@ class GameStatus {
     public final hasWinner : Bool;
     public final others : Array<Player> = new Array<Player>();    
 
-    public function new (finished:Bool, winner:Player, others:Array<Player> ){
+    function new (finished:Bool, winner:Player, others:Array<Player> ){
         this.isFinished = finished;
         this.winner = winner;
         hasWinner = winner != null;
