@@ -10,10 +10,12 @@ class ResultMenu extends Trait {
 	public function new() {
 		super();
 		notifyOnInit(() -> {
-			var theme:TTheme = Reflect.copy(UI.THEME);
+			var theme:TTheme = Reflect.copy(UI.THEME_2);
 			// theme.BUTTON_TEXT_COL = 0xff00ff00;
 			// theme.FILL_WINDOW_BG = false;
 			// theme.FILL_BUTTON_BG = true;
+			theme.FONT_SIZE = 24;
+			theme.ELEMENT_H = 26;
 			ui = new Zui({font: UI.fontTitle, theme: theme});
 			Event.add('game_end', handleGameEnd);
 			/*
@@ -21,6 +23,7 @@ class ResultMenu extends Trait {
 					Event.remove( 'game_end' );
 				});
 			 */
+			 //notifyOnRender2D(render);
 		});
 	}
 
@@ -35,16 +38,22 @@ class ResultMenu extends Trait {
 		g.end();
 		g.opacity = 1;
 		ui.begin(g);
+		// g.color = 0xff000000;
+		// g.fillRect( 0, 0, sw, sh );
 		if (ui.window(Id.handle(), 0, 0, sw, sh, false)) {
-			ui.text('RESULT ', Left);
 			//ui.text('DURATION '+, Left);
-			/* for (i in 0...game.players.length) {
+			for (i in 0...game.players.length) {
 				var player = game.players[i];
+				ui.ops.theme.TEXT_COL = player.color;
 				ui.text('P' + (i + 1), Left);
+				//ui.ops.font = UI.font;
 				ui.text('SPAWNED ELECTRONS ' + player.score.spawnedElectrons, Left);
 				ui.text('SHOTS FIRED ' + player.score.shotsFired, Left);
-			} */
-
+				ui.text('SHOTS HIT ATOM ' + player.score.shotsHitAtom, Left);
+				ui.text('SHOTS DESTROYED ' + player.score.shotsDestroyedByEnemyElectron, Left);
+				ui.text('OWNERSHIP TAKEN ' + player.score.ownershipsTaken, Left);
+				ui.text('OWNERSHIP LOST ' + player.score.ownershipsLost, Left);
+			}
 			/*   if( ui.button( 'RESTART', Left ) ) {
 				//game.restart();
 			}*/
