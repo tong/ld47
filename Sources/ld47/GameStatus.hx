@@ -1,10 +1,11 @@
 package ld47;
 
 class GameStatus {
-    public var isFinished(default,null):Bool=false;
-    public var winner(default,null):Player;
-    public var hasWinner(default,null):Bool;
-    public var others(default,null):Array<Player> = new Array<Player>();    
+
+    public final isFinished : Bool;
+    public final winner : Player;
+    public final hasWinner : Bool;
+    public final others : Array<Player> = new Array<Player>();    
 
     public function new (finished:Bool, winner:Player, others:Array<Player> ){
         this.isFinished = finished;
@@ -13,15 +14,15 @@ class GameStatus {
         this.others = others;
     }
 
-    public static function running(players: Array<Player>){
+    public static inline function running(players: Array<Player>){
         return new GameStatus(false,null, players);
     }
 
-    public static function finished(winner:Player, others:Array<Player>){
+    public static inline function finished(winner:Player, others:Array<Player>){
         return new GameStatus(true,winner,others);
     }
 
-    public static function draw(players: Array<Player>){
+    public static inline function draw(players: Array<Player>){
         return new GameStatus(true,null, players);
     }
 }
