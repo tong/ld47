@@ -4,9 +4,15 @@ import ld47.Electron.Feature;
 import ld47.renderpath.Postprocess;
 
 typedef MapData = {
-	var atoms : Array<{ features: Array<Electron.Feature> }>;
+	var atoms : Array<{
+		slots: Int,
+		?player: Null<Int>,
+		?electrons: Int,
+		?spawner: Int,
+		//?electrons: Array<Array<Electron.Feature>>,
+		//features: Array<Electron.Feature>
+	}>;
 }
-
 typedef PlayerData = {
 	var name : String;
 	var enabled : Bool;
@@ -58,16 +64,23 @@ class Game extends Trait {
 			}
 
 			trace("Creating map "+mapData );
-			//TODO
+			atoms = [];
+			spawnMap( mapData, () -> {
+				trace("Map spawned");
+				notifyOnUpdate(update);
+				start();
 
+			});
+
+			/*
 			spawnMap(10, true, () -> {
 				
 				atoms[0].setPlayer(players[0]);
 				atoms[1].setPlayer(players[1]);
 				atoms[2].setPlayer(players[1]);
 
-				atoms[0].spawnElectrons( 1, [Feature.Spawner], () -> {
-					atoms[1].spawnElectrons( 2, [Feature.None], () -> {
+				atoms[0].spawnElectrons( 2, [Feature.Spawner], () -> {
+					atoms[1].spawnElectrons( 2, [Feature.Spawner], () -> {
 						atoms[2].spawnElectrons( 1, [Feature.None], () -> {
 							notifyOnUpdate(update);
 							start();
@@ -75,6 +88,7 @@ class Game extends Trait {
 					} );
 				} );
 			});
+			*/
 		});
 	}
 
@@ -136,22 +150,33 @@ class Game extends Trait {
 		atoms = [];
 	}
 
-	public function spawnMap( numAtoms : Int, clear = true, cb:Void->Void) {
+	public function spawnMap( data : MapData, clear = true, cb:Void->Void) {
 		if (clear)
 			clearMap();
 		atoms = [];
-		var positions = getAtomPositions(numAtoms);
+		var positions = getAtomPositions( data.atoms.length );
 		function spawnNext() {
-			spawnAtom(positions[atoms.length], 5 + Std.int(Math.random()*10), a -> {
-				if (atoms.length == numAtoms)
-					cb();
-				else
-					spawnNext();
+			var dat = data.atoms[atoms.length];
+			spawnAtom( positions[atoms.length], dat.slots, a -> {
+				if( dat.player != null ) {
+					a.setPlayer(players[dat.player]);
+				}
+				if( dat.electrons != null ) {
+					a.spawnElectrons( dat.electrons, [Feature.None], spawned -> {
+						if( dat.spawner != null ) {
+							for( i in 0...dat.spawner ) {
+								spawned[i].features = [Feature.Spawner];
+							}
+						}
+						if (atoms.length == data.atoms.length ) cb() else spawnNext();
+					});
+				} else {
+					if (atoms.length == data.atoms.length ) cb() else spawnNext();
+				}
 			});
 		}
 		spawnNext();
 	}
-
 	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom( numSlots );

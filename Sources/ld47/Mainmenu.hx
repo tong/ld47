@@ -136,8 +136,20 @@ class Mainmenu extends Trait {
 			//TODO
 			var mapData : MapData = {
 				atoms: [
-					{ features: [None] },
-					{ features: [Spawner] },
+					{ slots: 16 },
+					{ slots: 16 },
+					{ slots: 16 },
+					{ slots: 16 },
+					{ slots: 8, player: 0, electrons: 2  },
+					{ slots: 10, player: 0, electrons: 6, spawner: 1 },
+					{ slots: 8, player: 1, electrons: 2  },
+					{ slots: 10, player: 1, electrons: 6, spawner: 1 },
+					// { slots: 8, player: 1, electrons: 2, spawner: 2 },
+					// { slots: 16, player: 1, electrons: 6 },
+					// { slots: 16 },
+					// { slots: 16 },
+					// { slots: 16 },
+					// { slots: 16 },
 				]
 			}
 

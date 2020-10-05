@@ -220,13 +220,15 @@ class Atom extends Trait {
 		object.remove();
 	}
 
-	public function spawnElectrons( num : Int, features : Array<Electron.Feature>, ?cb: Void -> Void) {		
-		var numSpawned = 0;
+	public function spawnElectrons( num : Int, features : Array<Electron.Feature>, ?cb: Array<Electron> -> Void) {		
+		//var numSpawned = 0;
+		var spawned = new Array<Electron>();
 		function spawnNext() {			
-			spawnElectron(features, () -> {
-				if (++ numSpawned == num )	{
+			spawnElectron( features, e -> {
+				spawned.push( e );
+				if (spawned.length == num )	{
 					player.addToScore(Score.spawned);
-					if (cb != null) { cb(); }
+					if (cb != null) { cb( spawned ); }
 				} else{
 					spawnNext();
 				}
@@ -235,20 +237,18 @@ class Atom extends Trait {
 		spawnNext();
 	}
 
-	
-
-	public function spawnElectron(features : Array<Electron.Feature>, ?cb:Void->Void) {
+	public function spawnElectron(features : Array<Electron.Feature>, ?cb:Electron->Void) {
 		Scene.active.spawnObject('Electron', object, obj -> {	
 			var electron = new Electron(player, features);
 			electron.notifyOnInit(()-> {
 				electron.setAtom(this, getFirstFreeElectronIndex());		
 				var pos = getElectronPosition(electron);
-				var direction = new Vec4(pos.x,pos.y);
+				var direction = new Vec4(pos.x,pos.y,0,1).normalize();
 				electron.setPostion(pos);
 				electron.setDirection(direction);
 				if (electrons.length == 0) {selectElectron(electron);}
 				electrons.push(electron);
-				if (cb != null) cb();
+				if (cb != null) cb( electron );
 			});
 			obj.addTrait(electron);
 		});			
