@@ -1,5 +1,5 @@
 
-const RELEASE = true;
+const RELEASE = false;
 
 console.info(project.name+" "+project.version);
 
