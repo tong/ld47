@@ -75,16 +75,20 @@ class Player extends Trait {
 			navigateSelectionTowards(v);
 
 			if (gp.started('cross')) {
-				// TODO fire electron
 				atom.fire();
-			}
-			else if (gp.started('l1')) {
-				// TODO fire electron
+			} else if (gp.started('l1')) {
 				atom.selectNextElectron();
-			}
-			else if (gp.started('r1')) {
-				// TODO fire electron
+			} else if (gp.started('r1')) {
 				atom.selectPreviousElectron();
+			}
+
+			switch this.index {
+			case 0:
+				if (keyboard.started('n')) atom.selectPreviousElectron();
+				else if (keyboard.started('b')) atom.selectNextElectron();
+			case 1:
+				if (keyboard.started('q')) atom.selectPreviousElectron();
+				else if (keyboard.started('e')) atom.selectNextElectron();
 			}
 		}
 
