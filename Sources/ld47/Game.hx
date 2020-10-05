@@ -96,6 +96,7 @@ class Game extends Trait {
 			}
 		});
 
+		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		SoundEffect.play( 'game_start' );
 
 		Event.send('game_start');
@@ -124,6 +125,7 @@ class Game extends Trait {
 	}
 
 	public function finish(gameStatus: GameStatus){
+		if( finished ) return;
 		finished = true;
 		var winner = gameStatus.winner;
 		var others = gameStatus.others;
