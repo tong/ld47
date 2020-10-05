@@ -14,9 +14,7 @@ class Atom extends Trait {
 	var marker:Marker;
 
 	var lastIntervalledSpawn:Float;
-	var spawnTime:Float = 10.0;
-
-	var isSelected:Bool;
+	var spawnTime:Float = 10.0;	
 	var materials : haxe.ds.Vector<MaterialData>;
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var selectedElectron : Electron;
@@ -44,22 +42,6 @@ class Atom extends Trait {
 			
 
 			if( materials != null ) mesh.materials = materials;
-		//	if( player != null ) mesh.materials = player.materials;
-
-			/* Tween.to({
-				props: {x: scale, y: scale, z: scale},
-				duration: 0.5,
-				target: atomMesh.transform.scale,
-				//target: object.transform.scale,
-				ease: Ease.QuartOut,
-				tick: () -> {
-					atomMesh.transform.buildMatrix();
-				},
-				done: () -> {
-					// object.remove();
-				}
-			});
- 			*/
 
 			notifyOnUpdate(update);
 		});
@@ -69,11 +51,6 @@ class Atom extends Trait {
 
 	public function setPlayer(p:Player) {
 		player = p;
-		//trace(player.materials);
-		//if ( mesh != null  ) mesh.materials = player.materials;
-	/* 	if( player != null )
-			if ( mesh != null  ) mesh.materials = player.materials;
-		*/
 		if( player != null ) {
 			trace("SET  MATTERIAL Player"+player.index);
 			marker.show();
@@ -190,8 +167,7 @@ class Atom extends Trait {
 		}
 	}
 
-	public function select() {
-		isSelected = true;
+	public function select() {		
 		/* if (marker != null) {
 			// marker.object.visible = true;
 
@@ -201,8 +177,7 @@ class Atom extends Trait {
 		} */
 	}
 
-	public function deselect() {
-		isSelected = false;
+	public function deselect() {		
 		/* if (marker != null) {
 			marker.object.visible = false;
 		} */
