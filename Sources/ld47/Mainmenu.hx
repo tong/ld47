@@ -46,11 +46,18 @@ class Mainmenu extends Trait {
 			Scene.setActive( 'Credits' );
 			return;
 		}
+		if( kb.started( "enter" ) ) {
+			loadGame();
+			return;
+		}
 		for( i in 0...4 ) {
-			final gp = Input.getGamepad(i);
-			//if( gp.started( 'cross' ) ) {}
-			if( gp.started( 'options' ) ) {
+			var gp = Input.getGamepad(i);
+			if( gp.started( 'cross' ) ) {
 				loadGame();
+				return;
+			}
+			if( gp.started( 'share' ) ) {
+				Scene.setActive( 'Quit' );
 				return;
 			}
 		}
@@ -68,7 +75,7 @@ class Mainmenu extends Trait {
 		
 		ui.begin( g );
 		g.opacity = 1;
-		if( ui.window( Id.handle(), 32, 32, sw, sh, false ) ) {
+		if( ui.window( Id.handle(), 0, 0, sw, sh, false ) ) {
 			
 			//ui.ops.theme.FONT_SIZE = 120;
 			ui.text('SUPERPOSITION');

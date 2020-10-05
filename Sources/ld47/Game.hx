@@ -156,7 +156,6 @@ class Game extends Trait {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			var atom = new Atom( numSlots );
 			atom.notifyOnInit(()->{
-				if( atom.mesh == null ) trace("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
 				cb(atom);
 			});
 			obj.addTrait(atom);
@@ -170,9 +169,9 @@ class Game extends Trait {
 	}
 
 	function update() {
-		var keyboard = Input.getKeyboard();
+		var kb = Input.getKeyboard();
 		if (paused) {
-			if (keyboard.started("escape")) {
+			if (kb.started("escape")) {
 				resume();
 				return;
 			}
@@ -187,18 +186,17 @@ class Game extends Trait {
 			var now = Time.time();
 			time = now - timeStart;
 
-			if (keyboard.started("escape")) {
+			if (kb.started("escape")) {
 				pause();
 				return;
 			}
-			/*
-				for( gp in Input.gamepads ) {
-					if( gp.started('start') ) {
-						pause();
-						return;
-					}
+			for( i in 0...4 ) {
+				var gp = Input.getGamepad(i);
+				if( gp.started('share') ) {
+					pause();
+					return;
 				}
-			 */
+			}
 
 			var newFlyingElectrons = new Array<Electron>();
 
