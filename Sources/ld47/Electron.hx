@@ -24,10 +24,18 @@ class Electron extends Trait {
         this.player = player;
         this.feature = feature;
         notifyOnInit( () -> {
-            mesh = cast object.getChild('ElectronMesh');                 
-
+            mesh = cast object.getChild('ElectronMesh');
             DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
                 mesh.materials = m;                
+                switch feature {
+                case Spawner:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {	
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                default:
+                }
             }); 
         });
     }
