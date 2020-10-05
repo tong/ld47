@@ -1,12 +1,12 @@
 package ld47;
 
 class Score {
-	public var spawnedElectrons(default, default):Int = 0;
-	public var shotsFired(default, default):Int = 0;
-	public var shotsHitAtom(default, default):Int = 0;
-	public var shotsDestroyedByEnemyElectron(default, default):Int = 0;
-	public var ownershipsTaken(default, default):Int = 0;
-    public var ownershipsLost(default, default):Int = 0;
+	public var spawnedElectrons(default, null):Int = 0;
+	public var shotsFired(default, null):Int = 0;
+	public var shotsHitAtom(default, null):Int = 0;
+	public var shotsDestroyedByEnemyElectron(default, null):Int = 0;
+	public var ownershipsTaken(default, null):Int = 0;
+    public var ownershipsLost(default, null):Int = 0;
     
 	public function new(spawned:Int, fired:Int, hitAtom:Int, destroyed:Int, ownershipsTaken:Int, ownershipsLost:Int) {
 		spawnedElectrons = spawned;
@@ -17,7 +17,7 @@ class Score {
 		this.ownershipsLost = ownershipsLost;
 	}
 
-	public function combine(s:Score):Score {
+	public function add(s:Score):Score {
         return new Score(this.spawnedElectrons	+ s.spawnedElectrons, 
                         this.shotsFired	+ s.shotsFired, 
                         this.shotsHitAtom + s.shotsHitAtom,

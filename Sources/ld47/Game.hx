@@ -4,15 +4,16 @@ import ld47.Electron.Feature;
 import ld47.renderpath.Postprocess;
 
 typedef MapData = {
+	var name: String;
 	var atoms : Array<{
 		slots: Int,
+		position: Vec2,		
 		?player: Null<Int>,
 		?electrons: Int,
 		?spawner: Int,
-		//?electrons: Array<Array<Electron.Feature>>,
-		//features: Array<Electron.Feature>
 	}>;
 }
+
 typedef PlayerData = {
 	var name : String;
 	var enabled : Bool;
@@ -64,31 +65,13 @@ class Game extends Trait {
 				}
 			}
 
-			trace("Creating map "+mapData );
+			trace("Creating map " + mapData );
 			atoms = [];
 			spawnMap( mapData, () -> {
 				trace("Map spawned");
 				notifyOnUpdate(update);
 				start();
 			});
-
-			/*
-			spawnMap(10, true, () -> {
-				
-				atoms[0].setPlayer(players[0]);
-				atoms[1].setPlayer(players[1]);
-				atoms[2].setPlayer(players[1]);
-
-				atoms[0].spawnElectrons( 2, [Feature.Spawner], () -> {
-					atoms[1].spawnElectrons( 2, [Feature.Spawner], () -> {
-						atoms[2].spawnElectrons( 1, [Feature.None], () -> {
-							notifyOnUpdate(update);
-							start();
-						} );
-					} );
-				} );
-			});
-			*/
 		});
 	}
 
@@ -168,11 +151,10 @@ class Game extends Trait {
 	public function spawnMap( data : MapData, clear = true, cb:Void->Void) {
 		if (clear)
 			clearMap();
-		atoms = [];
-		var positions = getAtomPositions( data.atoms.length );
+		atoms = [];		
 		function spawnNext() {
 			var dat = data.atoms[atoms.length];
-			spawnAtom( positions[atoms.length], dat.slots, a -> {
+			spawnAtom( dat.position, dat.slots, a -> {
 				if( dat.player != null ) {
 					a.setPlayer(players[dat.player]);
 				}
@@ -337,41 +319,5 @@ class Game extends Trait {
 				return GameStatus.running(winners);
 			}
 		}
-	}
-
-	private function getAtomPositions(count:Int):Array<Vec2> {
-		trace('###########');
-		var vectors = new Array<Vec2>();
-		for (index in 0...count) {
-			var hasTooCloseExistingVector = false;
-			var vector = new Vec2();
-			var trys = 0;
-			do {
-				trys++;
-				vector = new Vec2((0.5 - Math.random()) * (worldSizeX - minAtomDistance/1.5) , (0.5 - Math.random()) * (worldSizeY - minAtomDistance/1.5));
-				hasTooCloseExistingVector = false;
-				for (existingVector in vectors) {
-					var distance = vector.distanceTo(existingVector);
-					// trace('compare ' + vector + ' to vector' + existingVector + ' distance = ' + distance);
-
-					if (distance <= minAtomDistance) {
-						// trace('too near');
-						hasTooCloseExistingVector = true;
-						break;
-					}
-				}
-
-				if (trys>50){
-					vectors = new Array<Vec2>();
-					hasTooCloseExistingVector=false;
-				}
-
-			} while (hasTooCloseExistingVector);
-
-			vectors.push(vector);
-			trace('added vector ' + vector + ' now we have' + vectors.length);
-		}
-
-		return vectors;
 	}
 }

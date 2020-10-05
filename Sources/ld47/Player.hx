@@ -25,7 +25,7 @@ class Player extends Trait {
 	}
 
 	public function addToScore(s:Score){			
-		score = score.combine(s);
+		score = score.add(s);
 		//trace('new score is ' + score);
 		return;
 	}

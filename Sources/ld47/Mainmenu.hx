@@ -8,7 +8,7 @@ class Mainmenu extends Trait {
 
 	var sound : AudioChannel;
 	var ui : Zui;
-	var playerData : Array<PlayerData>;
+	var playerData : Array<PlayerData>;	
 
 	public function new() {
 		super();
@@ -133,25 +133,10 @@ class Mainmenu extends Trait {
 		final numEnabledPlayers = getNumEnabledPlayers();
 		if( numEnabledPlayers >= 2 ) {
 
+			var mapStore = new MapStore(numEnabledPlayers);
+			var mapData = mapStore.getRandom();
+
 			//TODO
-			var mapData : MapData = {
-				atoms: [
-					{ slots: 16 },
-					{ slots: 16 },
-					{ slots: 16 },
-					{ slots: 16 },
-					{ slots: 8, player: 0, electrons: 2  },
-					{ slots: 10, player: 0, electrons: 6, spawner: 1 },
-					{ slots: 8, player: 1, electrons: 2  },
-					{ slots: 10, player: 1, electrons: 6, spawner: 1 },
-					// { slots: 8, player: 1, electrons: 2, spawner: 2 },
-					// { slots: 16, player: 1, electrons: 6 },
-					// { slots: 16 },
-					// { slots: 16 },
-					// { slots: 16 },
-					// { slots: 16 },
-				]
-			}
 
 			Scene.setActive( 'Game' );
 			var game = new Game( playerData, mapData );
