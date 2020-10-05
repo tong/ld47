@@ -87,11 +87,11 @@ class Game extends Trait {
 		cam.transform.buildMatrix();
 		
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
-		var values = { chromatic : 20.0, camZ: 0.0 };
+		var values = { chromatic : 20.0 };
 		Tween.to({
 			target: values,
 			duration: 0.6,
-			props: { chromatic: 0.01, camZ: 102.0 },
+			props: { chromatic: 0.01 },
 			ease: QuartOut,
 			tick: () -> Postprocess.chromatic_aberration_uniforms[0] = values.chromatic,
 		});
