@@ -34,20 +34,16 @@ class ResultMenu extends Trait {
 		g.end();
 		g.opacity = 1;
 		ui.begin(g);
-		// g.color = 0xff000000;
-		// g.fillRect( 0, 0, sw, sh );
 		if (ui.window(Id.handle(), 0, 0, sw, sh, false)) {
-			//ui.text('DURATION '+, Left);
-			if( status.hasWinner ) {
-				ui.text('WINNER: P'+status.winner.index, Left );
-			} else {
-				//ui.ops.theme.FONT_SIZE = 60;
+			if( !status.hasWinner ) {
 				ui.ops.theme.TEXT_COL = 0xffffffff;
 				ui.text('DRAW', Left );
 			}
 			for (i in 0...game.players.length) {
 				var player = game.players[i];
 				ui.ops.theme.TEXT_COL = player.color;
+				if( status.hasWinner )
+					ui.text('WINNER', Left );
 				ui.text('P' + (i + 1), Left);
 				//ui.ops.font = UI.font;
 				ui.text('SPAWNED ELECTRONS ' + player.score.spawnedElectrons, Left);
@@ -57,9 +53,6 @@ class ResultMenu extends Trait {
 				ui.text('OWNERSHIP TAKEN ' + player.score.ownershipsTaken, Left);
 				ui.text('OWNERSHIP LOST ' + player.score.ownershipsLost, Left);
 			}
-			/*   if( ui.button( 'RESTART', Left ) ) {
-				//game.restart();
-			}*/
 			if (ui.button('PROCEED', Left)) {
 				Scene.setActive('Mainmenu');
 			}
