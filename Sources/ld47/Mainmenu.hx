@@ -75,7 +75,7 @@ class Mainmenu extends Trait {
 		
 		ui.begin( g );
 		g.opacity = 1;
-		if( ui.window( Id.handle(), 0, 0, sw, sh, false ) ) {
+		if( ui.window( Id.handle(), 16, 16, sw, sh, false ) ) {
 			
 			//ui.ops.theme.FONT_SIZE = 120;
 			ui.text('SUPERPOSITION');
