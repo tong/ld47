@@ -11,10 +11,10 @@ class MapStore{
             maps.push( {
                 name: 'intro',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,0)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,0)  },
-                    {slots: 10, player: 2, electrons:1, spawner: 1, position: new Vec2(0,4)  },
-                    {slots: 10, player: 3, electrons:1, spawner: 1, position: new Vec2(0,-4)  },
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(-8,0)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(8,0)  },
+                    {slots: 10, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },
+                    {slots: 10, player: 3, electrons:[Electron.Feature.Spawner], position: new Vec2(0,-4)  },
                     { slots: 16, position: new Vec2(-8,4) },
                     { slots: 16, position: new Vec2(-8,-4) },
                     { slots: 16, position: new Vec2(8,4) },
@@ -29,9 +29,9 @@ class MapStore{
             maps.push( {
                 name: 'intro',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,0)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,0)  },
-                    {slots: 10, player: 2, electrons:1, spawner: 1, position: new Vec2(0,4)  },                    
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(-8,0)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(8,0)  },
+                    {slots: 10, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },                    
                     { slots: 16, position: new Vec2(-8,4) },
                     { slots: 16, position: new Vec2(-8,-4) },
                     { slots: 16, position: new Vec2(8,4) },
@@ -46,8 +46,8 @@ class MapStore{
             maps.push( {
                 name: 'intro',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,0)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,0)  },                    
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(-8,0)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(8,0)  },                    
                     { slots: 16, position: new Vec2(-8,4) },
                     { slots: 16, position: new Vec2(-8,-4) },
                     { slots: 16, position: new Vec2(8,4) },
@@ -59,8 +59,8 @@ class MapStore{
             maps.push( {
                 name: 'intro2',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,-4)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,4)  },                    
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner, Electron.Feature.None], position: new Vec2(-8,-4)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner, Electron.Feature.None], position: new Vec2(8,4)  },                    
                     { slots: 16, position: new Vec2(-8,0) },
                     { slots: 16, position: new Vec2(-8,4) },
                     { slots: 16, position: new Vec2(8,0) },
@@ -72,8 +72,8 @@ class MapStore{
             maps.push( {
                 name: 'hardcore',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,-4)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,4)  },                    
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner, Electron.Feature.Spawner], position: new Vec2(-8,-4)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner, Electron.Feature.Spawner], position: new Vec2(8,4)  },                    
                     { slots: 20, position: new Vec2(0,0) }
                 ]
             }); 
@@ -81,8 +81,8 @@ class MapStore{
             maps.push( {
                 name: 'be safe',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,0)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,0)  },                    
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(-8,0)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(8,0)  },                    
                     { slots: 16, position: new Vec2(-4,2) },
                     { slots: 16, position: new Vec2(-4,-2) },
                     { slots: 16, position: new Vec2(4,2) },
@@ -96,12 +96,12 @@ class MapStore{
             maps.push( {
                 name: 'mayhem',
                 atoms: [
-                    {slots: 10, player: 0, electrons:1, spawner: 1, position: new Vec2(-8,0)  },
-                    {slots: 10, player: 1, electrons:1, spawner: 1, position: new Vec2(8,0)  },                    
-                    { slots: 16, player: 1, electrons:1, position: new Vec2(-4,2) },
-                    { slots: 16, player: 1, electrons:1, position: new Vec2(-4,-2) },
-                    { slots: 16, player: 0, electrons:1, position: new Vec2(4,2) },
-                    { slots: 16, player: 0, electrons:1, position: new Vec2(4,-2) },
+                    {slots: 10, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(-8,0)  },
+                    {slots: 10, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(8,0)  },                    
+                    { slots: 16, player: 1, electrons:[Electron.Feature.None], position: new Vec2(-4,2) },
+                    { slots: 16, player: 1, electrons:[Electron.Feature.None], position: new Vec2(-4,-2) },
+                    { slots: 16, player: 0, electrons:[Electron.Feature.None], position: new Vec2(4,2) },
+                    { slots: 16, player: 0, electrons:[Electron.Feature.None], position: new Vec2(4,-2) },
                     { slots: 20, position: new Vec2(0,4) },
                     { slots: 20, position: new Vec2(0,0) },
                     { slots: 20, position: new Vec2(0,-4) }

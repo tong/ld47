@@ -9,8 +9,8 @@ typedef MapData = {
 		slots: Int,
 		position: Vec2,		
 		?player: Null<Int>,
-		?electrons: Int,
-		?spawner: Int,
+		?electrons: Array<Feature>,
+		
 	}>;
 }
 
@@ -167,13 +167,9 @@ class Game extends Trait {
 				if( dat.player != null ) {
 					a.setPlayer(players[dat.player]);
 				}
+				
 				if( dat.electrons != null ) {
-					a.spawnElectrons( dat.electrons, Feature.None, spawned -> {
-						if( dat.spawner != null ) {
-							for( i in 0...dat.spawner ) {
-								spawned[i].feature = Feature.Spawner;
-							}
-						}
+					a.spawnElectrons( dat.electrons , spawned -> {						
 						if (atoms.length == data.atoms.length ) cb() else spawnNext();
 					});
 				} else {

@@ -16,8 +16,8 @@ class Electron extends Trait {
     public var atomIndex(default,null): Int;
     public var mesh(default, null) : MeshObject;
     
-    public var velocity : Vec4;    
-    public var feature : Feature;
+    public var velocity(default, null) : Vec4;    
+    public var feature(default, null) : Feature;
 
     public function new( player : Player, feature : Feature)  {
         super();

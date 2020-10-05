@@ -127,7 +127,7 @@ class Atom extends Trait {
 				setPlayer(null);				
 			}
 			
-			if (rotationSpeed>0){
+			if (rotationSpeed<0){
 				selectElectron(getNextElectron(electron));
 			}
 			else{
@@ -162,7 +162,7 @@ class Atom extends Trait {
 
 			if (num > 0){
 				//trace('time for auto spawn of ' + num + ' electrons');
-				spawnElectrons(num, Electron.Feature.None);
+				spawnElectrons([Electron.Feature.None]);
 			}
 		}
 	}
@@ -202,13 +202,13 @@ class Atom extends Trait {
 		object.remove();
 	}
 
-	public function spawnElectrons( num : Int, feature : Electron.Feature, ?cb: Array<Electron> -> Void) {		
+	public function spawnElectrons(  features : Array<Electron.Feature>, ?cb: Array<Electron> -> Void) {		
 		//var numSpawned = 0;
 		var spawned = new Array<Electron>();
 		function spawnNext() {			
-			spawnElectron( feature, e -> {
+			spawnElectron( features[spawned.length], e -> {
 				spawned.push( e );
-				if (spawned.length == num )	{
+				if (spawned.length == features.length )	{
 					player.addToScore(Score.spawned);
 					if (cb != null) { cb( spawned ); }
 				} else{
@@ -366,6 +366,7 @@ class Atom extends Trait {
 
 	private function getElectronPosition(electron:Electron) :Vec2{
 		var angle = 2 * Math.PI * electron.atomIndex / numSlots;
+		if (rotationSpeed < 0) { angle=-angle; }
 		var orbitRadius = mesh.transform.dim.x/2 + electron.mesh.transform.dim.x*2;
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));
 	}
