@@ -73,7 +73,7 @@ class MapStore{
                     {slots: 6, player: 0, electrons:[Electron.Feature.Spawner], position: new Vec2(0,4)  },
                     {slots: 6, player: 1, electrons:[Electron.Feature.Spawner], position: new Vec2(-5,-4)  },
                     {slots: 6, player: 2, electrons:[Electron.Feature.Spawner], position: new Vec2(5,-4)  },                    
-                    { slots: 15, position: new Vec2(0,0) },
+                    { slots: 16, position: new Vec2(0,-1) },
                     { slots: 8, position: new Vec2(2,2) },
                     { slots: 8, position: new Vec2(-2,2) },
                     { slots: 8, position: new Vec2(-3,-2) },

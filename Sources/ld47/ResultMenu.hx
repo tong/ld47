@@ -49,6 +49,7 @@ class ResultMenu extends Trait {
 
 			if( status.hasWinner ) {
 				var player = status.winner;
+				ui.ops.theme.TEXT_COL = player.color;
 				ui.text('WINNER', Left );
 				printPlayer( player );
 				for (p in status.others ) printPlayer(p);

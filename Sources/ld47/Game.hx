@@ -133,12 +133,13 @@ class Game extends Trait {
 
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
+		trace('status others:' + gameStatus.others.length );
 		finished = true;
 		var winner = gameStatus.winner;
 		var others = gameStatus.others;
 		if (gameStatus.hasWinner){
 			var score = winner.score;
-			trace('the game is finished, winner is player ' + winner.index + ' with a score of ' + score);
+			trace('the game is finished, winner is player ' + winner.index + ' with a score of ' + score);						
 		} else {
 			trace('the game ended in a draw');
 		}
@@ -298,13 +299,14 @@ class Game extends Trait {
 	}
 
 	private function getGameStatus():GameStatus{
+		//trace('getGameStatus of ' + players.length + ' players');
 		if (atoms.filter(atom -> atom.electrons.length > 0).length == 0 && 
 			flyingElectrons.length == 0){
 			//no electrons left -> everybody looses
 			return GameStatus.draw(players);
 		}
 		else{
-			var winners = players;
+			var winners = players.slice(0);
 			var loosers = new Array<Player>();
 			for (player in players){
 				
@@ -317,6 +319,8 @@ class Game extends Trait {
 					loosers.push(player);
 				}					
 			}
+
+			//trace('sorted into ' + winners.length + ' and ' + loosers.length);
 
 			if (winners.length == 1){
 				return GameStatus.finished(winners[0],loosers);
