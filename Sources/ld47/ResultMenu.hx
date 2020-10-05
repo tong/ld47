@@ -35,17 +35,10 @@ class ResultMenu extends Trait {
 		g.opacity = 1;
 		ui.begin(g);
 		if (ui.window(Id.handle(), 0, 0, sw, sh, false)) {
-			if( !status.hasWinner ) {
-				ui.ops.theme.TEXT_COL = 0xffffffff;
-				ui.text('DRAW', Left );
-			}
-			for (i in 0...game.players.length) {
-				var player = game.players[i];
+
+			function printPlayer( player : Player ) {
 				ui.ops.theme.TEXT_COL = player.color;
-				if( status.hasWinner )
-					ui.text('WINNER', Left );
-				ui.text('P' + (i + 1), Left);
-				//ui.ops.font = UI.font;
+				ui.text('P' + player.index, Left);
 				ui.text('SPAWNED ELECTRONS ' + player.score.spawnedElectrons, Left);
 				ui.text('SHOTS FIRED ' + player.score.shotsFired, Left);
 				ui.text('SHOTS HIT ATOM ' + player.score.shotsHitAtom, Left);
@@ -53,6 +46,16 @@ class ResultMenu extends Trait {
 				ui.text('OWNERSHIP TAKEN ' + player.score.ownershipsTaken, Left);
 				ui.text('OWNERSHIP LOST ' + player.score.ownershipsLost, Left);
 			}
+
+			if( status.hasWinner ) {
+				var player = status.winner;
+				ui.text('WINNER', Left );
+				printPlayer( player );
+				for (p in status.others ) printPlayer(p);
+			} else {
+				for (p in status.others ) printPlayer(p);
+			}
+
 			if (ui.button('PROCEED', Left)) {
 				Scene.setActive('Mainmenu');
 			}
