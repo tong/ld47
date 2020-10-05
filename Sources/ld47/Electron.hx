@@ -17,12 +17,12 @@ class Electron extends Trait {
     public var mesh(default, null) : MeshObject;
     
     public var velocity : Vec4;    
-    public var features : Array<Feature>;
+    public var feature : Feature;
 
-    public function new( player : Player, features : Array<Feature>)  {
+    public function new( player : Player, feature : Feature)  {
         super();
         this.player = player;
-        this.features = features;
+        this.feature = feature;
         notifyOnInit( () -> {
             mesh = cast object.getChild('ElectronMesh');                 
 

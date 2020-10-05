@@ -80,10 +80,10 @@ class Atom extends Trait {
 			trace('we got a hit on a neutral atom');
 			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
-			spawnElectron(electron.features);
+			spawnElectron(electron.feature);
 		} else if (player == electron.player) {
 			trace('we got a hit on a own atom');
-			spawnElectron(electron.features);
+			spawnElectron(electron.feature);
 
 		} else {
 			trace('we got a hit on a enemy atom');
@@ -156,13 +156,13 @@ class Atom extends Trait {
 		if (Game.active.time - lastIntervalledSpawn >= spawnTime) {			
 			lastIntervalledSpawn = Game.active.time;
 			
-			var spawnerCount = electrons.filter((e:Electron) -> return e.features.filter(f -> f == Electron.Feature.Spawner).length > 0).length;
+			var spawnerCount = electrons.filter((e:Electron) -> return e.feature == Electron.Feature.Spawner).length;
 			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));				
 			//trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
 
 			if (num > 0){
 				//trace('time for auto spawn of ' + num + ' electrons');
-				spawnElectrons(num, [Electron.Feature.None]);
+				spawnElectrons(num, Electron.Feature.None);
 			}
 		}
 	}
@@ -202,11 +202,11 @@ class Atom extends Trait {
 		object.remove();
 	}
 
-	public function spawnElectrons( num : Int, features : Array<Electron.Feature>, ?cb: Array<Electron> -> Void) {		
+	public function spawnElectrons( num : Int, feature : Electron.Feature, ?cb: Array<Electron> -> Void) {		
 		//var numSpawned = 0;
 		var spawned = new Array<Electron>();
 		function spawnNext() {			
-			spawnElectron( features, e -> {
+			spawnElectron( feature, e -> {
 				spawned.push( e );
 				if (spawned.length == num )	{
 					player.addToScore(Score.spawned);
@@ -219,9 +219,9 @@ class Atom extends Trait {
 		spawnNext();
 	}
 
-	public function spawnElectron(features : Array<Electron.Feature>, ?cb:Electron->Void) {
+	public function spawnElectron(feature : Electron.Feature, ?cb:Electron->Void) {
 		Scene.active.spawnObject('Electron', object, obj -> {	
-			var electron = new Electron(player, features);
+			var electron = new Electron(player, feature);
 			electron.notifyOnInit(()-> {
 				electron.setAtom(this, getFirstFreeElectronIndex());		
 				var pos = getElectronPosition(electron);

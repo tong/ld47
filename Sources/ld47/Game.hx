@@ -159,10 +159,10 @@ class Game extends Trait {
 					a.setPlayer(players[dat.player]);
 				}
 				if( dat.electrons != null ) {
-					a.spawnElectrons( dat.electrons, [Feature.None], spawned -> {
+					a.spawnElectrons( dat.electrons, Feature.None, spawned -> {
 						if( dat.spawner != null ) {
 							for( i in 0...dat.spawner ) {
-								spawned[i].features = [Feature.Spawner];
+								spawned[i].feature = Feature.Spawner;
 							}
 						}
 						if (atoms.length == data.atoms.length ) cb() else spawnNext();
