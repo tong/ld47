@@ -47,7 +47,7 @@ class HUD extends Trait {
             g.color = color;
             g.fillRect( px, 0, sh*percentAtoms, height );
             
-            var text = 'P$i A'+atoms.length;
+            var text = 'P'+(i+1)+' A'+atoms.length;
 
            /*  g.color = 0xff000000;
             for( i in 0...atoms.length ) {
