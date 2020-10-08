@@ -126,11 +126,6 @@ class Game extends Trait {
 		}
 	}
 
-	public function end() {
-		Event.send('game_end');
-		Scene.setActive("Mainmenu");
-	}
-
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
 		trace('status others:' + gameStatus.others.length );
@@ -143,9 +138,9 @@ class Game extends Trait {
 		} else {
 			trace('the game ended in a draw');
 		}
+		Scene.setActive( 'Result' );
 		var menu = new ResultMenu( gameStatus );
 		Scene.active.root.addTrait( menu );
-		//end();
 	}
 
 	public function clearMap() {

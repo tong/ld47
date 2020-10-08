@@ -49,7 +49,7 @@ class PauseMenu extends Trait {
 				game.start();
 			} */
             if( ui.button( 'EXIT', Left ) ) {
-				game.end();
+				Scene.setActive( 'Mainmenu' );
 			}
 		}
 		ui.end();
