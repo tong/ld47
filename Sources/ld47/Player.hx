@@ -1,13 +1,13 @@
 package ld47;
 
 class Player extends Trait {
-	public static final COLORS : Array<Color> = [0xff268BD2, 0xffDC322F, 0xff859900, 0xffD33682];
+	public static final COLORS:Array<Color> = [0xff268BD2, 0xffDC322F, 0xff859900, 0xffD33682];
 
 	public var index(default, null):Int;
 	public var color(default, null):Color;
 	public var materials(default, null):haxe.ds.Vector<MaterialData>;
 	public var atom(default, null):Atom;
-	public var score(default,null):Score;
+	public var score(default, null):Score;
 
 	public function new(index:Int) {
 		super();
@@ -17,23 +17,22 @@ class Player extends Trait {
 		notifyOnInit(() -> {
 			DataTools.loadMaterial('Game', 'Player$index', m -> {
 				materials = m;
-				var mesh : MeshObject = cast object;
-                mesh.materials = m;
+				var mesh:MeshObject = cast object;
+				mesh.materials = m;
 			});
 			notifyOnUpdate(update);
 		});
 	}
 
-	public function addToScore(s:Score){			
+	public function addToScore(s:Score) {
 		score = score.add(s);
-		//trace('new score is ' + score);
+		// trace('new score is ' + score);
 		return;
 	}
 
-
 	function update() {
 		var gp = Input.getGamepad(index);
-		var keyboard = Input.getKeyboard();
+		var kb = Input.getKeyboard();
 		if (gp.started('circle')) {
 			// TODO select electron
 		} else {
@@ -49,26 +48,26 @@ class Player extends Trait {
 
 			switch this.index {
 				case 0:
-					if (keyboard.started('left'))
+					if (kb.started('left'))
 						v.x = -1;
-					else if (keyboard.started('right'))
+					else if (kb.started('right'))
 						v.x = 1;
-					if (keyboard.started('up'))
+					if (kb.started('up'))
 						v.y = 1;
-					else if (keyboard.started('down'))
+					else if (kb.started('down'))
 						v.y = -1;
-					if (keyboard.started('m'))
+					if (kb.started('m'))
 						atom.fire();
 				case 1:
-					if (keyboard.started('a'))
+					if (kb.started('a'))
 						v.x = -1;
-					else if (keyboard.started('d'))
+					else if (kb.started('d'))
 						v.x = 1;
-					if (keyboard.started('w'))
+					if (kb.started('w'))
 						v.y = 1;
-					else if (keyboard.started('s'))
+					else if (kb.started('s'))
 						v.y = -1;
-					if (keyboard.started('f'))
+					if (kb.started('f'))
 						atom.fire();
 			}
 
@@ -83,12 +82,16 @@ class Player extends Trait {
 			}
 
 			switch this.index {
-			case 0:
-				if (keyboard.started('n')) atom.selectPreviousElectron();
-				else if (keyboard.started('b')) atom.selectNextElectron();
-			case 1:
-				if (keyboard.started('q')) atom.selectPreviousElectron();
-				else if (keyboard.started('e')) atom.selectNextElectron();
+				case 0:
+					if (kb.started('n'))
+						atom.selectPreviousElectron();
+					else if (kb.started('b'))
+						atom.selectNextElectron();
+				case 1:
+					if (kb.started('q'))
+						atom.selectPreviousElectron();
+					else if (kb.started('e'))
+						atom.selectNextElectron();
 			}
 		}
 
@@ -98,13 +101,15 @@ class Player extends Trait {
 				selectAtom(atoms[0]);
 			}
 		}
-		if (atom != null) {
-			final t = atom.object.transform;
-			final s = 1.3;
-			final scaleFactor = atom.scale * s;
-			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
-			object.transform.buildMatrix();
-		}
+		/*
+			if (atom != null) {
+				final t = atom.object.transform;
+				final s = 1.3;
+				final scaleFactor = atom.scale * s;
+				object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
+				object.transform.buildMatrix();
+			}
+		 */
 	}
 
 	public function selectAtom(newAtom:Atom) {
@@ -114,13 +119,13 @@ class Player extends Trait {
 		atom = newAtom;
 		atom.select();
 
-		final loc = atom.object.transform.world.getLoc(); 
+		final loc = atom.object.transform.world.getLoc();
 		final s = 1.3;
 		final scaleFactor = atom.scale * s;
 
 		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
 		object.transform.buildMatrix();
-		
+
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},
 			duration: 0.5,
@@ -130,6 +135,7 @@ class Player extends Trait {
 				object.transform.buildMatrix();
 			},
 			done: () -> {
+				// SoundEffect.play('player_move');
 			}
 		});
 		Tween.to({
@@ -144,42 +150,31 @@ class Player extends Trait {
 		if (atom == null || direction.x == 0 && direction.y == 0) {
 			return;
 		}
-
-		if (atom != null) {
-			var shootDirection = new Vec2(direction.x, direction.y).normalize();
-			trace('navigate too ' + shootDirection);
-
-			var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
-
-			if (atoms.length > 0) {
-				var bestAtom = null;
-				var bestScore = 0.0;
-				var bestDistance = 0.0;
-
-				for (a in atoms) {
-					var locA = a.object.transform.loc;
-					var locAtom = atom.object.transform.loc;
-					var distance = locAtom.distanceTo(locA);
-					var direction = new Vec2(locA.x - locAtom.x, locA.y - locAtom.y).normalize();
-					var score = Math.pow(direction.dot(shootDirection),1) / (distance+10);					
-
-					if (score > bestScore) {						
-						bestScore = score;
-						bestAtom = a;
-						bestDistance = distance;
-					}
+		var shootDirection = new Vec2(direction.x, direction.y).normalize();
+		trace('navigate too ' + shootDirection);
+		var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
+		if (atoms.length > 0) {
+			var bestAtom = null;
+			var bestScore = 0.0;
+			var bestDistance = 0.0;
+			for (a in atoms) {
+				var locA = a.object.transform.loc;
+				var locAtom = atom.object.transform.loc;
+				var distance = locAtom.distanceTo(locA);
+				var direction = new Vec2(locA.x - locAtom.x, locA.y - locAtom.y).normalize();
+				var score = Math.pow(direction.dot(shootDirection), 1) / (distance + 10);
+				if (score > bestScore) {
+					bestScore = score;
+					bestAtom = a;
+					bestDistance = distance;
 				}
-
-				
-
-				if (bestAtom != null) {
-					trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore + ' and a distance of ' + bestDistance);
-					selectAtom(bestAtom);
-				}
-				else
-				{
-					trace('no good atom to navigate to');
-				}
+			}
+			if (bestAtom != null) {
+				trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore
+					+ ' and a distance of ' + bestDistance);
+				selectAtom(bestAtom);
+			} else {
+				trace('no good atom to navigate to');
 			}
 		}
 	}
