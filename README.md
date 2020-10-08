@@ -2,8 +2,8 @@
 
 [LD47](https://ldjam.com/events/ludum-dare/47/superposition) ~ Stuck in a loop
 
-Web version: http://games.disktree.net/superposition/
-Desktop version: https://github.com/tong/ld47/releases
+* Web version: http://games.disktree.net/superposition/
+* Desktop version: https://github.com/tong/ld47/releases
 
 
 ## HowTo
