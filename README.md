@@ -33,3 +33,7 @@ If you hit an atom you either own it if it is not owned by other players, or des
 * **B**: select prev electron
 * **N**: select next electron
 * **M**: fire electron
+
+---
+
+![](cover.jpg)
