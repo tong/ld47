@@ -136,6 +136,24 @@ class MapStore {
                     { slots: 16, position: new Vec2(7,-3) },
                     { slots: 20, position: new Vec2(0,0) }
                 ]
+            },
+            {
+                name: 'empty',
+                atoms: [
+                    { slots: 10, player: 0, electrons: [Spawner,None,None,None], position: new Vec2(-4,4)  },
+                    { slots: 10, player: 1, electrons: [Spawner,None,None,None], position: new Vec2(4,4)  },
+                    { slots: 10, player: 2, electrons: [Spawner,None,None,None], position: new Vec2(-4,-4)  },
+                    { slots: 10, player: 3, electrons: [Spawner,None,None,None], position: new Vec2(4,-4)  },
+                ]
+            },
+            {
+                name: 'no_mercy',
+                atoms: [
+                    { slots: 10, player: 0, electrons: [None,None,None,None,None,None,None,None], position: new Vec2(-4,4)  },
+                    { slots: 10, player: 1, electrons: [None,None,None,None,None,None,None,None], position: new Vec2(4,4)  },
+                    { slots: 10, player: 2, electrons: [None,None,None,None,None,None,None,None], position: new Vec2(-4,-4)  },
+                    { slots: 10, player: 3, electrons: [None,None,None,None,None,None,None,None], position: new Vec2(4,-4)  },
+                ]
             }
         ]
     ];
