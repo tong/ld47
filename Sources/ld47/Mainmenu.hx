@@ -6,9 +6,10 @@ import zui.*;
 import zui.Themes;
 class Mainmenu extends Trait {
 
+	static var playerData : Array<PlayerData>;	
+
 	var ui : Zui;
 	var sound : AudioChannel;
-	var playerData : Array<PlayerData>;	
 
 	public function new() {
 		super();
@@ -16,11 +17,11 @@ class Mainmenu extends Trait {
 
 			Log.info( 'Mainmenu' );
 			
-			playerData = [for(i in 0...4) {
-				name: 'P'+(i+1),
-				enabled: i < 2,
-				color: Player.COLORS[i]
-			}];
+			if( playerData == null ) playerData = [for(i in 0...4) {
+					name: 'P'+(i+1),
+					enabled: i < 2,
+					color: Player.COLORS[i]
+				}];
 
 			ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
 			notifyOnUpdate( update );
