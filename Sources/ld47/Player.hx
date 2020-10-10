@@ -96,20 +96,18 @@ class Player extends Trait {
 		}
 
 		if (atom == null) {
-			var atoms = Game.active.atoms.filter(a -> return a.player == this);
+			final atoms = Game.active.atoms.filter(a -> return a.player == this);
 			if (atoms.length > 0) {
 				selectAtom(atoms[0]);
 			}
 		}
-		/*
-			if (atom != null) {
-				final t = atom.object.transform;
-				final s = 1.3;
-				final scaleFactor = atom.scale * s;
-				object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
-				object.transform.buildMatrix();
-			}
-		 */
+		if (atom != null) {
+			final t = atom.object.transform;
+			final s = 1.3;
+			final scaleFactor = atom.scale * s;
+			object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = scaleFactor;
+			object.transform.buildMatrix();
+		}
 	}
 
 	public function selectAtom(newAtom:Atom) {
@@ -151,7 +149,7 @@ class Player extends Trait {
 			return;
 		}
 		var shootDirection = new Vec2(direction.x, direction.y).normalize();
-		trace('navigate too ' + shootDirection);
+		trace('navigate to $shootDirection');
 		var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
 		if (atoms.length > 0) {
 			var bestAtom = null;
@@ -170,11 +168,10 @@ class Player extends Trait {
 				}
 			}
 			if (bestAtom != null) {
-				trace('navigate from ' + atom.object.transform.loc + ' too best atom at ' + bestAtom.object.transform.loc + ' with a score of ' + bestScore
-					+ ' and a distance of ' + bestDistance);
+				trace('navigate from ${atom.object.transform.loc} to best atom at ${bestAtom.object.transform.loc} with a score of $bestScore and a distance of $bestDistance');
 				selectAtom(bestAtom);
 			} else {
-				trace('no good atom to navigate to');
+				trace('no atom found to navigate to');
 			}
 		}
 	}
