@@ -3,23 +3,25 @@ package ld47;
 import iron.data.MaterialData;
 
 class Atom extends Trait {
+
 	public var rotationSpeed:Float;
 	public var numSlots:Int;
 	public var electrons:Array<Electron> = [];
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
 	public var mesh(default, null):MeshObject;
+	public var spawnTime : Float;
 
 	var marker:Marker;
 	var lastIntervalledSpawn:Float;
-	var spawnTime:Float = 10.0;
 	var materials:haxe.ds.Vector<MaterialData>;
 	var defaultMaterials:haxe.ds.Vector<MaterialData>;
 	var selectedElectron:Electron;
 
-	public function new(numSlots:Int) {
+	public function new( numSlots : Int, spawnTime = 10.0 ) {
 		super();
 		this.numSlots = numSlots;
+		this.spawnTime = spawnTime;
 		var random = Math.random();
 		this.rotationSpeed = Math.pow(-1, Math.floor(10 * random)) * (1 + random) / numSlots / 20; // * size;
 		this.scale = numSlots / 20;
@@ -238,7 +240,7 @@ class Atom extends Trait {
 				selectElectron(getPreviousElectron(selectedElectron));
 			}
 		} else {
-			selectElectron(null);
+			selectElectron();
 		}
 	}
 
@@ -250,21 +252,19 @@ class Atom extends Trait {
 				selectElectron(getPreviousElectron(selectedElectron));
 			}
 		} else {
-			selectElectron(null);
+			selectElectron();
 		}
 	}
 
-	private function getNextElectron(electron:Electron):Electron {
+	function getNextElectron(electron:Electron):Electron {
 		trace('getNextElectron for index ' + electron.position);
-		if (electrons.length == 0) {
-			return null;
-		} else if (electrons.length == 1) {
-			return electrons[0];
-		} else {
+		switch electrons.length {
+		case 0: return null;
+		case 1: return electrons[0];
+		default:
 			var index = electron.position;
 			do {
-				index++;
-				if (index > numSlots) {
+				if (++index > numSlots) {
 					index = 0;
 				}
 				for (e in electrons) {
@@ -275,7 +275,7 @@ class Atom extends Trait {
 		}
 	}
 
-	private function getPreviousElectron(electron:Electron):Electron {
+	function getPreviousElectron(electron:Electron):Electron {
 		trace('getPreviousElectron for index ' + electron.position);
 		if (electrons.length == 0) {
 			return null;
@@ -295,12 +295,11 @@ class Atom extends Trait {
 			} while (true);
 		}
 	}
-
-	private function selectElectron(electron:Electron) {
+ 
+	function selectElectron( ?electron : Electron ) {
 		var loc = new Vec4();
 		var rot = new Quat();
 		selectedElectron = electron;
-
 		if (electron != null) {
 			loc = electron.object.transform.loc;
 			rot = electron.object.transform.rot;
@@ -308,56 +307,40 @@ class Atom extends Trait {
 		} else {
 			trace('change selection to null ' + electron);
 		}
-
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},
 			duration: 0.5,
 			target: marker.object.transform.loc,
 			ease: Ease.QuartOut,
-			tick: () -> {
-				object.transform.buildMatrix();
-			},
-			done: () -> {}
+			tick: object.transform.buildMatrix
 		});
-
 		Tween.to({
-			props: {
-				x: rot.x,
-				y: rot.y,
-				z: rot.z,
-				w: rot.w
-			},
+			props: { x: rot.x, y: rot.y, z: rot.z, w: rot.w },
 			duration: 0.5,
 			target: marker.object.transform.rot,
 			ease: Ease.QuartOut,
-			tick: () -> {
-				object.transform.buildMatrix();
-			},
-			done: () -> {}
+			tick: object.transform.buildMatrix
 		});
 	}
 
-	private function getFirstFreeElectronIndex():Null<Int> {
+	function getFirstFreeElectronIndex() : Null<Int> {
 		for (i in 0...numSlots) {
 			var isFree = true;
-			for (electron in electrons) {
-				if (electron.position == i) {
+			for (e in electrons) {
+				if (e.position == i) {
 					isFree = false;
 					break;
 				}
 			}
-			if (isFree) {
+			if (isFree)
 				return i;
-			}
 		}
 		return null;
 	}
 
-	private function getElectronPosition(electron:Electron):Vec2 {
+	function getElectronPosition( electron : Electron ) : Vec2 {
 		var angle = 2 * Math.PI * electron.position / numSlots;
-		if (rotationSpeed < 0) {
-			angle = -angle;
-		}
+		if( rotationSpeed < 0 ) angle = -angle;
 		var orbitRadius = mesh.transform.dim.x / 2 + electron.mesh.transform.dim.x * 2;
 		return new Vec2(orbitRadius * Math.sin(angle), orbitRadius * Math.cos(angle));
 	}
