@@ -6,8 +6,8 @@ import zui.*;
 import zui.Themes;
 class Mainmenu extends Trait {
 
-	var sound : AudioChannel;
 	var ui : Zui;
+	var sound : AudioChannel;
 	var playerData : Array<PlayerData>;	
 
 	public function new() {
@@ -26,13 +26,11 @@ class Mainmenu extends Trait {
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
 			
-			/*
-			#if ld47_release
+			/* #if ld47_release
 			Data.getSound( 'mainmenu_ambient.ogg', s -> {
 				sound = Audio.play( s, true, true );
 			});
-			#end
-			*/
+			#end */
 		});
 	}
 
@@ -67,11 +65,10 @@ class Mainmenu extends Trait {
 
 		final sw = System.windowWidth();
 		final sh = System.windowHeight();
+		final colorEnabled = 0xffffffff;
+		final colorDisabled = 0xff505050;
 		
 		g.end();
-		
-		//g.color = 0xff000000;
-		//g.fillRect( 0, 0, sw, sh );
 		
 		ui.begin( g );
 		g.opacity = 1;
@@ -82,35 +79,30 @@ class Mainmenu extends Trait {
 			
 			ui.row( [ 1/20, 1/20, 1/20, 1/20 ]);
 			
-			//ui.ops.theme.TEXT_COL = playerData[0].color;
-			//playerData[0].enabled = ui.check(Id.handle( { selected: playerData[0].enabled } ), playerData[0].name );
-			ui.ops.theme.BUTTON_TEXT_COL = playerData[0].enabled ? playerData[0].color : 0xff505050;
-			//ui.ops.theme.BUTTON_TEXT_COL =  playerData[0].color;
-			//g.opacity = playerData[0].enabled ? 1.0 : 0.5;
-			//g.opacity = 0.5;
+			ui.ops.theme.BUTTON_TEXT_COL = playerData[0].enabled ? playerData[0].color : colorDisabled;
 			if( ui.button( playerData[0].name, Left ) ) playerData[0].enabled = !playerData[0].enabled;
 			
-			ui.ops.theme.BUTTON_TEXT_COL = playerData[1].enabled ? playerData[1].color : 0xff505050;
+			ui.ops.theme.BUTTON_TEXT_COL = playerData[1].enabled ? playerData[1].color : colorDisabled;
 			//g.opacity = 1.0;
 			if( ui.button( playerData[1].name, Left ) ) playerData[1].enabled = !playerData[1].enabled;
 			
-			ui.ops.theme.BUTTON_TEXT_COL = playerData[2].enabled ? playerData[2].color : 0xff505050;
+			ui.ops.theme.BUTTON_TEXT_COL = playerData[2].enabled ? playerData[2].color : colorDisabled;
 			if( ui.button( playerData[2].name, Left ) ) playerData[2].enabled = !playerData[2].enabled;
 			
-			ui.ops.theme.BUTTON_TEXT_COL = playerData[3].enabled ? playerData[3].color : 0xff505050;
+			ui.ops.theme.BUTTON_TEXT_COL = playerData[3].enabled ? playerData[3].color : colorDisabled;
 			if( ui.button( playerData[3].name, Left ) ) playerData[3].enabled = !playerData[3].enabled;
 			
-			ui.ops.theme.BUTTON_TEXT_COL = 0xffffffff;
+			ui.ops.theme.BUTTON_TEXT_COL = colorEnabled;
 			
-			final canPlay = getNumEnabledPlayers() >= 2;
-			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = 0xff999999;
+			final canPlay = playerData.filter( p -> return p.enabled ).length >= 2;
+			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = colorDisabled;
 			if( ui.button( 'PLAY', Left ) ) loadGame();
-			ui.ops.theme.BUTTON_TEXT_COL = 0xffffffff;
+			ui.ops.theme.BUTTON_TEXT_COL = colorEnabled;
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();
 
-		g.color = 0xffffffff;
+		g.color = colorEnabled;
 		g.font = UI.font;
 		g.fontSize = Std.int(UI.fontSize*0.8);
 		var text = 'v'+Main.projectVersion;
@@ -120,24 +112,12 @@ class Mainmenu extends Trait {
 		g.begin( false );
 	}
 
-	function getNumEnabledPlayers() : Int {
-		var n = 0;
-		for( p in playerData ) if( p.enabled ) n++;
-		return n;
-	}
-
 	function loadGame() {
-
 		if( sound != null ) sound.stop();
-		
-		final numEnabledPlayers = getNumEnabledPlayers();
+		final numEnabledPlayers = playerData.filter( p -> return p.enabled ).length;
 		if( numEnabledPlayers >= 2 ) {
-
 			var mapStore = new MapStore(numEnabledPlayers);
 			var mapData = mapStore.getRandom();
-
-			//TODO
-
 			Scene.setActive( 'Game' );
 			var game = new Game( playerData, mapData );
 			Scene.active.root.addTrait( game );
