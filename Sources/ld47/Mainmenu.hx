@@ -114,12 +114,12 @@ class Mainmenu extends Trait {
 
 	function loadGame() {
 		if( sound != null ) sound.stop();
-		final numEnabledPlayers = playerData.filter( p -> return p.enabled ).length;
-		if( numEnabledPlayers >= 2 ) {
-			var mapStore = new MapStore(numEnabledPlayers);
-			var mapData = mapStore.getRandom();
+		final numPlayers = playerData.filter( p -> return p.enabled ).length;
+		if( numPlayers >= 2 ) {
+			final maps = MapStore.MAPS[numPlayers];
+			final mapData = maps[Std.int(maps.length*Math.random())];
 			Scene.setActive( 'Game' );
-			var game = new Game( playerData, mapData );
+			final game = new Game( playerData, mapData );
 			Scene.active.root.addTrait( game );
 		}
 	}
