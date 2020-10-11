@@ -53,7 +53,11 @@ class Electron extends Trait {
     public function update() {
         if( Game.active.paused )
             return;
-        object.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+        switch feature {
+        case Spawner:
+            object.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+        default:
+        }
         if (velocity != null) {
             object.transform.translate(velocity.x/50, velocity.y/50,0);
         }
