@@ -5,8 +5,6 @@ import zui.Themes;
 
 class ResultMenu extends Trait {
 
-	//public var visible = false;
-
 	var status : GameStatus;
 	var ui : Zui;
 
@@ -22,8 +20,24 @@ class ResultMenu extends Trait {
 			theme.ELEMENT_H = 26;
 			ui = new Zui({font: UI.fontTitle, theme: theme});
 			//Event.add('game_end', handleGameEnd);
+			notifyOnUpdate( update );
 			notifyOnRender2D(render);
 		});
+	}
+
+	function update() {
+		final kb = Input.getKeyboard();
+		if( kb.started("enter") || kb.started("escape") || kb.started("space") ) {
+			Scene.setActive( 'Mainmenu' );
+			return;
+		}
+		for( i in 0...4 ) {
+			var gp = Input.getGamepad(i);
+			if( gp.started( 'cross' ) ) {
+				Scene.setActive('Mainmenu');
+				return;
+			}
+		}
 	}
 
 	function render(g:kha.graphics2.Graphics) {
