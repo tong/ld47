@@ -15,7 +15,6 @@ class Electron extends Trait {
     public var atom(default,null) : Atom;
     public var position(default,null): Int;
     public var mesh(default, null) : MeshObject;
-    
     public var velocity(default, null) : Vec4;    
     public var feature(default, null) : Feature;
 
@@ -36,6 +35,7 @@ class Electron extends Trait {
                         var m : MeshObject = cast obj;
                         m.materials = mesh.materials;
                     });
+                case None:
                 default:
                 }
             }); 
@@ -51,10 +51,13 @@ class Electron extends Trait {
     }
 
     public function update() {
-        if (velocity != null)
-            {
-                object.transform.translate(velocity.x/50, velocity.y/50,0);
-            }
+        if( Game.active.paused )
+            return;
+        object.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+        if (velocity != null) {
+            object.transform.translate(velocity.x/50, velocity.y/50,0);
+        }
+        object.transform.buildMatrix();
     } 
 
     public function setPostion( v : Vec2 ) {
@@ -64,7 +67,6 @@ class Electron extends Trait {
 		object.transform.buildMatrix();
     }
 
-
     public function setAtom(a:Atom, index:Int) {
         trace('attach electron to atom of player ' + a.player.index + ' at index ' + index);
         atom = a;
@@ -72,23 +74,18 @@ class Electron extends Trait {
         velocity = null;
     } 
 
-    public function setVelocity(v:Vec4)
-    {
-        trace('fire electron of in direction ' + v);
+    public function setVelocity(v:Vec4) {
+        trace('fire electron: $v');
         setDirection(v);
         atom = null;
-        velocity=v;
+        velocity = v;
     }
 
     public function setDirection(dir:Vec4){
         var angleX = Math.atan( dir.z / dir.y );
-
         if( dir.y < 0 ) angleX = -angleX;
-        
         var angleZ = Math.atan( dir.y / dir.x ) - HALF_PI;
         if( dir.x < 0 ) angleZ += Math.PI;
-        
-
         object.transform.setRotation( angleX, 0, angleZ );
         object.transform.buildMatrix();
     }
