@@ -16,15 +16,19 @@ class Boot extends Trait {
            
                 var keyboard = Input.getKeyboard();
                 var mouse = Input.getMouse();
-                //var gamepad = Input.gamepads[0];
     
                 Data.getImage( 'process.png', img -> {
     
                     notifyOnUpdate( () -> {
-                        if( keyboard.started( "space" ) || keyboard.started( "return" )
-                            || mouse.started("left") ) {
-                       // || gamepad.started("a") ) {
+                        if( keyboard.started( "space" ) || keyboard.started( "return" ) || mouse.started("left") ) {
                             proceed();
+                        }
+                        for( i in 0...4 ) {
+                            var gp = Input.getGamepad(i);
+                            if( gp.started( 'cross' ) ) {
+                                proceed();
+                                return;
+                            }
                         }
                     });
     
