@@ -65,7 +65,7 @@ class Game extends Trait {
 				}
 			}
 
-			trace("Creating map " + mapData );
+			trace( 'Spawning map ${mapData.name}' );
 			atoms = [];
 			spawnMap( mapData, () -> {
 				trace("Map spawned");
@@ -221,6 +221,8 @@ class Game extends Trait {
 					return;
 				}
 			}
+
+			for( p in players ) p.update();
 
 			var gameStatus = getGameStatus();
 			if (gameStatus.isFinished){
