@@ -4,9 +4,10 @@ import iron.data.MaterialData;
 
 class Atom extends Trait {
 
-	public var index : Int;
+	public final index : Int;
+	public final numSlots : Int;
+
 	public var rotationSpeed:Float;
-	public var numSlots:Int;
 	public var electrons:Array<Electron> = [];
 	public var player(default, null):Player;
 	public var scale(default, null):Float;
@@ -18,7 +19,6 @@ class Atom extends Trait {
 	var materials:haxe.ds.Vector<MaterialData>;
 	var defaultMaterials:haxe.ds.Vector<MaterialData>;
 	var selectedElectron:Electron;
-	//var sound : kha.Sound;
 	var sound : AudioChannel;
 
 	public function new( index : Int, numSlots : Int, spawnTime = 10.0 ) {
@@ -49,7 +49,7 @@ class Atom extends Trait {
 				mesh.materials = materials;
 			
 			var soundName = 'atom_'+(index+1);
-			trace('Loading sound $soundName');
+			//trace('Loading sound $soundName');
 			SoundEffect.play( soundName, true, true, 0.1, a -> {
 				sound = a;
 			} );
