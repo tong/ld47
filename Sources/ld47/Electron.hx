@@ -93,4 +93,8 @@ class Electron extends Trait {
         object.transform.setRotation( angleX, 0, angleZ );
         object.transform.buildMatrix();
     }
+
+    public function destroy() {
+        //....
+    }
 }

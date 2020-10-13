@@ -126,6 +126,11 @@ class Game extends Trait {
 		}
 	}
 
+	public function abort() {
+		for( a in atoms ) a.destroy();
+		Scene.setActive( 'Mainmenu' );
+	}
+
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
 		trace('status others:' + gameStatus.others.length );
@@ -138,6 +143,7 @@ class Game extends Trait {
 		} else {
 			trace('the game ended in a draw');
 		}
+		for( a in atoms ) a.destroy();
 		Scene.setActive( 'Result' );
 		var menu = new ResultMenu( gameStatus );
 		Scene.active.root.addTrait( menu );
@@ -178,7 +184,7 @@ class Game extends Trait {
 	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.visible = true;
-			var atom = new Atom( numSlots );
+			var atom = new Atom( atoms.length, numSlots );
 			atom.notifyOnInit(()->{
 				cb(atom);
 			});
