@@ -22,8 +22,9 @@ class Atom extends Trait {
 		super();
 		this.numSlots = numSlots;
 		this.spawnTime = spawnTime;
-		var random = Math.random();
-		this.rotationSpeed = Math.pow(-1, Math.floor(10 * random)) * (1 + random) / numSlots / 20; // * size;
+		//var random = Math.random();
+		//this.rotationSpeed = Math.pow(-1, Math.floor(10 * random)) * (1 + random) / numSlots / 20; // * size;
+		this.rotationSpeed = 0.01; //numSlots * 0.001;
 		this.scale = numSlots / 20;
 		lastIntervalledSpawn = Game.active.time;
 
