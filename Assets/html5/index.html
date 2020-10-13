@@ -13,11 +13,19 @@
 				margin: 0;
 				padding: 0;
 				font-family: monospace;
-				background: #ffffff;
+				background: #101010;
 				color: #fff;
 			}
 			canvas#viewport {
 				margin: 0 auto;
+				min-width: 1920px;
+				max-width: 1920px;
+				min-height: 1080px;
+				max-height: 1080px;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
 				display: block;
 				outline: none;
 				user-select: none;
