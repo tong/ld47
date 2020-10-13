@@ -122,7 +122,7 @@ class Game extends Trait {
 			paused = false;
 			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
-			Event.send('game_pause');
+			Event.send('game_resume');
 		}
 	}
 
