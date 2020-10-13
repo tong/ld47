@@ -65,6 +65,13 @@ class MapStore {
                     { slots: 20, position: new Vec2(0,0) },
                     { slots: 20, position: new Vec2(0,-3) }
                 ]
+            },
+            {
+                name: 'showdown',
+                atoms: [
+                    { slots: 10, player: 0, electrons:[Spawner,None,None], position: new Vec2(-7,0)  },
+                    { slots: 10, player: 1, electrons:[Spawner,None,None], position: new Vec2(7,0)  },                    
+                ]
             }
         ],
         3 => [
