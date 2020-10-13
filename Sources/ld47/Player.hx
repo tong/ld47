@@ -63,14 +63,6 @@ class Player extends Trait {
 
 		switch index {
 		case 0:
-			if (kb.started('left')) v.x = -1;
-			else if (kb.started('right')) v.x = 1;
-			else if (kb.started('up')) v.y = 1;
-			else if (kb.started('down')) v.y = -1;
-			if (kb.started('n')) atom.selectPreviousElectron();
-			else if (kb.started('b')) atom.selectNextElectron();
-			else if (kb.started('m')) atom.fire();
-		case 1:
 			if (kb.started('a')) v.x = -1;
 			else if (kb.started('d')) v.x = 1;
 			else if (kb.started('w')) v.y = 1;
@@ -78,8 +70,14 @@ class Player extends Trait {
 			if (kb.started('q')) atom.selectPreviousElectron();
 			else if (kb.started('e')) atom.selectNextElectron();
 			else if (kb.started('f')) atom.fire();
-		default:
-			trace('Keyboard controls only work for P1 + P2');
+		case 1:
+			if (kb.started('left')) v.x = -1;
+			else if (kb.started('right')) v.x = 1;
+			else if (kb.started('up')) v.y = 1;
+			else if (kb.started('down')) v.y = -1;
+			if (kb.started('n')) atom.selectPreviousElectron();
+			else if (kb.started('b')) atom.selectNextElectron();
+			else if (kb.started('m')) atom.fire();
 		}
 		
 		if( v.x != 0 || v.y != 0 ) navigateSelectionTowards(v);
