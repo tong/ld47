@@ -4,7 +4,10 @@ import iron.data.MaterialData;
 
 enum Feature {
     None;
+    Bomber;
     Spawner;
+    UpSpeeder;
+    DownSpeeder;
 }
 
 class Electron extends Trait {
@@ -41,6 +44,27 @@ class Electron extends Trait {
                         //var m : MeshObject = cast obj;
                         //m.materials = mesh.materials;
                     });
+                case Bomber:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'BomberElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                case UpSpeeder:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'UpSpeederElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                case DownSpeeder:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'DownSpeederElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
                 default:
                     mesh = cast object.getChild('ElectronMesh');
                     mesh.materials = m; 
@@ -55,33 +79,6 @@ class Electron extends Trait {
                 ease: Ease.ElasticOut,
                 tick: object.transform.buildMatrix
             });
-
-            /*
-            mesh = cast object.getChild('ElectronMesh');
-            mesh.visible = true;
-            DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
-                mesh.materials = m;                
-                switch feature {
-                case Spawner:
-                    mesh.visible = false;
-                    Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {
-                        obj.visible = true;
-                        var m : MeshObject = cast obj;
-                        m.materials = mesh.materials;
-                    });
-                case None:
-                default:
-                }
-            }); 
-            object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.01;
-            Tween.to({
-                props: {x: 1, y: 1, z: 1},
-                duration: 1.0,
-                target: object.transform.scale,
-                ease: Ease.ElasticOut,
-                tick: object.transform.buildMatrix
-            });
-            */
         });
     }
 

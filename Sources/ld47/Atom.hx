@@ -33,7 +33,7 @@ class Atom extends Trait {
 		notifyOnInit(() -> {
 
 			mesh = cast object.getChild('AtomMesh');
-			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
+			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;	
 			mesh.transform.buildMatrix();
 			mesh.visible = true;
 
@@ -99,19 +99,19 @@ class Atom extends Trait {
 			spawnElectron(electron.feature);
 		} else {
 			trace('hit on enemy atom');
-			var e = electrons.pop();
-			Tween.to({
-				props: {x: 0.01, y: 0.01, z: 0.01},
-				duration: 1.0,
-				target: e.mesh.transform.scale,
-				ease: Ease.ElasticOut,
-				tick: e.mesh.transform.buildMatrix,
-				done: () -> e.object.remove()
-			});
-			if (electrons.length == 0) {
-				player.addToScore(Score.lost);
-				setPlayer(null);
+			if (electron.feature == Electron.Feature.Bomber){
+				hitByFeatureBomber();
 			}
+			if (electron.feature == Electron.Feature.UpSpeeder){
+				hitByFeatureUpSpeeder();
+			}
+			if (electron.feature == Electron.Feature.DownSpeeder){
+				hitByFeatureDownSpeeder();
+			}
+			else {				
+				hitByFeatureNone();				
+			}
+			
 		}
 	}
 
@@ -154,7 +154,12 @@ class Atom extends Trait {
 		if (Game.active.paused)
 			return;
 
-		object.transform.rotate(new Vec4(0, 0, 1), rotationSpeed);
+		var upSpeeders = electrons.filter((e:Electron)-> return e.feature == Electron.Feature.UpSpeeder).length;
+		var downSpeeders = electrons.filter((e:Electron)-> return e.feature == Electron.Feature.DownSpeeder).length;
+		var modifiedRotationSpeed = rotationSpeed*Math.pow(1.1,upSpeeders)*Math.pow(0.8,downSpeeders);
+
+
+		object.transform.rotate(new Vec4(0, 0, 1), modifiedRotationSpeed);
 
 		for (electron in electrons) electron.update();
 
@@ -164,8 +169,17 @@ class Atom extends Trait {
 			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
 			// trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
 			if (num > 0) {
-				// trace('time for auto spawn of ' + num + ' electrons');
-				spawnElectrons([Electron.Feature.None]);
+				var features = new Array<Electron.Feature>();
+				for (i in 0...num){
+					switch Math.floor(Math.random()*3){
+						case 0: features.push(Electron.Feature.Bomber);
+						case 1: features.push(Electron.Feature.UpSpeeder);
+						case 2: features.push(Electron.Feature.DownSpeeder);
+						default: features.push(Electron.Feature.None);
+					}
+				}
+				
+				spawnElectrons(features);
 			}
 		}
 	}
@@ -267,6 +281,39 @@ class Atom extends Trait {
 		} else {
 			selectElectron();
 		}
+	}
+
+	function hitByFeatureNone(){
+		var e = electrons.pop();
+		Tween.to({
+			props: {x: 0.01, y: 0.01, z: 0.01},
+			duration: 1.0,
+			target: e.mesh.transform.scale,
+			ease: Ease.ElasticOut,
+			tick: e.mesh.transform.buildMatrix,
+			done: () -> e.object.remove()
+		});
+
+		if (electrons.length == 0) {
+			player.addToScore(Score.lost);
+			setPlayer(null);
+		}
+	}
+
+	function hitByFeatureBomber(){
+		while (electrons.length>0){
+			hitByFeatureNone();
+		}	
+	}
+
+	function hitByFeatureUpSpeeder(){		
+		rotationSpeed = rotationSpeed*1.2;//the rotationspeed of this atom increases permanently
+		hitByFeatureNone();
+	}
+
+	function hitByFeatureDownSpeeder(){		
+		rotationSpeed = rotationSpeed*0.8;//the rotationspeed of this atom increases permanently
+		hitByFeatureNone();
 	}
 
 	function getNextElectron(electron:Electron):Electron {
