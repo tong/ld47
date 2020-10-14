@@ -2,5 +2,5 @@ root = true
 
 [*.hx]
 indent_style = tab
-indent_size = 4
+indent_size = 1
 trim_trailing_whitespace = false
