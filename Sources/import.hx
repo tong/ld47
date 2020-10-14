@@ -7,14 +7,7 @@ import sys.FileSystem;
 import sys.io.File;
 #else
 
-#if kha_html5
-import js.lib.Promise;
-#end
-
 import armory.system.Event;
-// import armory.trait.internal.CanvasScript;
-// import armory.trait.physics.PhysicsWorld;
-// import armory.trait.physics.RigidBody;
 
 import iron.Scene;
 import iron.Trait;
@@ -59,6 +52,8 @@ import tron.Music;
 import tron.PhysicsTools;
 import tron.SpawnTools;
 import tron.sys.Path;
+
+import ld47.renderpath.Postprocess;
 
 using StringTools;
 using tron.PhysicsTools;
