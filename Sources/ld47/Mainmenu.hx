@@ -20,6 +20,7 @@ class Mainmenu extends Trait {
 		super();
 		notifyOnInit( () -> {
 			Log.info( 'Mainmenu' );
+			SoundEffect.play( 'game_ambient_3', true, true, 1.0, s -> sound = s );
 			ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
@@ -55,6 +56,9 @@ class Mainmenu extends Trait {
 				return;
 			}
 		}
+		notifyOnRemove( () -> {
+            if( sound != null ) sound.stop();
+        });
 	}
 
 	function render2D( g : kha.graphics2.Graphics ) {
@@ -103,7 +107,7 @@ class Mainmenu extends Trait {
 			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
 			//if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
 			//if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
-			if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
+			//if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();

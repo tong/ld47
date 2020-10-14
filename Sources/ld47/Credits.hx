@@ -5,10 +5,12 @@ import zui.*;
 class Credits extends Trait {
 
     var ui : Zui;
+    var sound : AudioChannel;
 
 	public function new() {
         super();
         Log.info( 'Credits' );
+        SoundEffect.play( 'game_ambient_1', true, true, 1.0, s -> sound = s );
         ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
         var sw : Int = null, sh : Int = null;
         notifyOnRender2D( g -> {
@@ -37,6 +39,9 @@ class Credits extends Trait {
                     return;
                 }
             }
+        });
+        notifyOnRemove( () -> {
+            if( sound != null ) sound.stop();
         });
     }
 }

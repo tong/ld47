@@ -37,7 +37,7 @@ class Boot extends Trait {
                         g.begin( false );
                     });
                     #if !kha_html5
-                    Tween.timer( 0.5, proceed );
+                    Tween.timer( 0.2, proceed );
                     #end
                 });
             });
