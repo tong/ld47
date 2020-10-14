@@ -20,25 +20,30 @@ typedef PlayerData = {
 	var color : Color;
 }
 
+@:enum abstract GameEvent(String) to String {
+	var Start;
+	var Pause;
+	var Resume;
+	var End;
+}
+
 class Game extends Trait {
+
 	public static var active(default, null):Game;
 
 	public var time(default, null):Float;
 	public var paused(default, null) = false;
 	public var finished(default, null) = false;
-	
-	public var worldSizeX(default,null) : Float;
-	public var worldSizeY(default,null) : Float;
-
+	public var worldSize(default,null) : Vec2;
 	public var players(default, null):Array<Player>;
 	public var atoms(default, null):Array<Atom>;
 	public var flyingElectrons(default,null):Array<Electron>;
 
 	var timeStart:Null<Float>;
 	var timePauseStart:Null<Float>;
-
 	var minAtomDistance = 3;
 	var atomContainer:Object;
+	var soundAmbient : AudioChannel;
 
 	public function new( playerData : Array<PlayerData>, mapData : MapData ) {
 		super();
@@ -48,12 +53,12 @@ class Game extends Trait {
 
 			flyingElectrons = [];
 			players = [];
+			atoms = [];
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 
-			var ground = Scene.active.getMesh('Ground');
-			worldSizeX = Math.floor( ground.transform.dim.x*100 ) / 100;
-			worldSizeY = Math.floor( ground.transform.dim.y*100 ) / 100;
-
+			final ground = Scene.active.getMesh('Ground');
+			worldSize = new Vec2( Math.floor( ground.transform.dim.x*100 ) / 100, Math.floor( ground.transform.dim.y*100 ) / 100 );
+			
 			for( i in 0...playerData.length ) {
 				var raw = playerData[i];
 				if( raw.enabled ) {
@@ -64,9 +69,8 @@ class Game extends Trait {
 					players.push( player );
 				}
 			}
-
+			
 			trace( 'Spawning map ${mapData.name}' );
-			atoms = [];
 			spawnMap( mapData, () -> {
 				trace("Map spawned");
 				notifyOnUpdate(update);
@@ -76,8 +80,8 @@ class Game extends Trait {
 	}
 
 	public function start() {
-
-		trace('Starting game');
+		
+		trace('Start game '+players.length);
 		
 		time = 0;
 		timeStart = Time.time();
@@ -87,11 +91,12 @@ class Game extends Trait {
 		cam.transform.buildMatrix();
 		
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
+
 		var values = { chromatic : 20.0 };
 		Tween.to({
 			target: values,
 			duration: 0.6,
-			props: { chromatic: 0.01 },
+			props: { chromatic: 0.06 },
 			ease: QuartOut,
 			tick: () -> Postprocess.chromatic_aberration_uniforms[0] = values.chromatic,
 		});
@@ -104,35 +109,45 @@ class Game extends Trait {
 		});
 
 		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-		SoundEffect.play( 'game_start' );
+		
+		SoundEffect.play( 'game_start', 0.3 );
+		SoundEffect.play( 'game_ambient_'+1, true, true, 0.8, s -> soundAmbient = s );
 
-		Event.send('game_start');
+		Event.send( GameEvent.Start );
 	}
 
 	public function pause() {
 		if (!finished && !paused) {
+			trace('Pause game');
 			paused = true;
 			timePauseStart = Time.time();
-			Event.send('game_pause');
+			Postprocess.colorgrading_shadow_uniforms[0] = [0.0, 0.0, 0.0];
+			Event.send(GameEvent.Pause);
 		}
 	}
 
 	public function resume() {
 		if (!finished && paused) {
+			trace('Resume game');
 			paused = false;
 			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
-			Event.send('game_resume');
+			Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+			Event.send(GameEvent.Resume);
 		}
 	}
 
 	public function abort() {
+		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+		if( soundAmbient != null ) soundAmbient.stop();
 		for( a in atoms ) a.destroy();
+		Event.send( GameEvent.End );
 		Scene.setActive( 'Mainmenu' );
 	}
-
+	
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
+		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		trace('status others:' + gameStatus.others.length );
 		finished = true;
 		var winner = gameStatus.winner;
@@ -143,7 +158,9 @@ class Game extends Trait {
 		} else {
 			trace('the game ended in a draw');
 		}
+		if( soundAmbient != null ) soundAmbient.stop();
 		for( a in atoms ) a.destroy();
+		Event.send( GameEvent.End );
 		Scene.setActive( 'Result' );
 		var menu = new ResultMenu( gameStatus );
 		Scene.active.root.addTrait( menu );
@@ -151,10 +168,7 @@ class Game extends Trait {
 
 	public function clearMap() {
 		if (atoms != null) {
-			for (a in atoms) {
-				a.destroy(); // TODO
-				// a.object.remove();
-			}
+			for (a in atoms) a.destroy();
 		}
 		atoms = [];
 	}
@@ -169,7 +183,6 @@ class Game extends Trait {
 				if( dat.player != null ) {
 					a.setPlayer(players[dat.player]);
 				}
-				
 				if( dat.electrons != null ) {
 					a.spawnElectrons( dat.electrons , spawned -> {						
 						if (atoms.length == data.atoms.length ) cb() else spawnNext();
@@ -181,6 +194,7 @@ class Game extends Trait {
 		}
 		spawnNext();
 	}
+
 	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.visible = true;
@@ -194,13 +208,10 @@ class Game extends Trait {
 		});
 	}
 
-	public function destroyAtom() {
-		// TODO
-	}
-
 	function update() {
 		var kb = Input.getKeyboard();
 		if (paused) {
+			/*
 			if (kb.started("escape")) {
 				resume();
 				return;
@@ -212,11 +223,12 @@ class Game extends Trait {
 					return;
 				}
 			}
+			*/
 		} else {
 			var now = Time.time();
 			time = now - timeStart;
 
-			if (kb.started("escape")) {
+			/* if (kb.started("escape")) {
 				pause();
 				return;
 			}
@@ -227,7 +239,7 @@ class Game extends Trait {
 					return;
 				}
 			}
-
+ */
 			for( p in players ) p.update();
 
 			var gameStatus = getGameStatus();
@@ -283,25 +295,23 @@ class Game extends Trait {
 					}
 					if (!electronOK) {break;}
 				}
-				if (worldSizeX/2 < Math.abs(locElectron.x) || 
-					worldSizeY/2 < Math.abs(locElectron.y)){
+				if (worldSize.x/2 < Math.abs(locElectron.x) || 
+					worldSize.y/2 < Math.abs(locElectron.y)){
 						//the electron leaves the game area
 						electronOK=false;
 						object.removeChild(electron.object);
 						electron.object.remove();		
-						SoundEffect.play( 'electron_death', 0.4 );				
+						SoundEffect.play( 'electron_death', 0.1 );				
 				}
 				if (electronOK){
 					newFlyingElectrons.push(electron);
 				}
 			}
 			flyingElectrons=newFlyingElectrons;
-
-			
 		}
 	}
 
-	private function getGameStatus():GameStatus{
+	function getGameStatus():GameStatus{
 		//trace('getGameStatus of ' + players.length + ' players');
 		if (atoms.filter(atom -> atom.electrons.length > 0).length == 0 && 
 			flyingElectrons.length == 0){
@@ -312,7 +322,6 @@ class Game extends Trait {
 			var winners = players.slice(0);
 			var loosers = new Array<Player>();
 			for (player in players){
-				
 				if (atoms.filter(atom -> atom.player != null && 
 										 atom.player == player &&
 										 atom.electrons.length > 0).length == 0 &&
@@ -322,13 +331,10 @@ class Game extends Trait {
 					loosers.push(player);
 				}					
 			}
-
 			//trace('sorted into ' + winners.length + ' and ' + loosers.length);
-
-			if (winners.length == 1){
+			if(winners.length == 1){
 				return GameStatus.finished(winners[0],loosers);
-			}
-			else{
+			} else {
 				return GameStatus.running(winners);
 			}
 		}

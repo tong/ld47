@@ -27,11 +27,9 @@ class Mainmenu extends Trait {
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
 			
-			/* #if ld47_release
-			Data.getSound( 'mainmenu_ambient.ogg', s -> {
-				sound = Audio.play( s, true, true );
-			});
-			#end */
+			//#if ld47_release
+			//SoundEffect.play( 'game_ambient_2', true, true, 0.9, s -> sound = s );
+			//#end 
 		});
 	}
 
@@ -106,9 +104,9 @@ class Mainmenu extends Trait {
 		g.color = colorEnabled;
 		g.font = UI.font;
 		g.fontSize = Std.int(UI.fontSize*0.8);
-		var text = 'v'+Main.projectVersion;
-		var textWidth = UI.font.width( g.fontSize, text );
-		g.drawString( text, sw - (textWidth + g.fontSize/2), sh-(g.fontSize*1.5) ); 
+		final text = 'v'+Main.projectVersion;
+		final textWidth = UI.font.width( g.fontSize, text );
+		g.drawString( text, sw-(textWidth + (g.fontSize*1.2)), sh-(g.fontSize*2) ); 
 		
 		g.begin( false );
 	}

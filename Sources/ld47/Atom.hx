@@ -33,6 +33,7 @@ class Atom extends Trait {
 		lastIntervalledSpawn = Game.active.time;
 
 		notifyOnInit(() -> {
+
 			mesh = cast object.getChild('AtomMesh');
 			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;
 			mesh.transform.buildMatrix();
@@ -48,11 +49,14 @@ class Atom extends Trait {
 			if (materials != null)
 				mesh.materials = materials;
 			
+			
+			/*
 			var soundName = 'atom_'+(index+1);
 			//trace('Loading sound $soundName');
-			SoundEffect.play( soundName, true, true, 0.1, a -> {
+			SoundEffect.play( soundName, true, true, 0.6, a -> {
 				sound = a;
 			} );
+			 */
 
 			notifyOnUpdate(update);
 		});
@@ -75,7 +79,6 @@ class Atom extends Trait {
 			marker.hide();
 			materials = null;
 			mesh.materials = defaultMaterials;
-			// mesh.materials = new haxe.ds.Vector(1);
 		}
 	}
 
@@ -87,15 +90,15 @@ class Atom extends Trait {
 
 	public function hit(electron:Electron) {
 		if (player == null) {
-			trace('we got a hit on a neutral atom');
+			trace('hit on neutral atom');
 			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
 			spawnElectron(electron.feature);
 		} else if (player == electron.player) {
-			trace('we got a hit on a own atom');
+			trace('hit on own atom');
 			spawnElectron(electron.feature);
 		} else {
-			trace('we got a hit on a enemy atom');
+			trace('hit on enemy atom');
 			var e = electrons.pop();
 			Tween.to({
 				props: {x: 0.01, y: 0.01, z: 0.01},
@@ -140,10 +143,10 @@ class Atom extends Trait {
 			}
 
 			selectElectron(getNextElectron(electron));
-			SoundEffect.play('electron_fire');
+			SoundEffect.play('electron_fire_p'+(index+1), 0.2 );
 
 		} else {
-			SoundEffect.play('electron_fire_deny');
+			SoundEffect.play('electron_fire_deny', 0.2 );
 		}
 	}
 
@@ -318,9 +321,9 @@ class Atom extends Trait {
 		if (electron != null) {
 			loc = electron.object.transform.loc;
 			rot = electron.object.transform.rot;
-			trace('change selection to electron at ' + loc + ' with rot=' + rot);
+			trace('change selection to electron at $loc with rot: $rot');
 		} else {
-			trace('change selection to null ' + electron);
+			trace('change electron selection to ' + electron);
 		}
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},

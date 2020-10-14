@@ -1,8 +1,8 @@
 package ld47;
 
+import ld47.Game;
 import zui.*;
 import zui.Themes;
-import ld47.renderpath.Postprocess;
 
 class PauseMenu extends Trait {
 
@@ -16,20 +16,43 @@ class PauseMenu extends Trait {
 			theme.FILL_WINDOW_BG = false;
 			theme.FILL_BUTTON_BG = false;
 			ui = new Zui( { font : UI.fontTitle, theme: theme } );
-			Event.add( 'game_pause', handlePause );
+			Event.add( GameEvent.Pause, () -> {
+				notifyOnRender2D( render );
+			} );
+			Event.add( GameEvent.Resume, () -> {
+				removeRender2D( render );
+			} );
+			Event.add( GameEvent.End, () -> {
+				removeRender2D( render );
+			} );
+			/*
 			notifyOnRemove( () -> {
-				Event.remove( 'game_pause' );
+				Event.remove( GameEvent.Pause );
+				Event.remove( GameEvent.Resume );
 			});
+			*/
+			notifyOnUpdate( update );
 		});
 	}
 
-	function handlePause() {
-		if( Game.active.paused ) {
-			Postprocess.colorgrading_shadow_uniforms[0] = [0.0, 0.0, 0.0];
-			notifyOnRender2D( render );
-		} else {
-			Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-			removeRender2D( render );
+	function update() {
+		var kb = Input.getKeyboard();
+		if( kb.started("escape") ) {
+			if( Game.active.paused ) {
+				Game.active.resume();
+			} else {
+				Game.active.pause();
+			}
+		}
+		for (i in 0...4) {
+			var gp = Input.getGamepad(i);
+			if (gp.started('start')) {
+				if( Game.active.paused ) {
+					Game.active.resume();
+				} else {
+					Game.active.pause();
+				}
+			}
 		}
 	}
 
@@ -41,7 +64,6 @@ class PauseMenu extends Trait {
 		g.opacity = 1;
 		ui.begin( g );
 		if( ui.window( Id.handle(), 16, 16, 400, 200, false ) ) {
-			//ui.row( [ 1/2, 1/2 ]);
 			if( ui.button( 'RESUME', Left ) ) {
 				game.resume();
             }
