@@ -4,7 +4,10 @@ import iron.data.MaterialData;
 
 enum Feature {
     None;
+    Bomber;
     Spawner;
+    UpSpeeder;
+    DownSpeeder;
 }
 
 class Electron extends Trait {
@@ -31,6 +34,27 @@ class Electron extends Trait {
                 case Spawner:
                     mesh.visible = false;
                     Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                case Bomber:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'BomberElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                case UpSpeeder:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'UpSpeederElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                    });
+                case DownSpeeder:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'DownSpeederElectronMesh', object, obj -> {
                         obj.visible = true;
                         var m : MeshObject = cast obj;
                         m.materials = mesh.materials;
