@@ -1,32 +1,43 @@
 package ld47;
 
-import kha.graphics2.Graphics;
+import zui.*;
 
 class Credits extends Trait {
 
+    var ui : Zui;
+
 	public function new() {
-		super();
-		notifyOnInit( () -> {
-            final sw = System.windowWidth();
-            final sh = System.windowHeight();
-            final keyboard = Input.getKeyboard();
-            var text = "Developed by shadow & tong @ disktree.net";
-            notifyOnUpdate( () -> {
-                if( keyboard.started('escape') ) {
-                    Scene.setActive( 'Mainmenu' );
+        super();
+        Log.info( 'Credits' );
+        ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
+        var sw : Int = null;
+        var sh : Int = null;
+        notifyOnRender2D( g -> {
+            sw = System.windowWidth();
+		    sh = System.windowHeight();
+            g.end();
+            ui.begin( g );
+            if( ui.window( Id.handle(), 16, 16, sw, sh, false ) ) {
+                ui.text( 'Developed by shadow & tong at disktree.net'.toUpperCase() );
+                ui.text( 'Sound by fred'.toUpperCase() );
+            }
+            ui.end();
+            g.begin(false);
+        });
+        var kb = Input.getKeyboard();
+        var gp : Gamepad = null;
+        notifyOnUpdate( () -> {
+            if( kb.started('escape') ) {
+                Scene.setActive( 'Mainmenu' );
+                return;
+            }
+            for( i in 0...4 ) {
+                gp = Input.getGamepad(i);
+                if( gp.started( 'cross' ) ) {
+                    Scene.setActive( 'Quit' );
+                    return;
                 }
-            });
-            notifyOnRender2D( g -> {
-                g.end();
-                g.color = 0xff000000;
-                g.fillRect( 0, 0, sw, sh );
-                g.font = UI.font;
-                g.fontSize = UI.fontSize;
-                g.color = 0xffffffff;
-                g.drawString( text, UI.fontSize, UI.fontSize ); 
-                g.begin( false );
-            });
-		});
+            }
+        });
     }
-    
 }
