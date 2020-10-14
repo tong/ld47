@@ -1,7 +1,6 @@
 package ld47;
 
 import ld47.Electron.Feature;
-import ld47.renderpath.Postprocess;
 
 typedef MapData = {
 	var name: String;
@@ -10,7 +9,7 @@ typedef MapData = {
 		position: Vec2,		
 		?player: Null<Int>,
 		?electrons: Array<Feature>,
-		
+		//?rotationSpeed : Float //TODO
 	}>;
 }
 
@@ -20,24 +19,26 @@ typedef PlayerData = {
 	var color : Color;
 }
 
+/*
 @:enum abstract GameEvent(String) to String {
 	var Start;
 	var Pause;
 	var Resume;
 	var End;
 }
+*/
 
 class Game extends Trait {
 
 	public static var active(default, null):Game;
 
-	public var time(default, null):Float;
+	public var time(default,null):Float;
 	public var paused(default, null) = false;
 	public var finished(default, null) = false;
 	public var worldSize(default,null) : Vec2;
-	public var players(default, null):Array<Player>;
-	public var atoms(default, null):Array<Atom>;
-	public var flyingElectrons(default,null):Array<Electron>;
+	public var players(default, null):Array<Player> = [];
+	public var atoms(default, null):Array<Atom> = [];
+	public var flyingElectrons(default,null):Array<Electron> = [];
 
 	var timeStart:Null<Float>;
 	var timePauseStart:Null<Float>;
@@ -48,12 +49,12 @@ class Game extends Trait {
 	public function new( playerData : Array<PlayerData>, mapData : MapData ) {
 		super();
 		Game.active = this;
+		Log.info('Game');
 		notifyOnInit(() -> {
-			Log.info('Game');
 
-			flyingElectrons = [];
-			players = [];
-			atoms = [];
+			//flyingElectrons = [];
+			//players = [];
+			//atoms = [];
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 
 			final ground = Scene.active.getMesh('Ground');
@@ -73,10 +74,10 @@ class Game extends Trait {
 			trace( 'Spawning map ${mapData.name}' );
 			spawnMap( mapData, () -> {
 				trace("Map spawned");
-				notifyOnUpdate(update);
 				start();
 			});
 		});
+		notifyOnUpdate(update);
 	}
 
 	public function start() {
@@ -90,9 +91,11 @@ class Game extends Trait {
 		cam.transform.loc.z = 0;
 		cam.transform.buildMatrix();
 		
-		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
+		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+		Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 
-		var values = { chromatic : 20.0 };
+		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
+		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0]};
 		Tween.to({
 			target: values,
 			duration: 0.6,
@@ -107,13 +110,11 @@ class Game extends Trait {
 			ease: QuartOut,
 			tick: cam.transform.buildMatrix,
 		});
-
-		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		
 		SoundEffect.play( 'game_start', 0.3 );
 		SoundEffect.play( 'game_ambient_'+1, true, true, 0.8, s -> soundAmbient = s );
 
-		Event.send( GameEvent.Start );
+//		Event.send( GameEvent.Start );
 	}
 
 	public function pause() {
@@ -122,10 +123,11 @@ class Game extends Trait {
 			paused = true;
 			timePauseStart = Time.time();
 			Postprocess.colorgrading_shadow_uniforms[0] = [0.0, 0.0, 0.0];
-			Event.send(GameEvent.Pause);
+			Postprocess.colorgrading_shadow_uniforms[1] = [0.3, 0.3, 0.3];
+//			Event.send(GameEvent.Pause);
 		}
 	}
-
+	
 	public function resume() {
 		if (!finished && paused) {
 			trace('Resume game');
@@ -133,21 +135,23 @@ class Game extends Trait {
 			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
 			Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-			Event.send(GameEvent.Resume);
+			Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
+//			Event.send(GameEvent.Resume);
 		}
 	}
-
+	
 	public function abort() {
 		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		if( soundAmbient != null ) soundAmbient.stop();
 		for( a in atoms ) a.destroy();
-		Event.send( GameEvent.End );
+//		Event.send( GameEvent.End );
 		Scene.setActive( 'Mainmenu' );
 	}
 	
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
 		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+		Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 		trace('status others:' + gameStatus.others.length );
 		finished = true;
 		var winner = gameStatus.winner;
@@ -160,7 +164,7 @@ class Game extends Trait {
 		}
 		if( soundAmbient != null ) soundAmbient.stop();
 		for( a in atoms ) a.destroy();
-		Event.send( GameEvent.End );
+//		Event.send( GameEvent.End );
 		Scene.setActive( 'Result' );
 		var menu = new ResultMenu( gameStatus );
 		Scene.active.root.addTrait( menu );
@@ -195,7 +199,7 @@ class Game extends Trait {
 		spawnNext();
 	}
 
-	public function spawnAtom( pos:Vec2, numSlots = 10, cb:Atom->Void) {
+	public function spawnAtom( pos:Vec2, numSlots : Int, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.visible = true;
 			var atom = new Atom( atoms.length, numSlots );
@@ -225,26 +229,15 @@ class Game extends Trait {
 			}
 			*/
 		} else {
-			var now = Time.time();
+			final now = Time.time();
 			time = now - timeStart;
-
-			/* if (kb.started("escape")) {
-				pause();
-				return;
-			}
-			for( i in 0...4 ) {
-				var gp = Input.getGamepad(i);
-				if( gp.started('share') ) {
-					pause();
-					return;
-				}
-			}
- */
+			
 			for( p in players ) p.update();
 
 			var gameStatus = getGameStatus();
 			if (gameStatus.isFinished){
 				finish(gameStatus);
+				return;
 			}
 
 			var newFlyingElectrons = new Array<Electron>();
@@ -262,20 +255,19 @@ class Game extends Trait {
 					var radiusAtom = atom.mesh.transform.dim.x/2;
 					//trace('test atom in a distance of '+ distance + ' with radius of ' + radiusAtom + ' and in e-radius of ' + radiusElectron );
 
-					if (distance < radiusAtom+radiusElectron)
-					{		
+					if (distance < radiusAtom+radiusElectron) {		
 						//the electron hits an atom				
-						trace('elektron from player ' + electron.player.index + ' hit an atom');
+						trace('electron from player ${electron.player.index} hit an atom');
 						electronOK = false;						
 						object.removeChild(electron.object);
 						electron.object.remove();
 						electron.player.addToScore(Score.hit);
 						atom.hit(electron);	
 
-					}else if (distance < radiusAtom*4 && 
+					} else if (distance < radiusAtom*4 && 
 							  atom.player != electron.player &&
 							  atom.electrons.length>0){
-						trace('elektron from player ' + electron.player.index + ' is in the outter area of an atom, lets check its electrons');
+						trace('electron from player ${electron.player.index} is in outer area of an atom, lets check electrons');
 
 						for (targetElectron in atom.electrons){
 							var locTarget = new Vec4(targetElectron.object.transform.worldx(),
@@ -284,7 +276,7 @@ class Game extends Trait {
 
 							if (distElectron < radiusElectron*2){
 								//the electron hits an enemy electron attached to an atom
-								trace('elektron from player ' + electron.player.index + ' hit an enemy electron orbiting an atom');
+								trace('electron from player ${electron.player.index} hit an enemy electron orbiting an atom' );
 								electron.player.addToScore(Score.destroyed);
 								electronOK = false;								
 								object.removeChild(electron.object);
@@ -293,7 +285,8 @@ class Game extends Trait {
 							}								
 						}						
 					}
-					if (!electronOK) {break;}
+					if(!electronOK) break;
+					
 				}
 				if (worldSize.x/2 < Math.abs(locElectron.x) || 
 					worldSize.y/2 < Math.abs(locElectron.y)){
@@ -303,11 +296,11 @@ class Game extends Trait {
 						electron.object.remove();		
 						SoundEffect.play( 'electron_death', 0.1 );				
 				}
-				if (electronOK){
+				if (electronOK) {
 					newFlyingElectrons.push(electron);
 				}
 			}
-			flyingElectrons=newFlyingElectrons;
+			flyingElectrons = newFlyingElectrons;
 		}
 	}
 

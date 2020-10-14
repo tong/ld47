@@ -10,14 +10,13 @@ class Credits extends Trait {
         super();
         Log.info( 'Credits' );
         ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
-        var sw : Int = null;
-        var sh : Int = null;
+        var sw : Int = null, sh : Int = null;
         notifyOnRender2D( g -> {
             sw = System.windowWidth();
 		    sh = System.windowHeight();
             g.end();
             ui.begin( g );
-            if( ui.window( Id.handle(), 16, 16, sw, sh, false ) ) {
+            if( ui.window( Id.handle(), 0, 0, sw, sh, false ) ) {
                 ui.text( 'Developed by shadow & tong at disktree.net'.toUpperCase() );
                 ui.text( 'Sound by fred'.toUpperCase() );
             }

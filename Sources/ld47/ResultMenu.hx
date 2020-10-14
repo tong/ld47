@@ -1,7 +1,8 @@
 package ld47;
 
-import zui.*;
+import zui.Id;
 import zui.Themes;
+import zui.Zui;
 
 class ResultMenu extends Trait {
 
@@ -19,9 +20,8 @@ class ResultMenu extends Trait {
 			theme.FONT_SIZE = 24;
 			theme.ELEMENT_H = 26;
 			ui = new Zui({font: UI.fontTitle, theme: theme});
-			//Event.add('game_end', handleGameEnd);
 			notifyOnUpdate( update );
-			notifyOnRender2D(render);
+			notifyOnRender2D( render );
 		});
 	}
 
@@ -31,8 +31,9 @@ class ResultMenu extends Trait {
 			Scene.setActive( 'Mainmenu' );
 			return;
 		}
+		var gp : Gamepad = null;
 		for( i in 0...4 ) {
-			var gp = Input.getGamepad(i);
+			gp = Input.getGamepad(i);
 			if( gp.started( 'cross' ) ) {
 				Scene.setActive('Mainmenu');
 				return;
@@ -41,7 +42,6 @@ class ResultMenu extends Trait {
 	}
 
 	function render(g:kha.graphics2.Graphics) {
-		//if( !visible ) return;
 		final game = Game.active;
 		final sw = System.windowWidth();
 		final sh = System.windowHeight();
@@ -49,10 +49,9 @@ class ResultMenu extends Trait {
 		g.opacity = 1;
 		ui.begin(g);
 		if (ui.window(Id.handle(), 0, 0, sw, sh, false)) {
-
 			function printPlayer( player : Player ) {
 				ui.ops.theme.TEXT_COL = player.color;
-				ui.text('P' + player.index, Left);
+				ui.text('P' + (player.index+1), Left);
 				ui.text('SPAWNED ELECTRONS ' + player.score.spawnedElectrons, Left);
 				ui.text('SHOTS FIRED ' + player.score.shotsFired, Left);
 				ui.text('SHOTS HIT ATOM ' + player.score.shotsHitAtom, Left);
@@ -60,7 +59,6 @@ class ResultMenu extends Trait {
 				ui.text('OWNERSHIP TAKEN ' + player.score.ownershipsTaken, Left);
 				ui.text('OWNERSHIP LOST ' + player.score.ownershipsLost, Left);
 			}
-
 			if( status.hasWinner ) {
 				var player = status.winner;
 				ui.ops.theme.TEXT_COL = player.color;
@@ -70,7 +68,6 @@ class ResultMenu extends Trait {
 			} else {
 				for (p in status.others ) printPlayer(p);
 			}
-
 			if (ui.button('PROCEED', Left)) {
 				Scene.setActive('Mainmenu');
 			}

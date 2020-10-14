@@ -14,29 +14,15 @@ class PauseMenu extends Trait {
 			var theme : TTheme = Reflect.copy( UI.THEME );
 			//theme.BUTTON_TEXT_COL = 0xff00ff00;
 			theme.FILL_WINDOW_BG = false;
-			theme.FILL_BUTTON_BG = false;
+			theme.FILL_BUTTON_BG = true;
 			ui = new Zui( { font : UI.fontTitle, theme: theme } );
-			Event.add( GameEvent.Pause, () -> {
-				notifyOnRender2D( render );
-			} );
-			Event.add( GameEvent.Resume, () -> {
-				removeRender2D( render );
-			} );
-			Event.add( GameEvent.End, () -> {
-				removeRender2D( render );
-			} );
-			/*
-			notifyOnRemove( () -> {
-				Event.remove( GameEvent.Pause );
-				Event.remove( GameEvent.Resume );
-			});
-			*/
 			notifyOnUpdate( update );
+			notifyOnRender2D( render );
 		});
 	}
 
 	function update() {
-		var kb = Input.getKeyboard();
+		final kb = Input.getKeyboard();
 		if( kb.started("escape") ) {
 			if( Game.active.paused ) {
 				Game.active.resume();
@@ -45,7 +31,7 @@ class PauseMenu extends Trait {
 			}
 		}
 		for (i in 0...4) {
-			var gp = Input.getGamepad(i);
+			final gp = Input.getGamepad(i);
 			if (gp.started('start')) {
 				if( Game.active.paused ) {
 					Game.active.resume();
@@ -57,6 +43,8 @@ class PauseMenu extends Trait {
 	}
 
 	function render( g : kha.graphics2.Graphics ) {
+		if( !Game.active.paused )
+			return;
 		final game = Game.active;
         final sw = System.windowWidth();
 		final sh = System.windowHeight();

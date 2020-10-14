@@ -1,7 +1,5 @@
 package ld47;
 
-import iron.data.MaterialData;
-
 class Atom extends Trait {
 
 	public final index : Int;
@@ -49,7 +47,6 @@ class Atom extends Trait {
 			if (materials != null)
 				mesh.materials = materials;
 			
-			
 			/*
 			var soundName = 'atom_'+(index+1);
 			//trace('Loading sound $soundName');
@@ -58,8 +55,9 @@ class Atom extends Trait {
 			} );
 			 */
 
-			notifyOnUpdate(update);
 		});
+	
+		notifyOnUpdate(update);
 
 		deselect();
 	}
@@ -75,6 +73,8 @@ class Atom extends Trait {
 				if (mesh != null)
 					mesh.materials = m;
 			});
+//			SoundEffect.play('atom_takeover');
+
 		} else {
 			marker.hide();
 			materials = null;
@@ -129,12 +129,13 @@ class Atom extends Trait {
 			electron.setPostion(wlocElectron);
 			electrons.splice(electrons.indexOf(electron), 1);
 			Game.active.flyingElectrons.push(electron);
-			trace('shot electron from ' + wlocElectron + ' now only ' + electrons.length + ' electrons left');
+			trace('shot electron from $wlocElectron now only ${electrons.length} electrons left');
 			// move electron object in
 			var locElectron = electron.object.transform.loc.clone();
 
 			var direction = new Vec4(wlocElectron.x - wlocAtom.x, wlocElectron.y - wlocAtom.y).normalize();
 			electron.setVelocity(direction);
+			SoundEffect.play('electron_fire_p'+(player.index+1), 0.5 );
 
 			if (electrons.length == 0) {
 				player.navigateSelectionTowards(new Vec2(direction.x, direction.y));
@@ -143,7 +144,6 @@ class Atom extends Trait {
 			}
 
 			selectElectron(getNextElectron(electron));
-			SoundEffect.play('electron_fire_p'+(index+1), 0.2 );
 
 		} else {
 			SoundEffect.play('electron_fire_deny', 0.2 );
@@ -156,17 +156,13 @@ class Atom extends Trait {
 
 		object.transform.rotate(new Vec4(0, 0, 1), rotationSpeed);
 
-		for (electron in electrons) {
-			electron.update();
-		}
+		for (electron in electrons) electron.update();
 
 		if (Game.active.time - lastIntervalledSpawn >= spawnTime) {
 			lastIntervalledSpawn = Game.active.time;
-
 			var spawnerCount = electrons.filter((e:Electron) -> return e.feature == Electron.Feature.Spawner).length;
 			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
 			// trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
-
 			if (num > 0) {
 				// trace('time for auto spawn of ' + num + ' electrons');
 				spawnElectrons([Electron.Feature.None]);
@@ -177,7 +173,6 @@ class Atom extends Trait {
 	public function select() {
 		/* if (marker != null) {
 			// marker.object.visible = true;
-
 			marker.show();
 			// Twwen.to;
 			// trace(marker.materials.length);
@@ -293,8 +288,8 @@ class Atom extends Trait {
 		}
 	}
 
-	function getPreviousElectron(electron:Electron):Electron {
-		trace('getPreviousElectron for index ' + electron.position);
+	function getPreviousElectron(electron:Electron) : Electron {
+		trace('getPreviousElectron for index ${electron.position}');
 		if (electrons.length == 0) {
 			return null;
 		} else if (electrons.length == 1) {
@@ -323,22 +318,24 @@ class Atom extends Trait {
 			rot = electron.object.transform.rot;
 			trace('change selection to electron at $loc with rot: $rot');
 		} else {
-			trace('change electron selection to ' + electron);
+			trace('change electron selection to $electron');
 		}
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},
-			duration: 0.5,
+			duration: 0.2,
 			target: marker.object.transform.loc,
-			ease: Ease.QuartOut,
+			ease: Ease.QuartInOut,
 			tick: object.transform.buildMatrix
 		});
+		/*
 		Tween.to({
 			props: { x: rot.x, y: rot.y, z: rot.z, w: rot.w },
-			duration: 0.5,
+			duration: 0.3,
 			target: marker.object.transform.rot,
 			ease: Ease.QuartOut,
 			tick: object.transform.buildMatrix
 		});
+		*/
 	}
 
 	function getFirstFreeElectronIndex() : Null<Int> {

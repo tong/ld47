@@ -24,6 +24,40 @@ class Electron extends Trait {
         this.feature = feature;
         notifyOnInit( () -> {
             mesh = cast object.getChild('ElectronMesh');
+            //mesh.visible = true;
+            DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
+                mesh.materials = m;                
+                switch feature {
+                case Spawner:
+                    mesh.visible = false;
+                    Scene.active.spawnObject( 'SpawnerElectronMesh', object, obj -> {
+                        obj.visible = true;
+                        var m : MeshObject = cast obj;
+                        m.materials = mesh.materials;
+                        //mesh = cast obj;
+                        //mesh.visible = true;
+                        //mesh.materials = m;
+                        //obj.visible = true;
+                        //var m : MeshObject = cast obj;
+                        //m.materials = mesh.materials;
+                    });
+                default:
+                    mesh = cast object.getChild('ElectronMesh');
+                    mesh.materials = m; 
+                    mesh.visible = true;
+                }
+            }); 
+            object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.01;
+            Tween.to({
+                props: {x: 1, y: 1, z: 1},
+                duration: 1.0,
+                target: object.transform.scale,
+                ease: Ease.ElasticOut,
+                tick: object.transform.buildMatrix
+            });
+
+            /*
+            mesh = cast object.getChild('ElectronMesh');
             mesh.visible = true;
             DataTools.loadMaterial('Game', 'Player'+(player.index), m -> {                
                 mesh.materials = m;                
@@ -47,6 +81,7 @@ class Electron extends Trait {
                 ease: Ease.ElasticOut,
                 tick: object.transform.buildMatrix
             });
+            */
         });
     }
 
@@ -55,13 +90,14 @@ class Electron extends Trait {
             return;
         switch feature {
         case Spawner:
-            object.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+            //object.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+            mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
         default:
         }
         if (velocity != null) {
             object.transform.translate(velocity.x/50, velocity.y/50,0);
         }
-        object.transform.buildMatrix();
+        //object.transform.buildMatrix();
     } 
 
     public function setPostion( v : Vec2 ) {
@@ -95,6 +131,6 @@ class Electron extends Trait {
     }
 
     public function destroy() {
-        //....
+        object.remove();
     }
 }

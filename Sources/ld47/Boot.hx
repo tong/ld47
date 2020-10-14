@@ -7,21 +7,16 @@ class Boot extends Trait {
 
 	public function new() {
 		super();
+        Log.info( 'Boot' );
 		notifyOnInit( () -> {
-
-            Log.info( Main.projectName+' '+Main.projectVersion );
-            Log.info( 'Boot' );
-
             ld47.UI.init( () -> {
-           
-                var keyboard = Input.getKeyboard();
+                var kb = Input.getKeyboard();
                 var mouse = Input.getMouse();
-    
                 Data.getImage( 'process.png', img -> {
-    
                     notifyOnUpdate( () -> {
-                        if( keyboard.started( "space" ) || keyboard.started( "return" ) || mouse.started("left") ) {
+                        if( kb.started( "space" ) || kb.started( "return" ) || mouse.started("left") ) {
                             proceed();
+                            return;
                         }
                         for( i in 0...4 ) {
                             var gp = Input.getGamepad(i);
@@ -31,7 +26,6 @@ class Boot extends Trait {
                             }
                         }
                     });
-    
                     notifyOnRender2D( (g) -> {
                         final sw = System.windowWidth();
                         final sh = System.windowHeight();
@@ -42,7 +36,6 @@ class Boot extends Trait {
                         g.drawImage( img, sw/2 - img.width/2, sh/2 - img.height/2 );
                         g.begin( false );
                     });
-
                     #if !kha_html5
                     Tween.timer( 0.5, proceed );
                     #end
@@ -51,7 +44,7 @@ class Boot extends Trait {
 		});
 	}
 
-    function proceed() {
+    inline function proceed() {
         Scene.setActive( scene );
     }
 }
