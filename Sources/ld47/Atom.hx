@@ -38,8 +38,6 @@ class Atom extends Trait {
 			mesh.visible = true;
 
 			var markerObject = cast object.getChild('ElectronMarker');
-			markerObject.transform.loc.set(0,0,0);
-            markerObject.transform.buildMatrix();
 			marker = new Marker();
 			markerObject.addTrait(marker);
 			marker.hide();
@@ -76,7 +74,6 @@ class Atom extends Trait {
 					mesh.materials = m;
 			});
 //			SoundEffect.play('atom_takeover');
-
 		} else {
 			marker.hide();
 			materials = null;

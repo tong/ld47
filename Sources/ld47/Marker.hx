@@ -9,11 +9,14 @@ class Marker extends Trait {
 		super();
 		this.color = color;
 		notifyOnInit(() -> {
+			object.transform.loc.set(0,0,0);
+			object.transform.buildMatrix();
 		});
 	}
 
 	public function show() {
 		object.visible = true;
+		/*
 		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
 		object.transform.buildMatrix();
 		Tween.to({
@@ -28,6 +31,7 @@ class Marker extends Trait {
 				// object.remove();
 			}
 		});
+		*/
 	}
 
 	public function hide() {
