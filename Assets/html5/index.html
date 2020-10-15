@@ -4,37 +4,68 @@
 		<meta charset="utf-8"/>
         <meta name="theme-color" content="#000">
         <meta name="viewport" content="width=device-width,minimum-scale=1">
-		<meta name="description" content="">
-		<meta>
+		<meta name="description" content="Realtime strategy game">
+		<meta name="keywords" content="game,strategy,superposition">
 		<title>Superposition</title>
 		<style>
+			@font-face {
+				font-family: 'FontRegular';
+				src: url('mono.ttf') format('truetype');
+			}
+			@font-face {
+				font-family: 'FontTitle';
+				src: url('title.ttf') format('truetype');
+			}
 			body {
 				overflow: hidden;
 				margin: 0;
 				padding: 0;
-				font-family: monospace;
+				font-family: 'FontRegular';
 				background: #fff;
-				color: #fff;
+				color: #000;
 			}
-			canvas#viewport {
-				margin: 0 auto;
-				min-width: 1920px;
-				max-width: 1920px;
-				min-height: 1080px;
-				max-height: 1080px;
+			h1#title {
 				position: fixed;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%,-50%);
-				display: block;
-				outline: none;
+				font-family: 'FontTitle';
 				user-select: none;
+				z-index: 0;
+			}
+			canvas#viewport {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+				min-width: 1920px;
+				max-width: 1920px;
+				min-height: 1080px;
+				max-height: 1080px;
+				margin: 0;
+				padding: 0;
+				outline: none;
+				border: none;
+				user-select: none;
+				z-index: 1000;
+			}
+			footer {
+				position: fixed;
+				right: 1rem;
+				bottom: 1rem;
+				font-family: 'FontRegular';
+				font-size: 0.5rem;
+				user-select: none;
+				z-index: 0;
 			}
 		</style>
-		<link rel="icon" type="image/png" href="icon.png"/>
+		<link rel="icon" type="image/svg+xml" href="favicon.svg">
+		<link rel="manifest" href="manifest.json">
+		<script async src='kha.js'></script>
 	</head>
 	<body>
+		<h1 id="title">SUPERPOSITION</h1>
 		<canvas id='viewport' width='1920' height='1080' tabindex='-1'></canvas>
-		<script src='kha.js'></script>
+		<footer id="footer">~</footer>
 	</body>
 </html>
