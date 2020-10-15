@@ -88,6 +88,7 @@ class Electron extends Trait {
     }
 
     public function destroy() {
+        object.parent.removeChild(object);
         object.remove();
     }
 }

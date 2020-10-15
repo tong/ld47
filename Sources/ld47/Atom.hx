@@ -141,31 +141,35 @@ class Atom extends Trait {
 			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
 			spawnElectron(electron.core);
-
-			var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
+		/* 	var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
 			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
 			if( playerAtoms.length == 1 ) {
 				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
 				player.selectAtom( this );
-			}
+			} */
 
 		} else if (player == electron.player) {
 			trace('hit on own atom');
-
-			/* if( player.atom == null ) {
-				trace("PLAYER OWNS NO ATOM!!!!!!!!!!!!!!!!!!");
-			} */
-			var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
+			/* var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
 			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
 			if( playerAtoms.length == 1 ) {
 				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
 				player.selectAtom( this );
-			}
-
-
+			} */
 			spawnElectron(electron.core);
 		} else {
 			trace('hit on enemy atom');
+			Scene.active.spawnObject('ElectronExplosion', null, obj -> {
+				var mesh : MeshObject = cast obj;
+				//var light : LightObject = cast mesh.getChild('ElectronExplosionLight');
+				//light.visible = true;
+				mesh.transform.loc.x = electron.object.transform.loc.x;
+				mesh.transform.loc.y = electron.object.transform.loc.y;
+				mesh.transform.rotate( Vec4.zAxis(), Math.random() * 100 );
+				@:privateAccess mesh.tilesheet.onActionComplete = () -> {
+					mesh.remove();
+				}
+			});
 			switch electron.core {
 			case Bomber: hitByBomber();
 			case UpSpeeder: hitByUpSpeeder();

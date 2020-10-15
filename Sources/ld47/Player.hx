@@ -7,10 +7,13 @@ class Player extends Trait {
 	public final index : Int;
 	public final color : Color;
 	
-	public var atoms(default, null):Array<Atom> = [];
+	//public var atoms(default, null):Array<Atom> = [];
 	public var atom(default, null):Atom;
 	public var score(default, null):Score;
 	public var mesh(default,null) : MeshObject;
+	public var dead(default,null) = false;
+
+	var soundMove : AudioChannel; 
 
 	public function new(index:Int) {
 		super();
@@ -20,10 +23,15 @@ class Player extends Trait {
 		notifyOnInit(() -> {
 			mesh = cast object.getChild('PlayerMesh');
 			mesh.visible = true;
-			
+			//var speaker = new SpeakerObject();
 			DataTools.loadMaterial('Game', 'Player'+(index+1), m -> {
 				mesh.materials = m;
 			});
+			SoundEffect.load( 'player_move', s -> {
+				soundMove = Audio.play( s, false, false );
+				soundMove.pause();
+				soundMove.volume = 0.2;
+			} );
 		});
 	}
 
@@ -35,7 +43,7 @@ class Player extends Trait {
 
 	public function update() {
 
-		atoms = Game.active.atoms.filter(a -> return a.player == this );
+		//atoms = Game.active.atoms.filter(a -> return a.player == this );
 
 		if (atom == null) {
 			final atoms = Game.active.atoms.filter(a -> return a.player == this);
@@ -109,6 +117,8 @@ class Player extends Trait {
 		final scaleFactor = atom.scale * s;
 		final duration = object.transform.world.getLoc().distanceTo( loc ) / 20;
 
+		if( soundMove != null ) soundMove.play();
+				
 		Tween.to({
 			props: {x: loc.x, y: loc.y, z: loc.z},
 			duration: duration,
@@ -118,7 +128,7 @@ class Player extends Trait {
 				object.transform.buildMatrix();
 			},
 			done: () -> {
-				// SoundEffect.play('player_move');
+				//if( soundMove != null ) soundMove.play();
 			}
 		});
 		Tween.to({
@@ -135,7 +145,7 @@ class Player extends Trait {
 			return;
 		}
 		var shootDirection = new Vec2(dir.x, dir.y).normalize();
-		//var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
+		var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
 		if (atoms.length > 0) {
 			//trace('navigate to $shootDirection');
 			var bestAtom = null, bestScore = 0.0, bestDistance = 0.0;

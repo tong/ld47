@@ -62,16 +62,15 @@ class Game extends Trait {
 			for( i in 0...playerData.length ) {
 				var raw = playerData[i];
 				if( raw.enabled ) {
-					final player = new Player( i );
+					final p = new Player( i );
 					Scene.active.spawnObject( 'Player', null, obj -> {
-						obj.addTrait( player );
+						obj.addTrait( p );
 					});
-					players.push( player );
+					players.push( p );
 				}
 			}
 			trace( 'Spawning map ${mapData.name}' );
 			spawnMap( mapData, () -> {
-				//Tween.timer( 1.0, start );
 				start();
 			});
 
@@ -83,6 +82,7 @@ class Game extends Trait {
 		
 		trace('Start game ${players.length}' );
 		
+		paused = finished = false;
 		time = 0;
 		timeStart = Time.time();
 
@@ -157,7 +157,10 @@ class Game extends Trait {
 		if( finished ) return;
 		//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
-		trace('status others:' + gameStatus.others.length );
+		//trace('status others:' + gameStatus.others.length );
+		SoundEffect.play( 'game_finish', false, true, 0.1, s -> {
+			//Tween.to( { target: s, props: { volume: 0.5 }, delay: 0.1, duration: 0.8 } );
+		});
 		finished = true;
 		var winner = gameStatus.winner;
 		var others = gameStatus.others;
@@ -222,22 +225,12 @@ class Game extends Trait {
 	}
 
 	function update() {
-		var kb = Input.getKeyboard();
 		if (paused) {
-			/*
-			if (kb.started("escape")) {
-				resume();
-				return;
-			}
-			for (i in 0...4) {
-				var gp = Input.getGamepad(i);
-				if (gp.started('start')) {
-					resume();
-					return;
-				}
-			}
-			*/
+			//...
 		} else {
+
+			var kb = Input.getKeyboard();
+
 			final now = Time.time();
 			time = now - timeStart;
 			
@@ -255,9 +248,9 @@ class Game extends Trait {
 				//trace('check flying electron from player ' + electron.player.index);
 				var locElectron = new Vec4(electron.object.transform.worldx(), electron.object.transform.worldy());
 				var radiusElectron = electron.mesh.transform.dim.x/2;							
+				var electronOK = true;
 				
 				electron.update();
-				var electronOK = true;
 
 				for (atom in atoms){
 					var distance = atom.object.transform.loc.distanceTo(locElectron);
@@ -271,17 +264,14 @@ class Game extends Trait {
 						electron.object.remove();
 						electron.player.addToScore(Score.hit);
 						atom.hit(electron);	
-
 					} else if (distance < radiusAtom*4 && 
 							  atom.player != electron.player &&
 							  atom.electrons.length>0){
 						trace('electron from player ${electron.player.index} is in outer area of an atom, lets check electrons');
 
 						for (targetElectron in atom.electrons){
-							var locTarget = new Vec4(targetElectron.object.transform.worldx(),
-													 targetElectron.object.transform.worldy());
+							var locTarget = new Vec4(targetElectron.object.transform.worldx(), targetElectron.object.transform.worldy());
 							var distElectron = locTarget.distanceTo(locElectron);
-
 							if (distElectron < radiusElectron*2){
 								//the electron hits an enemy electron attached to an atom
 								trace('electron from player ${electron.player.index} hit an enemy electron orbiting an atom' );
@@ -294,15 +284,15 @@ class Game extends Trait {
 						}						
 					}
 					if(!electronOK) break;
-					
 				}
 				if (worldSize.x/2 < Math.abs(locElectron.x) || 
 					worldSize.y/2 < Math.abs(locElectron.y)){
 						//the electron leaves the game area
 						electronOK=false;
-						object.removeChild(electron.object);
-						electron.object.remove();		
-						SoundEffect.play( 'electron_death', 0.1 );				
+						//object.removeChild(electron.object);
+						//electron.object.remove();
+						electron.destroy();	
+						//SoundEffect.play( 'electron_death', 0.1 );
 				}
 				if (electronOK) {
 					newFlyingElectrons.push(electron);
