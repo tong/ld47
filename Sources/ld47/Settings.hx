@@ -43,9 +43,11 @@ class Settings extends Trait {
     }
     
     function render( g : kha.graphics2.Graphics ) {
+		var sw = System.windowWidth();
+		var sh = System.windowHeight();
 		g.end();
 		ui.begin( g );
-		if( ui.window( Id.handle(), 0, 0, 600, 600, true ) ) {
+		if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
 			//if( ui.panel( Id.handle( { selected: true } ), "Settings", true ) ) {
 			ui.text( raw.anything, Left );
 		}
@@ -68,7 +70,7 @@ class Settings extends Trait {
 			done(raw);
 		}
 		#else
-		trace("not implemented");
+		Log.warn("not implemented");
 		#end
 	}
 
@@ -86,7 +88,7 @@ class Settings extends Trait {
 			trace(e);
 		}
 		#else
-		trace("not implemented");
+		Log.warn("not implemented");
 		#end
     }
 }

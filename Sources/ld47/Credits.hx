@@ -12,10 +12,9 @@ class Credits extends Trait {
         Log.info( 'Credits' );
         SoundEffect.play( 'game_ambient_1', true, true, 1.0, s -> sound = s );
         ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
-        var sw : Int = null, sh : Int = null;
         notifyOnRender2D( g -> {
-            sw = System.windowWidth();
-		    sh = System.windowHeight();
+            var sw = System.windowWidth();
+		    var sh = System.windowHeight();
             g.end();
             ui.begin( g );
             if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
