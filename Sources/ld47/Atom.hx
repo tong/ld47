@@ -1,16 +1,51 @@
 package ld47;
 
+private class Marker extends Trait {
+	
+	public function new() {
+		super();
+		notifyOnInit(() -> {
+			object.transform.loc.set(0,0,0);
+			object.transform.buildMatrix();
+		});
+	}
+
+	public function show() {
+		object.visible = true;
+		/*
+		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
+		object.transform.buildMatrix();
+		Tween.to({
+			props: {x: 1, y: 1, z: 1},
+			duration: 0.5,
+			target: object.transform.scale,
+			ease: Ease.QuartOut,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
+			done: () -> {
+				// object.remove();
+			}
+		});
+		*/
+	}
+
+	public function hide() {
+		object.visible = false;
+	}
+}
+
 class Atom extends Trait {
 
 	public final index : Int;
 	public final numSlots : Int;
 
+	public var spawnTime : Float;
 	public var rotationSpeed:Float;
+	public var scale(default, null):Float;
 	public var electrons:Array<Electron> = [];
 	public var player(default, null):Player;
-	public var scale(default, null):Float;
 	public var mesh(default, null):MeshObject;
-	public var spawnTime : Float;
 
 	var marker:Marker;
 	var lastIntervalledSpawn:Float;
