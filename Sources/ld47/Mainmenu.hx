@@ -57,11 +57,13 @@ class Mainmenu extends Trait {
 			}
 		}
 		notifyOnRemove( () -> {
-            if( sound != null ) sound.stop();
+			if( sound != null ) sound.stop();
         });
 	}
 
 	function render2D( g : kha.graphics2.Graphics ) {
+
+		if( ui == null ) return;
 
 		final sw = System.windowWidth();
 		final sh = System.windowHeight();
@@ -71,7 +73,7 @@ class Mainmenu extends Trait {
 		
 		ui.begin( g );
 		g.opacity = 1;
-		if( ui.window( Id.handle(), 16, 16, sw, sh, false ) ) {
+		if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
 			
 			ui.text('SUPERPOSITION');
 			
@@ -106,8 +108,8 @@ class Mainmenu extends Trait {
 			if( ui.button( 'PLAY', Left ) ) loadGame();
 			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
 			//if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
-			//if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
-			//if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
+			if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
+			if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();
@@ -127,7 +129,8 @@ class Mainmenu extends Trait {
 		final numPlayers = playerData.filter( p -> return p.enabled ).length;
 		if( numPlayers >= 2 ) {
 			final maps = MapStore.MAPS[numPlayers];
-			final mapData = maps[Std.int(maps.length*Math.random())];
+			//final mapData = maps[Std.int(maps.length*Math.random())];
+			final mapData = maps[0];
 			Scene.setActive( 'Game' );
 			final game = new Game( playerData, mapData );
 			Scene.active.root.addTrait( game );

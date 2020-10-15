@@ -18,7 +18,7 @@ class Credits extends Trait {
 		    sh = System.windowHeight();
             g.end();
             ui.begin( g );
-            if( ui.window( Id.handle(), 0, 0, sw, sh, false ) ) {
+            if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
                 ui.text( 'Developed by shadow & tong at disktree.net'.toUpperCase() );
                 ui.text( 'Sound by fred'.toUpperCase() );
             }
