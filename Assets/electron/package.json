@@ -1,0 +1,21 @@
+{
+	"name": "superposition",
+	"productName": "Superposition",
+	"version": "0.3.10",
+	"description": "",
+	"author": "https://disktree.net",
+	"license": "GPL",
+	"main": "main.js",
+	"scripts": {
+		"build": "cd ../../; node $ARMSDK/Kha/Tools/khamake/khamake.js",
+		"start": "electron .",
+		"clean": "rm -r ../Superposition-*/",
+		"package-linux": "electron-packager . Superposition --platform=linux --arch=x64 --overwrite --out ../",
+		"package-osx": "electron-packager . Superposition --platform=darwin --arch=x64 --overwrite --out ../",
+		"package-win": "electron-packager . Superposition --platform=win32 --arch=x64 --overwrite --out ../",
+		"package-all": "electron-packager . Superposition --all --overwrite --out ../"
+	},
+	"devDependencies": {
+		"electron": "^10.1.3"
+	}
+}
