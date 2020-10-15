@@ -59,7 +59,7 @@ class Atom extends Trait {
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var materials : haxe.ds.Vector<MaterialData>;
 	var selectedElectron:Electron;
-	var sound : AudioChannel;
+	var soundAmnbient : AudioChannel;
 
 	public function new( index : Int, numSlots : Int, spawnTime = 10.0 ) {
 		super();
@@ -87,17 +87,14 @@ class Atom extends Trait {
 
 			//if (materials != null) mesh.materials = materials;
 			
-			/*
-			var soundName = 'atom_'+(index+1);
-			//trace('Loading sound $soundName');
-			SoundEffect.play( soundName, true, true, 0.6, a -> {
-				sound = a;
-			} );
-			 */
+			SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.5, a -> {
+				soundAmnbient = a;
+			});
 
 			notifyOnUpdate(update);
 		});
-		//deselect();
+		
+		deselect();
 	}
 
 	public function setPostion(v:Vec2) {
@@ -126,7 +123,7 @@ class Atom extends Trait {
 			if (electrons.length == 0) {
 				player.navigateSelectionTowards(new Vec2(direction.x, direction.y));
 				setPlayer(null);
-				if( sound != null ) sound.stop();
+				//if( sound != null ) sound.stop();
 				marker.hide();
 			}
 			selectElectron(getNextElectron(electron));
@@ -253,7 +250,7 @@ class Atom extends Trait {
 	}
 
 	public function destroy() {
-		if( sound != null ) sound.stop();
+		if( soundAmnbient != null ) soundAmnbient.stop();
 		for( e in electrons ) e.destroy();
 		object.remove();
 		/*
