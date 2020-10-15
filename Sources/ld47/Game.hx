@@ -91,8 +91,8 @@ class Game extends Trait {
 		cam.transform.loc.z = 0;
 		cam.transform.buildMatrix();
 		
-		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-		Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
+		//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+		//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
 		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0]};
@@ -122,8 +122,8 @@ class Game extends Trait {
 			trace('Pause game');
 			paused = true;
 			timePauseStart = Time.time();
-			Postprocess.colorgrading_shadow_uniforms[0] = [0.0, 0.0, 0.0];
-			Postprocess.colorgrading_shadow_uniforms[1] = [0.3, 0.3, 0.3];
+			//Postprocess.colorgrading_shadow_uniforms[0] = [0.0, 0.0, 0.0];
+			//Postprocess.colorgrading_shadow_uniforms[1] = [0.3, 0.3, 0.3];
 //			Event.send(GameEvent.Pause);
 		}
 	}
@@ -134,8 +134,8 @@ class Game extends Trait {
 			paused = false;
 			timeStart += Time.time() - timePauseStart;
 			timePauseStart = null;
-			Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-			Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
+			//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+			//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 //			Event.send(GameEvent.Resume);
 		}
 	}
