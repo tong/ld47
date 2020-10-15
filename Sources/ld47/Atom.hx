@@ -59,7 +59,7 @@ class Atom extends Trait {
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var materials : haxe.ds.Vector<MaterialData>;
 	var selectedElectron:Electron;
-	var soundAmnbient : AudioChannel;
+	var soundAmbient : AudioChannel;
 
 	public function new( index : Int, numSlots : Int, spawnTime = 10.0 ) {
 		super();
@@ -87,8 +87,9 @@ class Atom extends Trait {
 
 			//if (materials != null) mesh.materials = materials;
 			
-			SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.5, a -> {
-				soundAmnbient = a;
+			SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, false, 0.0, a -> {
+				soundAmbient = a;
+				Tween.to( { target: soundAmbient, props: { volume: 0.3 }, duration: 2.0 } );
 			});
 
 			notifyOnUpdate(update);
@@ -119,7 +120,7 @@ class Atom extends Trait {
 			var locElectron = electron.object.transform.loc.clone();
 			var direction = new Vec4(wlocElectron.x - wlocAtom.x, wlocElectron.y - wlocAtom.y).normalize();
 			electron.setVelocity(direction);
-			SoundEffect.play('electron_fire_p'+(player.index+1), 0.5 );
+			SoundEffect.play('electron_fire_p'+(player.index+1), 0.05 );
 			if (electrons.length == 0) {
 				player.navigateSelectionTowards(new Vec2(direction.x, direction.y));
 				setPlayer(null);
@@ -139,18 +140,14 @@ class Atom extends Trait {
 			setPlayer(electron.player);
 			spawnElectron(electron.core);
 		/* 	var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
-			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
 			if( playerAtoms.length == 1 ) {
-				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
 				player.selectAtom( this );
 			} */
 
 		} else if (player == electron.player) {
 			trace('hit on own atom');
 			/* var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
-			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
 			if( playerAtoms.length == 1 ) {
-				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
 				player.selectAtom( this );
 			} */
 			spawnElectron(electron.core);
@@ -250,7 +247,7 @@ class Atom extends Trait {
 	}
 
 	public function destroy() {
-		if( soundAmnbient != null ) soundAmnbient.stop();
+		if( soundAmbient != null ) soundAmbient.stop();
 		for( e in electrons ) e.destroy();
 		object.remove();
 		/*
