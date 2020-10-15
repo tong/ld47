@@ -12,7 +12,7 @@
               viewBox="0 0 270.93333 270.93334"
               version="1.1"
               id="svg8"
-              sodipodi:docname="icon.svg"
+              sodipodi:docname="favicon.svg"
               inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
               inkscape:export-filename="/home/tong/dev/game/ld47/icon.png"
               inkscape:export-xdpi="96"
@@ -26,19 +26,34 @@
                            borderopacity="1.0"
                            inkscape:pageopacity="0.0"
                            inkscape:pageshadow="2"
-                           inkscape:zoom="0.49497475"
-                           inkscape:cx="303.05509"
-                           inkscape:cy="40.96001"
+                           inkscape:zoom="0.7"
+                           inkscape:cx="512.32395"
+                           inkscape:cy="628.4077"
                            inkscape:document-units="px"
                            inkscape:current-layer="layer1"
-                           showgrid="false"
+                           showgrid="true"
                            units="px"
-                           inkscape:window-width="1686"
+                           inkscape:window-width="1536"
                            inkscape:window-height="2126"
-                           inkscape:window-x="1115"
+                           inkscape:window-x="1229"
                            inkscape:window-y="33"
                            inkscape:window-maximized="0"
-                           inkscape:document-rotation="0" />
+                           inkscape:document-rotation="0"
+                           showguides="true"
+                           inkscape:guide-bbox="true">
+                          <inkscape:grid
+                                        type="xygrid"
+                                        id="grid834"
+                                        empspacing="4" />
+                          <sodipodi:guide
+                                        position="135.46667,317.5"
+                                        orientation="1,0"
+                                        id="guide853" />
+                          <sodipodi:guide
+                                        position="135.46667,135.46667"
+                                        orientation="0,-1"
+                                        id="guide855" />
+             </sodipodi:namedview>
              <metadata
                            id="metadata5">
                           <rdf:RDF>
@@ -56,18 +71,29 @@
                            inkscape:groupmode="layer"
                            id="layer1"
                            transform="translate(0,-270.54165)">
-                          <rect
-                                        style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.22849"
-                                        id="rect830"
-                                        width="270.93335"
-                                        height="270.93335"
-                                        x="0"
-                                        y="270.54166" />
                           <circle
-                                        style="fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:0.749261"
+                                        style="fill:#268bd2;fill-opacity:1;stroke:none;stroke-width:0.455678"
                                         id="path850"
-                                        cx="135.46666"
-                                        cy="406.0083"
-                                        r="101.6" />
+                                        cx="73.676689"
+                                        cy="344.21832"
+                                        r="61.789993" />
+                          <circle
+                                        style="fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:0.455678"
+                                        id="circle832"
+                                        cx="197.25667"
+                                        cy="344.21832"
+                                        r="61.789993" />
+                          <circle
+                                        style="fill:#859900;fill-opacity:1;stroke:none;stroke-width:0.455678"
+                                        id="path850-3"
+                                        cx="73.676689"
+                                        cy="467.79834"
+                                        r="61.789993" />
+                          <circle
+                                        style="fill:#d33682;fill-opacity:1;stroke:none;stroke-width:0.455678"
+                                        id="circle857"
+                                        cx="197.25667"
+                                        cy="467.79834"
+                                        r="61.789993" />
              </g>
 </svg>
