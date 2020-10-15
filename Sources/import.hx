@@ -1,4 +1,5 @@
 
+import haxe.EnumTools.EnumValueTools;
 import haxe.Json;
 import haxe.io.Bytes;
 

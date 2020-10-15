@@ -38,6 +38,8 @@ class Atom extends Trait {
 			mesh.visible = true;
 
 			var markerObject = cast object.getChild('ElectronMarker');
+			markerObject.transform.loc.set(0,0,0);
+            markerObject.transform.buildMatrix();
 			marker = new Marker();
 			markerObject.addTrait(marker);
 			marker.hide();
@@ -99,19 +101,12 @@ class Atom extends Trait {
 			spawnElectron(electron.feature);
 		} else {
 			trace('hit on enemy atom');
-			if (electron.feature == Electron.Feature.Bomber){
-				hitByFeatureBomber();
+			switch electron.feature {
+			case Bomber: hitByFeatureBomber();
+			case UpSpeeder: hitByFeatureUpSpeeder();
+			case DownSpeeder: hitByFeatureDownSpeeder();
+			default: hitByFeatureNone();	
 			}
-			if (electron.feature == Electron.Feature.UpSpeeder){
-				hitByFeatureUpSpeeder();
-			}
-			if (electron.feature == Electron.Feature.DownSpeeder){
-				hitByFeatureDownSpeeder();
-			}
-			else {				
-				hitByFeatureNone();				
-			}
-			
 		}
 	}
 
@@ -158,14 +153,13 @@ class Atom extends Trait {
 		var downSpeeders = electrons.filter((e:Electron)-> return e.feature == Electron.Feature.DownSpeeder).length;
 		var modifiedRotationSpeed = rotationSpeed*Math.pow(1.1,upSpeeders)*Math.pow(0.8,downSpeeders);
 
-
 		object.transform.rotate(new Vec4(0, 0, 1), modifiedRotationSpeed);
 
 		for (electron in electrons) electron.update();
 
 		if (Game.active.time - lastIntervalledSpawn >= spawnTime) {
 			lastIntervalledSpawn = Game.active.time;
-			var spawnerCount = electrons.filter((e:Electron) -> return e.feature == Electron.Feature.Spawner).length;
+			var spawnerCount = electrons.filter( e -> return e.feature == Electron.Feature.Spawner).length;
 			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
 			// trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
 			if (num > 0) {
@@ -178,7 +172,6 @@ class Atom extends Trait {
 						default: features.push(Electron.Feature.None);
 					}
 				}
-				
 				spawnElectrons(features);
 			}
 		}
@@ -364,25 +357,16 @@ class Atom extends Trait {
 			loc = electron.object.transform.loc;
 			rot = electron.object.transform.rot;
 			trace('change selection to electron at $loc with rot: $rot');
+			Tween.to({
+				props: {x: loc.x, y: loc.y, z: loc.z},
+				duration: 0.2,
+				target: marker.object.transform.loc,
+				ease: Ease.QuartInOut,
+				tick: object.transform.buildMatrix
+			});
 		} else {
 			trace('change electron selection to $electron');
 		}
-		Tween.to({
-			props: {x: loc.x, y: loc.y, z: loc.z},
-			duration: 0.2,
-			target: marker.object.transform.loc,
-			ease: Ease.QuartInOut,
-			tick: object.transform.buildMatrix
-		});
-		/*
-		Tween.to({
-			props: { x: rot.x, y: rot.y, z: rot.z, w: rot.w },
-			duration: 0.3,
-			target: marker.object.transform.rot,
-			ease: Ease.QuartOut,
-			tick: object.transform.buildMatrix
-		});
-		*/
 	}
 
 	function getFirstFreeElectronIndex() : Null<Int> {
