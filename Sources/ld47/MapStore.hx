@@ -9,8 +9,8 @@ class MapStore {
             {
                 name: 'intro',
                 atoms: [
-                    { slots: 10, player: 0, electrons:[Spawner], position: new Vec2(-7,0)  },
-                    { slots: 10, player: 1, electrons:[Spawner], position: new Vec2(7,0)  },                    
+                    { slots: 10, player: 0, electrons:[None,None,Spawner,Bomber,UpSpeeder,DownSpeeder,Laser], position: new Vec2(-7,0)  },
+                    { slots: 10, player: 1, electrons:[None,None,Spawner,Bomber,UpSpeeder,DownSpeeder,Laser], position: new Vec2(7,0)  },                    
                     { slots: 16, position: new Vec2(-7,3) },
                     { slots: 16, position: new Vec2(-7,-3) },
                     { slots: 16, position: new Vec2(7,3) },
@@ -41,8 +41,8 @@ class MapStore {
             {
                 name: 'be safe',
                 atoms: [
-                    { slots: 10, player: 0, electrons:[Spawner], position: new Vec2(-7,0)  },
-                    { slots: 10, player: 1, electrons:[Spawner], position: new Vec2(7,0)  },                    
+                    { slots: 10, player: 0, electrons:[Spawner,None], position: new Vec2(-7,0)  },
+                    { slots: 10, player: 1, electrons:[Spawner,None], position: new Vec2(7,0)  },                    
                     { slots: 16, position: new Vec2(-4,2) },
                     { slots: 16, position: new Vec2(-4,-2) },
                     { slots: 16, position: new Vec2(4,2) },

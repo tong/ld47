@@ -19,7 +19,7 @@ class Settings extends Trait {
 	public static inline var FILE = "config.json";
 
     public static var defaultConfig : TConfig = {
-        anything: "TestTest"
+        anything: "Test"
     }
 
     public static var raw:TConfig;
@@ -28,28 +28,33 @@ class Settings extends Trait {
 
 	public function new() {
         super();
-        Log.info( 'Settings' );
-        load( cfg -> {
-            trace(cfg);
-            ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
-            notifyOnRender2D( render );
-		} );
-		var kb = Input.getKeyboard();
-        var gp : Gamepad = null;
-        notifyOnUpdate( () -> {
-            if( kb.started('escape') ) Scene.setActive( 'Mainmenu' );
-            for( i in 0...4 ) if( Input.getGamepad(i).started( 'cross' ) ) Scene.setActive( 'Quit' );
-        });
+		Log.info( 'Settings' );
+		notifyOnInit( () -> {
+			load( cfg -> {
+				trace(cfg);
+				ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
+				notifyOnRender2D( render );
+			} );
+			var kb = Input.getKeyboard();
+			var gp : Gamepad = null;
+			notifyOnUpdate( () -> {
+				if( kb.started('escape') ) Scene.setActive( 'Mainmenu' );
+				for( i in 0...4 ) if( Input.getGamepad(i).started( 'cross' ) ) Scene.setActive( 'Quit' );
+			});
+		});
     }
     
     function render( g : kha.graphics2.Graphics ) {
-		var sw = System.windowWidth();
-		var sh = System.windowHeight();
+		final sw = System.windowWidth();
+		final sh = System.windowHeight();
 		g.end();
 		ui.begin( g );
 		if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
 			//if( ui.panel( Id.handle( { selected: true } ), "Settings", true ) ) {
 			ui.text( raw.anything, Left );
+			/* if( ui.panel( Id.handle( { selected: true } ), "Sound", true ) ) {
+				ui.slider( Id.handle( { value: 1.0} ), "Ambient", 0, 1.0, true );
+			} */
 		}
 		ui.end();
 		g.begin( false );

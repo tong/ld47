@@ -21,7 +21,9 @@ class Mainmenu extends Trait {
 		notifyOnInit( () -> {
 			Log.info( 'Mainmenu' );
 			SoundEffect.play( 'game_ambient_3', true, true, 1.0, s -> sound = s );
-			ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
+			var theme : TTheme = Reflect.copy( UI.THEME );
+			ui = new Zui( { font : UI.fontTitle, theme: theme } );
+			//ui.alwaysRedraw = true;
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
 			//#if ld47_release
@@ -73,8 +75,15 @@ class Mainmenu extends Trait {
 		
 		ui.begin( g );
 		g.opacity = 1;
-		if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
+
+		var hwin = Id.handle();
+		hwin.redraws = 1;
+
+		if( ui.window( hwin, 32, 32, sw-64, sh-64, false ) ) {
+
+			//ui.indent();
 			
+			ui.ops.theme.TEXT_COL = COLOR_ENABLED;
 			ui.text('SUPERPOSITION');
 			
 			ui.row( [ 1/20, 1/20, 1/20, 1/20 ]);
@@ -107,7 +116,7 @@ class Mainmenu extends Trait {
 			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = COLOR_DISABLED;
 			if( ui.button( 'PLAY', Left ) ) loadGame();
 			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
-			//if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
+			if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
 			if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
 			if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
@@ -129,8 +138,8 @@ class Mainmenu extends Trait {
 		final numPlayers = playerData.filter( p -> return p.enabled ).length;
 		if( numPlayers >= 2 ) {
 			final maps = MapStore.MAPS[numPlayers];
-			//final mapData = maps[Std.int(maps.length*Math.random())];
-			final mapData = maps[0];
+			final mapData = maps[Std.int(maps.length*Math.random())];
+			//final mapData = maps[0];
 			Scene.setActive( 'Game' );
 			final game = new Game( playerData, mapData );
 			Scene.active.root.addTrait( game );

@@ -2,32 +2,33 @@ package ld47;
 
 import iron.data.MaterialData;
 
-enum Feature {
+enum Core {
     None;
     Bomber;
     Spawner;
     UpSpeeder;
     DownSpeeder;
-    //Laser;
+    Laser;
 }
 
 class Electron extends Trait {
 
     public static var defaultColor = new Vec4( 0, 1, 0 );
 
-    public var player(default,null) : Player;
+    public final player : Player;
+    public final core : Core;
+
     public var atom(default,null) : Atom;
     public var position(default,null): Int;
     public var mesh(default, null) : MeshObject;
     public var velocity(default, null) : Vec4;    
-    public var feature(default, null) : Feature;
 
-    public function new( player : Player, feature : Feature)  {
+    public function new( player : Player, core : Core )  {
         super();
         this.player = player;
-        this.feature = feature;
+        this.core = core;
         notifyOnInit( () -> {
-            Scene.active.spawnObject( EnumValueTools.getName( feature )+'ElectronMesh', object, obj -> {
+            Scene.active.spawnObject( EnumValueTools.getName( core )+'ElectronMesh', object, obj -> {
                 mesh = cast obj;
                 mesh.visible = true;
                 mesh.transform.loc.set(0,0,0);
@@ -47,13 +48,9 @@ class Electron extends Trait {
     public function update() {
         if( Game.active.paused )
             return;
-        /* switch feature {
-        case Spawner:
-        default:
-        } */
-        mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
+        //mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
         if (velocity != null) {
-            object.transform.translate(velocity.x/50, velocity.y/50,0);
+            object.transform.translate( velocity.x/50, velocity.y/50, 0 );
         }
     } 
 
@@ -69,8 +66,8 @@ class Electron extends Trait {
         atom = a;
         position = index;
         velocity = null;
-        DataTools.loadMaterial('Game', 'Player'+(player.index), mat -> {
-            mesh.materials = mat;
+        DataTools.loadMaterial('Game', 'Player'+(player.index), n -> {
+            mesh.materials = n;
         });
     } 
 

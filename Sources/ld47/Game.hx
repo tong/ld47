@@ -1,6 +1,6 @@
 package ld47;
 
-import ld47.Electron.Feature;
+import ld47.Electron.Core;
 
 typedef MapData = {
 	var name: String;
@@ -8,7 +8,7 @@ typedef MapData = {
 		slots: Int,
 		position: Vec2,		
 		?player: Null<Int>,
-		?electrons: Array<Feature>,
+		?electrons: Array<Core>,
 		//?rotationSpeed : Float //TODO
 	}>;
 }
@@ -44,6 +44,7 @@ class Game extends Trait {
 	var timePauseStart:Null<Float>;
 	var minAtomDistance = 3;
 	var atomContainer:Object;
+	var ground : MeshObject;
 	var soundAmbient : AudioChannel;
 
 	public function new( playerData : Array<PlayerData>, mapData : MapData ) {
@@ -51,15 +52,9 @@ class Game extends Trait {
 		Game.active = this;
 		Log.info('Game');
 		notifyOnInit(() -> {
-
-			//flyingElectrons = [];
-			//players = [];
-			//atoms = [];
 			atomContainer = Scene.active.getEmpty('AtomContainer');
-
-			final ground = Scene.active.getMesh('Ground');
+			ground = Scene.active.getMesh('Ground');
 			worldSize = new Vec2( Math.floor( ground.transform.dim.x*100 ) / 100, Math.floor( ground.transform.dim.y*100 ) / 100 );
-			
 			for( i in 0...playerData.length ) {
 				var raw = playerData[i];
 				if( raw.enabled ) {
@@ -70,10 +65,8 @@ class Game extends Trait {
 					players.push( player );
 				}
 			}
-			
 			trace( 'Spawning map ${mapData.name}' );
 			spawnMap( mapData, () -> {
-				trace("Map spawned");
 				start();
 			});
 		});
@@ -82,33 +75,32 @@ class Game extends Trait {
 
 	public function start() {
 		
-		trace('Start game '+players.length);
+		trace('Start game ${players.length}' );
 		
 		time = 0;
 		timeStart = Time.time();
 
-		var cam = Scene.active.camera;
-		cam.transform.loc.z = 0;
-		cam.transform.buildMatrix();
+		//var cam = Scene.active.camera;
+		//cam.transform.loc.z = 0;
+		//cam.transform.buildMatrix();
 		
 		//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
-
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
 		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0]};
 		Tween.to({
 			target: values,
-			duration: 0.6,
-			props: { chromatic: 0.06 },
+			duration: 1.0,
+			props: { chromatic: 0.05 },
 			ease: QuartOut,
-			tick: () -> Postprocess.chromatic_aberration_uniforms[0] = values.chromatic,
-		});
-		Tween.to({
-			target: cam.transform.loc,
-			duration: 0.7,
-			props: { z: 102 },
-			ease: QuartOut,
-			tick: cam.transform.buildMatrix,
+			tick: () -> {
+				//cam.transform.loc.z = values.z;
+				//cam.transform.buildMatrix();
+				Postprocess.chromatic_aberration_uniforms[0] = values.chromatic;
+			},
+			done: () -> {
+				Postprocess.chromatic_aberration_uniforms[0] = 0.05;
+			}
 		});
 		
 		SoundEffect.play( 'game_start', 0.3 );
@@ -150,15 +142,15 @@ class Game extends Trait {
 	
 	public function finish(gameStatus: GameStatus){
 		if( finished ) return;
-		Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
-		Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
+		//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
+		//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 		trace('status others:' + gameStatus.others.length );
 		finished = true;
 		var winner = gameStatus.winner;
 		var others = gameStatus.others;
 		if (gameStatus.hasWinner){
 			var score = winner.score;
-			trace('the game is finished, winner is player ' + winner.index + ' with a score of ' + score);						
+			trace('the game is finished, winner is player ${winner.index} with a score of $score' );						
 		} else {
 			trace('the game ended in a draw');
 		}
@@ -185,6 +177,10 @@ class Game extends Trait {
 			var dat = data.atoms[atoms.length];
 			spawnAtom( dat.position, dat.slots, a -> {
 				if( dat.player != null ) {
+					/* a.notifyOnInit( () -> {
+						a.setPlayer(players[dat.player]);
+
+					}); */
 					a.setPlayer(players[dat.player]);
 				}
 				if( dat.electrons != null ) {
@@ -254,7 +250,6 @@ class Game extends Trait {
 					var distance = atom.object.transform.loc.distanceTo(locElectron);
 					var radiusAtom = atom.mesh.transform.dim.x/2;
 					//trace('test atom in a distance of '+ distance + ' with radius of ' + radiusAtom + ' and in e-radius of ' + radiusElectron );
-
 					if (distance < radiusAtom+radiusElectron) {		
 						//the electron hits an atom				
 						trace('electron from player ${electron.player.index} hit an atom');

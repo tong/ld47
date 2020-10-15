@@ -4,21 +4,22 @@ class Player extends Trait {
 
 	public static final COLORS:Array<Color> = [0xff268BD2, 0xffDC322F, 0xff859900, 0xffD33682];
 
-	public var index(default, null):Int;
-	public var color(default, null):Color;
-	public var materials(default, null):haxe.ds.Vector<MaterialData>;
+	public final index : Int;
+	public final color : Color;
+	
 	public var atom(default, null):Atom;
 	public var score(default, null):Score;
+	public var mesh(default,null) : MeshObject;
 
 	public function new(index:Int) {
 		super();
 		this.index = index;
-		score = Score.empty;
+		this.score = Score.empty;
 		this.color = COLORS[index];
 		notifyOnInit(() -> {
+			mesh = cast object.getChild('PlayerMesh');
 			DataTools.loadMaterial('Game', 'Player$index', m -> {
-				materials = m;
-				cast(object,MeshObject).materials = m;
+				mesh.materials = m;
 			});
 		});
 	}
@@ -41,7 +42,7 @@ class Player extends Trait {
 
 		final gp = Input.getGamepad(index);
 		final kb = Input.getKeyboard();
-		final v = new Vec2();
+		final dir = new Vec2();
 
 		if (gp.started('l1') ) {
 			atom.selectPreviousElectron();
@@ -52,35 +53,41 @@ class Player extends Trait {
 			return;
 		}
 		if (gp.started('cross')) {
-			atom.fire();
+			fire();
 			return;
 		}
 
-		if( gp.started("left") ) v.x = -1;
-		else if (gp.started("right")) v.x = 1;
-		else if (gp.started("up")) v.y = -1;
-		else if (gp.started("down")) v.y = 1;
+		if( gp.started("left") ) dir.x = -1;
+		else if (gp.started("right")) dir.x = 1;
+		else if (gp.started("up")) dir.y = -1;
+		else if (gp.started("down")) dir.y = 1;
 
 		switch index {
 		case 0:
-			if (kb.started('a')) v.x = -1;
-			else if (kb.started('d')) v.x = 1;
-			else if (kb.started('w')) v.y = 1;
-			else if (kb.started('s')) v.y = -1;
+			if (kb.started('a')) dir.x = -1;
+			else if (kb.started('d')) dir.x = 1;
+			else if (kb.started('w')) dir.y = 1;
+			else if (kb.started('s')) dir.y = -1;
 			if (kb.started('q')) atom.selectPreviousElectron();
 			else if (kb.started('e')) atom.selectNextElectron();
-			else if (kb.started('f')) atom.fire();
+			else if (kb.started('f')) {
+				fire();
+				return;
+			}
 		case 1:
-			if (kb.started('left')) v.x = -1;
-			else if (kb.started('right')) v.x = 1;
-			else if (kb.started('up')) v.y = 1;
-			else if (kb.started('down')) v.y = -1;
+			if (kb.started('left')) dir.x = -1;
+			else if (kb.started('right')) dir.x = 1;
+			else if (kb.started('up')) dir.y = 1;
+			else if (kb.started('down')) dir.y = -1;
 			if (kb.started('n')) atom.selectPreviousElectron();
 			else if (kb.started('b')) atom.selectNextElectron();
-			else if (kb.started('m')) atom.fire();
+			else if (kb.started('m')) {
+				fire();
+				return;
+			}
 		}
 		
-		if( v.x != 0 || v.y != 0 ) navigateSelectionTowards(v);
+		if( dir.x != 0 || dir.y != 0 ) navigateSelectionTowards(dir);
 	}
 
 	public function selectAtom(newAtom:Atom) {
@@ -100,6 +107,9 @@ class Player extends Trait {
 			duration: duration,
 			target: object.transform.loc,
 			ease: Ease.QuartOut,
+			tick: () -> {
+				object.transform.buildMatrix();
+			},
 			done: () -> {
 				// SoundEffect.play('player_move');
 			}
@@ -107,8 +117,8 @@ class Player extends Trait {
 		Tween.to({
 			props: {x: scaleFactor, y: scaleFactor, z: scaleFactor},
 			duration: duration,
-			target: object.transform.scale,
-			tick: object.transform.buildMatrix,
+			target: mesh.transform.scale,
+			tick: mesh.transform.buildMatrix,
 			ease: Ease.QuartOut
 		});
 	}
@@ -121,9 +131,7 @@ class Player extends Trait {
 		trace('navigate to $shootDirection');
 		var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
 		if (atoms.length > 0) {
-			var bestAtom = null;
-			var bestScore = 0.0;
-			var bestDistance = 0.0;
+			var bestAtom = null, bestScore = 0.0, bestDistance = 0.0;
 			for (a in atoms) {
 				var locA = a.object.transform.loc;
 				var locAtom = atom.object.transform.loc;
@@ -141,6 +149,23 @@ class Player extends Trait {
 				selectAtom(bestAtom);
 			} else {
 				trace('no atom found to navigate to');
+			}
+		}
+	}
+
+	function fire() {
+		atom.fire();
+		if( atom.electrons.length == 0 ) {
+			var atom : Atom = null;
+			for( a in Game.active.atoms ) if( a.player == this ) {
+				atom = a;
+				break;
+			}
+			if( atom == null ) {
+				mesh.visible = false;
+			} else {
+				selectAtom( atom );
+				mesh.visible = true;
 			}
 		}
 	}
