@@ -52,6 +52,10 @@ class Game extends Trait {
 		Game.active = this;
 		Log.info('Game');
 		notifyOnInit(() -> {
+			SoundEffect.play( 'game_ambient_'+1, true, true, 0.0, s -> {
+				soundAmbient = s;
+				Tween.to( { target: soundAmbient, props: { volume: 0.9 }, delay: 0.1, duration: 0.8 } );
+			});
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 			ground = Scene.active.getMesh('Ground');
 			worldSize = new Vec2( Math.floor( ground.transform.dim.x*100 ) / 100, Math.floor( ground.transform.dim.y*100 ) / 100 );
@@ -67,8 +71,10 @@ class Game extends Trait {
 			}
 			trace( 'Spawning map ${mapData.name}' );
 			spawnMap( mapData, () -> {
+				//Tween.timer( 1.0, start );
 				start();
 			});
+
 		});
 		notifyOnUpdate(update);
 	}
@@ -80,32 +86,39 @@ class Game extends Trait {
 		time = 0;
 		timeStart = Time.time();
 
-		//var cam = Scene.active.camera;
-		//cam.transform.loc.z = 0;
-		//cam.transform.buildMatrix();
+		var cam = Scene.active.camera;
+		cam.transform.loc.z = 0;
+		cam.transform.buildMatrix();
+
+		Tween.timer( 0.2, () -> SoundEffect.play( 'game_start', false, true, 0.05 ) );
 		
 		//Postprocess.colorgrading_shadow_uniforms[0] = [1.0, 1.0, 1.0];
 		//Postprocess.colorgrading_shadow_uniforms[1] = [1.0, 1.0, 1.0];
 		Postprocess.chromatic_aberration_uniforms[0] = 20.0;
-		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0]};
+		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0] };
 		Tween.to({
 			target: values,
+			delay: 0.2,
 			duration: 1.0,
 			props: { chromatic: 0.05 },
 			ease: QuartOut,
 			tick: () -> {
+				cam.transform.loc.z = 105;
+				cam.transform.buildMatrix();
+				Postprocess.chromatic_aberration_uniforms[0] = values.chromatic;
+				/* if( fadeInStarted ) {
+					//Postprocess.chromatic_aberration_uniforms[0] = values.chromatic;
+				} else {
+					//Postprocess.chromatic_aberration_uniforms[0] = 20.0;
+					fadeInStarted = true;
+				} */
 				//cam.transform.loc.z = values.z;
 				//cam.transform.buildMatrix();
-				Postprocess.chromatic_aberration_uniforms[0] = values.chromatic;
 			},
 			done: () -> {
 				Postprocess.chromatic_aberration_uniforms[0] = 0.05;
 			}
 		});
-		
-		SoundEffect.play( 'game_start', 0.3 );
-		SoundEffect.play( 'game_ambient_'+1, true, true, 0.8, s -> soundAmbient = s );
-
 //		Event.send( GameEvent.Start );
 	}
 
@@ -169,7 +182,7 @@ class Game extends Trait {
 		atoms = [];
 	}
 
-	public function spawnMap( data : MapData, clear = true, cb:Void->Void) {
+	function spawnMap( data : MapData, clear = true, cb:Void->Void) {
 		if (clear)
 			clearMap();
 		atoms = [];		
@@ -195,7 +208,7 @@ class Game extends Trait {
 		spawnNext();
 	}
 
-	public function spawnAtom( pos:Vec2, numSlots : Int, cb:Atom->Void) {
+	function spawnAtom( pos:Vec2, numSlots : Int, cb:Atom->Void) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.visible = true;
 			var atom = new Atom( atoms.length, numSlots );

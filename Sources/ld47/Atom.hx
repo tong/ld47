@@ -3,6 +3,7 @@ package ld47;
 private class Marker extends Trait {
 	
 	public var mesh(default,null) : MeshObject;
+	public var light(default,null) : LightObject;
 	
 	public function new() {
 		super();
@@ -10,6 +11,8 @@ private class Marker extends Trait {
 			object.transform.loc.set(0,0,0);
 			object.transform.buildMatrix();
 			mesh = cast object.getChild('ElectronMarkerMesh');
+			//light = cast object.getChild('ElectronMarkerLight');
+			//trace(light);
 		});
 	}
 
@@ -79,6 +82,7 @@ class Atom extends Trait {
 			defaultMaterials = mesh.materials;
 
 			var markerObject = cast object.getChild('ElectronMarker');
+			markerObject.visible = true;
 			markerObject.addTrait( marker = new Marker() );
 
 			//if (materials != null) mesh.materials = materials;
@@ -96,54 +100,10 @@ class Atom extends Trait {
 		//deselect();
 	}
 
-	public function setPlayer(p:Player) {
-		/* if( player == null && p != null ) {
-			SoundEffect.play('atom_takeover');
-		} */
-		player = p;
-		if (player != null) {
-			DataTools.loadMaterial('Game', 'Player' + player.index, m -> {
-				materials = m;
-				if (mesh != null) mesh.materials = m;
-				if( marker.mesh != null ) {
-					marker.mesh.materials = m;
-				} else {
-					marker.notifyOnInit( () -> {
-						marker.mesh.materials = m;
-					});
-				}
-				marker.show();
-			});
-		} else {
-			mesh.materials = defaultMaterials;
-			marker.hide();
-		}
-	}
-
 	public function setPostion(v:Vec2) {
 		object.transform.loc.x = v.x;
 		object.transform.loc.y = v.y;
 		object.transform.buildMatrix();
-	}
-
-	public function hit(electron:Electron) {
-		if (player == null) {
-			trace('hit on neutral atom');
-			electron.player.addToScore(Score.taken);
-			setPlayer(electron.player);
-			spawnElectron(electron.core);
-		} else if (player == electron.player) {
-			trace('hit on own atom');
-			spawnElectron(electron.core);
-		} else {
-			trace('hit on enemy atom');
-			switch electron.core {
-			case Bomber: hitByBomber();
-			case UpSpeeder: hitByUpSpeeder();
-			case DownSpeeder: hitByDownSpeeder();
-			default: hitByNone();	
-			}
-		}
 	}
 
 	public function fire() {
@@ -172,6 +132,70 @@ class Atom extends Trait {
 			selectElectron(getNextElectron(electron));
 		} else {
 			SoundEffect.play('electron_fire_deny', 0.2 );
+		}
+	}
+
+	public function hit(electron:Electron) {
+		if (player == null) {
+			trace('hit on neutral atom');
+			electron.player.addToScore(Score.taken);
+			setPlayer(electron.player);
+			spawnElectron(electron.core);
+
+			var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
+			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
+			if( playerAtoms.length == 1 ) {
+				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
+				player.selectAtom( this );
+			}
+
+		} else if (player == electron.player) {
+			trace('hit on own atom');
+
+			/* if( player.atom == null ) {
+				trace("PLAYER OWNS NO ATOM!!!!!!!!!!!!!!!!!!");
+			} */
+			var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
+			trace("PLAYER HAS ATOMS:"+playerAtoms.length);
+			if( playerAtoms.length == 1 ) {
+				trace("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSElect");
+				player.selectAtom( this );
+			}
+
+
+			spawnElectron(electron.core);
+		} else {
+			trace('hit on enemy atom');
+			switch electron.core {
+			case Bomber: hitByBomber();
+			case UpSpeeder: hitByUpSpeeder();
+			case DownSpeeder: hitByDownSpeeder();
+			default: hitByNone();	
+			}
+		}
+	}
+
+	public function setPlayer(p:Player) {
+		/* if( player == null && p != null ) {
+			SoundEffect.play('atom_takeover');
+		} */
+		player = p;
+		if (player != null) {
+			DataTools.loadMaterial('Game', 'Player'+(player.index+1), m -> {
+				materials = m;
+				if (mesh != null) mesh.materials = m;
+				if( marker.mesh != null ) {
+					marker.mesh.materials = m;
+				} else {
+					marker.notifyOnInit( () -> {
+						marker.mesh.materials = m;
+					});
+				}
+				marker.show();
+			});
+		} else {
+			mesh.materials = defaultMaterials;
+			//marker.hide();
 		}
 	}
 

@@ -7,6 +7,7 @@ class Player extends Trait {
 	public final index : Int;
 	public final color : Color;
 	
+	public var atoms(default, null):Array<Atom> = [];
 	public var atom(default, null):Atom;
 	public var score(default, null):Score;
 	public var mesh(default,null) : MeshObject;
@@ -18,7 +19,9 @@ class Player extends Trait {
 		this.color = COLORS[index];
 		notifyOnInit(() -> {
 			mesh = cast object.getChild('PlayerMesh');
-			DataTools.loadMaterial('Game', 'Player$index', m -> {
+			mesh.visible = true;
+			
+			DataTools.loadMaterial('Game', 'Player'+(index+1), m -> {
 				mesh.materials = m;
 			});
 		});
@@ -31,6 +34,8 @@ class Player extends Trait {
 	}
 
 	public function update() {
+
+		atoms = Game.active.atoms.filter(a -> return a.player == this );
 
 		if (atom == null) {
 			final atoms = Game.active.atoms.filter(a -> return a.player == this);
@@ -93,6 +98,8 @@ class Player extends Trait {
 	public function selectAtom(newAtom:Atom) {
 		if (atom != null) {
 			atom.deselect();
+		} else {
+			
 		}
 		atom = newAtom;
 		atom.select();
@@ -123,14 +130,14 @@ class Player extends Trait {
 		});
 	}
 
-	public function navigateSelectionTowards(direction:Vec2) {
-		if (atom == null || direction.x == 0 && direction.y == 0) {
+	public function navigateSelectionTowards(dir:Vec2) {
+		if (atom == null || dir.x == 0 && dir.y == 0) {
 			return;
 		}
-		var shootDirection = new Vec2(direction.x, direction.y).normalize();
-		trace('navigate to $shootDirection');
-		var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
+		var shootDirection = new Vec2(dir.x, dir.y).normalize();
+		//var atoms = Game.active.atoms.filter(a -> return a.player == this && a != atom);
 		if (atoms.length > 0) {
+			//trace('navigate to $shootDirection');
 			var bestAtom = null, bestScore = 0.0, bestDistance = 0.0;
 			for (a in atoms) {
 				var locA = a.object.transform.loc;
@@ -164,8 +171,8 @@ class Player extends Trait {
 			if( atom == null ) {
 				mesh.visible = false;
 			} else {
-				selectAtom( atom );
 				mesh.visible = true;
+				selectAtom( atom );
 			}
 		}
 	}

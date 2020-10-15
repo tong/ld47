@@ -10,7 +10,10 @@ class Credits extends Trait {
 	public function new() {
         super();
         Log.info( 'Credits' );
-        SoundEffect.play( 'game_ambient_1', true, true, 1.0, s -> sound = s );
+        SoundEffect.play( 'game_ambient_1', true, true, 0.0, s -> {
+            sound = s;
+            Tween.to( { target: sound, props: { volume: 0.9 }, delay: 0.1, duration: 1.0 } );
+        } );
         ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
         notifyOnRender2D( g -> {
             var sw = System.windowWidth();
@@ -19,7 +22,7 @@ class Credits extends Trait {
             ui.begin( g );
             if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
                 ui.text( 'Developed by shadow & tong at disktree.net'.toUpperCase() );
-                ui.text( 'Sound by fred'.toUpperCase() );
+                ui.text( 'Sound by stritter.audio'.toUpperCase() );
             }
             ui.end();
             g.begin(false);

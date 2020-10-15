@@ -66,7 +66,7 @@ class Electron extends Trait {
         atom = a;
         position = index;
         velocity = null;
-        DataTools.loadMaterial('Game', 'Player'+(player.index), n -> {
+        DataTools.loadMaterial('Game', 'Player'+(player.index+1), n -> {
             mesh.materials = n;
         });
     } 

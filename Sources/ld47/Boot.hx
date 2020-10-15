@@ -45,6 +45,11 @@ class Boot extends Trait {
 	}
 
     inline function proceed() {
+        var win = kha.Window.get(0);
+        win.title = Main.projectName;
+        //win.changeWindowFeatures( 1);
+        //win.mode = Fullscreen;
+        //trace(win);
         Scene.setActive( scene );
     }
 }
