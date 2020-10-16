@@ -166,17 +166,18 @@ class Mainmenu extends Trait {
 			//final mapData = maps[Std.int(maps.length*Math.random())];
 
 			Scene.setActive( 'Game' );
-			final game = new Game( playerData, mapData );
+			final game = new Game( playerData, mapData, () -> {
+				Tween.to( { target: sound, props: { volume: 0.0 }, duration: 1.5,
+					tick: () -> {
+					//	ui.g.opacity = sound.b
+					},
+					done: () -> {
+						//sound.stop();
+					}
+				} );
+			} );
 			Scene.active.root.addTrait( game );
 
-			Tween.to( { target: sound, props: { volume: 0.0 }, duration: 0.4,
-				tick: () -> {
-				//	ui.g.opacity = sound.b
-				},
-				done: () -> {
-					//sound.stop();
-				}
-			} );
 		}
 	}
 

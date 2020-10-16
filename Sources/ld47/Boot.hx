@@ -11,7 +11,9 @@ class Boot extends Trait {
 			ld47.UI.init(() -> {
 				var kb = Input.getKeyboard();
 				var mouse = Input.getMouse();
-				Data.getImage('process.png', img -> {
+				var images = ['process','sulfur','syn','tong','topy','vril'];
+           		var img = images[Std.int(Math.random()*(images.length-1))];
+				Data.getImage('$img.png', img -> {
 					notifyOnUpdate(() -> {
 						if (kb.started("space") || kb.started("return") || mouse.started("left")) {
 							proceed();
@@ -26,8 +28,7 @@ class Boot extends Trait {
 						}
 					});
 					notifyOnRender2D((g) -> {
-						final sw = System.windowWidth();
-						final sh = System.windowHeight();
+						final sw = System.windowWidth(), sh = System.windowHeight();
 						g.end();
 						g.color = 0xff000000;
 						g.fillRect(0, 0, sw, sh);

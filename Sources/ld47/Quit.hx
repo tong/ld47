@@ -6,15 +6,13 @@ class Quit extends Trait {
 
 	public function new() {
 		super();
-		//gamma.renderpath.Postprocess.camera_uniforms[10] = 0.0;
 		notifyOnInit( () -> {
-            Data.getImage( 'topy.png', img -> {
+            var images = ['process','sulfur','syn','tong','topy','vril'];
+            var img = images[Std.int(Math.random()*(images.length-1))];
+            Data.getImage( '$img.png', img -> {
                 function render(g:Graphics) {
-                    final sw = System.windowWidth();
-                    final sh = System.windowHeight();
+                    final sw = System.windowWidth(), sh = System.windowHeight();
                     g.end();
-                   /*  g.color = 0xff000000;
-                    g.fillRect( 0, 0, sw, sh ); */
                     g.color = 0xffffffff;
 					g.drawImage( img, sw/2 - img.width/2, sh/2 - img.height/2 );
                     g.begin( false );

@@ -23,7 +23,34 @@ class Player extends Trait {
 		notifyOnInit(() -> {
 			mesh = cast object.getChild('PlayerMesh');
 			mesh.visible = true;
+
+			//Scene.active.spawnObject('PlayerLight', mesh, obj -> {});
+			
+			//var light : LightObject = cast object.getChild('PlayerLight');
+			//trace(light.data);
+
+		 	/* var d = new iron.data.LightData(cast {
+				name : "PlayerLight"+index, 
+				type : 'point', 
+				cast_shadow : true, 
+				near_plane : 0.10000000149011612, 
+				far_plane : 5, 
+				fov : 1.5707999467849731, 
+				color : [0.0193822979927063,0.25818297266960144,0.6444798111915588], 
+				strength : 56, 
+				shadows_bias : 0.00009999999747378752, 
+				shadowmap_size : 1024, 
+				shadowmap_cube : true, 
+				light_size : 2.5
+			}, (dat) -> {
+				var l = new LightObject(dat);
+				l.transform.loc.z = 5;
+				l.transform.buildMatrix();
+				object.addChild( l );
+			});  */
+
 			//var speaker = new SpeakerObject();
+
 			DataTools.loadMaterial('Game', 'Player'+(index+1), m -> {
 				mesh.materials = m;
 			});
