@@ -2,7 +2,3 @@ _*
 *.blend[0-9]
 build*/
 Data/svg/
-Sources/Main.hx
-khafile.js
-
-
