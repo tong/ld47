@@ -20,4 +20,4 @@ jobs:
       run: |
         git clone --recursive https://github.com/armory3d/armsdk.git
     - name: Build
-      run: node armsdk/Kha/make.js krom
+      run: node armsdk/Kha/make.js -t krom --shaderversion 330

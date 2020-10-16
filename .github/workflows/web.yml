@@ -20,4 +20,4 @@ jobs:
       run: |
         git clone --recursive https://github.com/armory3d/armsdk.git
     - name: Build
-      run: node armsdk/Kha/make.js -t html5
+      run: node --unhandled-rejections=strict armsdk/Kha/make.js -t html5

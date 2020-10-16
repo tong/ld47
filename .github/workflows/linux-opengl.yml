@@ -25,4 +25,5 @@ jobs:
         git clone --recursive https://github.com/armory3d/armsdk.git
     - name: Build
       run: |
-        node armsdk/Kha/make.js -g opengl --compile
+        ARMSDK=./armsdk
+        node $ARMSDK/Kha/make.js -g opengl --compile
