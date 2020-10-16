@@ -44,10 +44,9 @@ class Game extends Trait {
 	var timePauseStart:Null<Float>;
 	var minAtomDistance = 3;
 	var atomContainer:Object;
-	var ground : MeshObject;
 	var soundAmbient : AudioChannel;
 
-	public function new( playerData : Array<PlayerData>, mapData : MapData ) {
+	public function new( playerData : Array<PlayerData>, mapData : MapData, onReady : Void->Void ) {
 		super();
 		Game.active = this;
 		Log.info('Game');
@@ -57,8 +56,8 @@ class Game extends Trait {
 				Tween.to( { target: soundAmbient, props: { volume: 0.9 }, delay: 0.1, duration: 0.8 } );
 			});
 			atomContainer = Scene.active.getEmpty('AtomContainer');
-			ground = Scene.active.getMesh('Ground');
-			worldSize = new Vec2( Math.floor( ground.transform.dim.x*100 ) / 100, Math.floor( ground.transform.dim.y*100 ) / 100 );
+			//worldSize = new Vec2( Math.floor( ground.transform.dim.x*100 ) / 100, Math.floor( ground.transform.dim.y*100 ) / 100 );
+			worldSize = new Vec2( 19.2, 10.8 );
 			for( i in 0...playerData.length ) {
 				var raw = playerData[i];
 				if( raw.enabled ) {
@@ -70,10 +69,7 @@ class Game extends Trait {
 				}
 			}
 			trace( 'Spawning map ${mapData.name}' );
-			spawnMap( mapData, () -> {
-				start();
-			});
-
+			spawnMap( mapData, onReady );
 		});
 		notifyOnUpdate(update);
 	}
@@ -186,21 +182,16 @@ class Game extends Trait {
 	}
 
 	function spawnMap( data : MapData, clear = true, cb:Void->Void) {
-		if (clear)
-			clearMap();
+		if (clear) clearMap();
 		atoms = [];		
 		function spawnNext() {
 			var dat = data.atoms[atoms.length];
 			spawnAtom( dat.position, dat.slots, a -> {
 				if( dat.player != null ) {
-					/* a.notifyOnInit( () -> {
-						a.setPlayer(players[dat.player]);
-
-					}); */
 					a.setPlayer(players[dat.player]);
-				}
-				if( dat.electrons != null ) {
-					a.spawnElectrons( dat.electrons , spawned -> {						
+					var electrons = dat.electrons;
+					if( dat.electrons == null || dat.electrons.length == 0 ) electrons = [None];
+					a.spawnElectrons( electrons , spawned -> {						
 						if (atoms.length == data.atoms.length ) cb() else spawnNext();
 					});
 				} else {
@@ -219,7 +210,7 @@ class Game extends Trait {
 				cb(atom);
 			});
 			obj.addTrait(atom);
-			atom.setPostion(pos);
+			atom.setPostion( new Vec2( pos.x*worldSize.x/2, pos.y*worldSize.y/2 ) );
 			atoms.push(atom);			
 		});
 	}
@@ -228,8 +219,6 @@ class Game extends Trait {
 		if (paused) {
 			//...
 		} else {
-
-			var kb = Input.getKeyboard();
 
 			final now = Time.time();
 			time = now - timeStart;

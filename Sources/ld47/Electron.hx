@@ -4,11 +4,14 @@ import iron.data.MaterialData;
 
 enum Core {
     None;
+    Spawner(v:Float); //TODO (speed:Float,?core:Core):
+    Speeder(v:Float);
     Bomber;
-    Spawner;
-    UpSpeeder;
-    DownSpeeder;
+    Shield;
     Laser;
+    Swastika;
+    //Candyflip;
+    //Occupier;
 }
 
 class Electron extends Trait {

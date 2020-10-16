@@ -47,33 +47,32 @@ class Atom extends Trait {
 	public final numSlots : Int;
 	public final scale : Float;
 
-	public var spawnTime : Float;
-	public var rotationSpeed : Float;
-
+	public var rotationSpeed(default,null) = 1.0; // base speed
 	public var electrons(default,null):Array<Electron> = [];
 	public var player(default, null):Player;
 	public var mesh(default, null):MeshObject;
 
-	var marker:Marker;
-	var lastIntervalledSpawn:Float;
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var materials : haxe.ds.Vector<MaterialData>;
+	var marker:Marker;
+	var lastSpawnTime:Float;
 	var selectedElectron:Electron;
 	var soundAmbient : AudioChannel;
 
-	public function new( index : Int, numSlots : Int, spawnTime = 10.0 ) {
+	public function new( index : Int, numSlots : Int ) {
 		super();
 		this.index = index;
 		this.numSlots = numSlots;
-		this.spawnTime = spawnTime;
 		//var random = Math.random();
 		//this.rotationSpeed = Math.pow(-1, Math.floor(10 * random)) * (1 + random) / numSlots / 20; // * size;
 		this.rotationSpeed = 0.01; //numSlots * 0.001;
 		this.scale = numSlots / 20;
-		lastIntervalledSpawn = Game.active.time;
+		
+		lastSpawnTime = Game.active.time;
 
 		notifyOnInit(() -> {
-
+			
+			
 			mesh = cast object.getChild('AtomMesh');
 			mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = scale;	
 			mesh.transform.buildMatrix();
@@ -139,17 +138,8 @@ class Atom extends Trait {
 			electron.player.addToScore(Score.taken);
 			setPlayer(electron.player);
 			spawnElectron(electron.core);
-		/* 	var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
-			if( playerAtoms.length == 1 ) {
-				player.selectAtom( this );
-			} */
-
 		} else if (player == electron.player) {
 			trace('hit on own atom');
-			/* var playerAtoms = Game.active.atoms.filter( a -> return a.player == player );
-			if( playerAtoms.length == 1 ) {
-				player.selectAtom( this );
-			} */
 			spawnElectron(electron.core);
 		} else {
 			trace('hit on enemy atom');
@@ -159,24 +149,21 @@ class Atom extends Trait {
 				//light.visible = true;
 				mesh.transform.loc.x = electron.object.transform.loc.x;
 				mesh.transform.loc.y = electron.object.transform.loc.y;
+				mesh.transform.loc.z = electron.object.transform.loc.z + 1;
 				mesh.transform.rotate( Vec4.zAxis(), Math.random() * 100 );
 				@:privateAccess mesh.tilesheet.onActionComplete = () -> {
 					mesh.remove();
 				}
+				SoundEffect.play('electron_hit',false,true,0.5);
 			});
 			switch electron.core {
-			case Bomber: hitByBomber();
-			case UpSpeeder: hitByUpSpeeder();
-			case DownSpeeder: hitByDownSpeeder();
-			default: hitByNone();	
+			case Bomber: while( electrons.length > 0 ) hitByElectron();
+			default: hitByElectron();	
 			}
 		}
 	}
 
 	public function setPlayer(p:Player) {
-		/* if( player == null && p != null ) {
-			SoundEffect.play('atom_takeover');
-		} */
 		player = p;
 		if (player != null) {
 			DataTools.loadMaterial('Game', 'Player'+(player.index+1), m -> {
@@ -198,32 +185,47 @@ class Atom extends Trait {
 	}
 
 	function update() {
-		if (Game.active.paused)
-			return;
-		final numUpSpeeders = electrons.filter( e -> return e.core == Electron.Core.UpSpeeder).length;
-		final numDownSpeeders = electrons.filter( e -> return e.core == Electron.Core.DownSpeeder).length;
-		final modifiedRotationSpeed = rotationSpeed*Math.pow(1.1,numUpSpeeders)*Math.pow(0.8,numDownSpeeders);
-		object.transform.rotate( Vec4.zAxis(), modifiedRotationSpeed);
-		//marker.update();
-		for(e in electrons) e.update();
-		if (Game.active.time - lastIntervalledSpawn >= spawnTime) {
-			lastIntervalledSpawn = Game.active.time;
-			var spawnerCount = electrons.filter( e -> return e.core == Electron.Core.Spawner).length;
-			var num = Std.int(Math.min(numSlots - electrons.length, spawnerCount));
-			// trace('we have ' + electrons.length + ' electrons, but only ' + spawnerCount + ' are spanners');
-			if (num > 0) {
-				var cores = new Array<Electron.Core>();
-				for (i in 0...num){
-					switch Math.floor(Math.random()*3){
-						case 0: cores.push(Electron.Core.Bomber);
-						case 1: cores.push(Electron.Core.UpSpeeder);
-						case 2: cores.push(Electron.Core.DownSpeeder);
-						default: cores.push(Electron.Core.None);
-					}
-				}
-				spawnElectrons(cores);
+
+		if (Game.active.paused) return;
+
+		var rotSpeed = 1.0;
+		var spawnTimeFactor = 0.0;
+		
+		for( e in electrons ) {
+			switch e.core {
+			case Spawner(v): spawnTimeFactor += v;
+			case Speeder(v): rotSpeed *= v;
+			case _:
 			}
 		}
+		
+		object.transform.rotate( Vec4.zAxis(), rotSpeed/100 );
+
+		for(e in electrons) e.update();
+		
+		if( electrons.length < numSlots && spawnTimeFactor > 0 ) {
+			var spawnTime = 10 / spawnTimeFactor;
+			if( Game.active.time - lastSpawnTime >= spawnTime ) {
+				lastSpawnTime = Game.active.time;
+				var type = Math.floor( Math.random() * (EnumTools.getConstructors(Electron.Core).length) );
+				var core : Electron.Core = switch type {
+				case 0: None;
+				case 1: Spawner(1+Math.random()*2);
+				case 2: Speeder(1+Math.random()*2);
+				case 3: Bomber;
+				case 4: Shield;
+				case 5: Laser;
+				case 6: Swastika;
+				//case 7: Candyflip;
+				//case 8: Occupier;
+				case _: null;
+				}
+				if( core != null ) {
+					spawnElectron(core);
+				}
+			}
+		}
+
 		if( electrons.length == 0 ) {
 			marker.hide();
 		}
@@ -318,7 +320,7 @@ class Atom extends Trait {
 		} else selectElectron();
 	}
 
-	function hitByNone(){
+	function hitByElectron(){
 		var e = electrons.pop();
 		Tween.to({
 			props: {x: 0.01, y: 0.01, z: 0.01},
@@ -333,21 +335,7 @@ class Atom extends Trait {
 			setPlayer(null);
 		}
 	}
-
-	function hitByBomber(){
-		while( electrons.length > 0 ) hitByNone();
-	}
-
-	function hitByUpSpeeder(){		
-		rotationSpeed = rotationSpeed*1.2; //the rotationspeed of this atom increases permanently
-		hitByNone();
-	}
-
-	function hitByDownSpeeder(){		
-		rotationSpeed = rotationSpeed*0.8; //the rotationspeed of this atom increases permanently
-		hitByNone();
-	}
-
+	
 	function getNextElectron(electron:Electron):Electron {
 		trace('getNextElectron for index ${electron.position}');
 		switch electrons.length {
