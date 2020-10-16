@@ -61,11 +61,16 @@
 		</style>
 		<link rel="icon" type="image/svg+xml" href="icon.svg">
 		<link rel="manifest" href="manifest.json">
+		<link rel="preload" href="mono.ttf" as="font">
+		<link rel="preload" href="title.ttf" as="font">
 		<script async src='kha.js'></script>
 	</head>
 	<body>
 		<h1 id="title">SUPERPOSITION</h1>
 		<canvas id='viewport' width='1920' height='1080' tabindex='-1'></canvas>
 		<footer id="footer">~</footer>
+		<div>
+			<audio src="atom_ambient_1.ogg" preload="auto"></audio>
+		</div>
 	</body>
 </html>
