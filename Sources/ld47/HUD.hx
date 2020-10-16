@@ -3,6 +3,7 @@ package ld47;
 import kha.math.FastMatrix3;
 
 class HUD extends Trait {
+
 	public var visible = true;
 
 	public function new() {
@@ -17,10 +18,8 @@ class HUD extends Trait {
 			return;
 
 		final game = Game.active;
-		final sw = System.windowWidth();
-		final sh = System.windowHeight();
-		final paddingX = 4;
-		final paddingY = 1;
+		final sw = System.windowWidth(), sh = System.windowHeight();
+		final paddingX = 3, paddingY = 0;
 		final height = UI.fontSize + paddingY * 2;
 
 		g.end();
@@ -29,9 +28,9 @@ class HUD extends Trait {
 		g.fontSize = UI.fontSize;
 		g.color = 0xffffffff;
 
-		var transform = FastMatrix3.rotation(MathTools.degToRad(-90));
-		transform._21 = sh;
-		g.pushTransformation(transform);
+		//var transform = FastMatrix3.rotation(MathTools.degToRad(-90));
+		//transform._21 = sh;
+		//g.pushTransformation(transform);
 
 		var px = 0.0;
 		for (i in 0...game.players.length) {
@@ -42,13 +41,15 @@ class HUD extends Trait {
 			var width = sh * percentAtoms;
 			g.color = color;
 			g.fillRect(px, 0, sh * percentAtoms, height);
-			var text = 'P' + (i + 1) + ' A' + atoms.length;
+
+			//var text = 'P' + (i + 1) + ' A' + atoms.length;
+			var text = 'P' + (i + 1);
 			g.color = 0xff000000;
 			g.drawString(text, px + paddingX, paddingY);
 			px += width;
 		}
 
-		g.popTransformation();
+		//g.popTransformation();
 		g.begin(false);
 	}
 }
