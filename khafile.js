@@ -5,22 +5,22 @@ project.addSources('Sources');
 project.addLibrary("/home/tong/sdk/armsdk/armory");
 project.addLibrary("/home/tong/sdk/armsdk/iron");
 project.addLibrary("tron");
-project.addParameter('superposition.Help');
-project.addParameter("--macro keep('superposition.Help')");
 project.addParameter('superposition.HUD');
 project.addParameter("--macro keep('superposition.HUD')");
-project.addParameter('superposition.Quit');
-project.addParameter("--macro keep('superposition.Quit')");
-project.addParameter('superposition.Boot');
-project.addParameter("--macro keep('superposition.Boot')");
 project.addParameter('superposition.Mainmenu');
 project.addParameter("--macro keep('superposition.Mainmenu')");
 project.addParameter('superposition.Credits');
 project.addParameter("--macro keep('superposition.Credits')");
-project.addParameter('superposition.Settings');
-project.addParameter("--macro keep('superposition.Settings')");
 project.addParameter('superposition.PauseMenu');
 project.addParameter("--macro keep('superposition.PauseMenu')");
+project.addParameter('superposition.Quit');
+project.addParameter("--macro keep('superposition.Quit')");
+project.addParameter('superposition.Help');
+project.addParameter("--macro keep('superposition.Help')");
+project.addParameter('superposition.Settings');
+project.addParameter("--macro keep('superposition.Settings')");
+project.addParameter('superposition.Boot');
+project.addParameter("--macro keep('superposition.Boot')");
 project.addShaders("build_ld47/compiled/Shaders/*.glsl", { noembed: false});
 project.addAssets("build_ld47/compiled/Assets/**", { notinlist: true });
 project.addAssets("build_ld47/compiled/Shaders/*.arm", { notinlist: true });
@@ -100,11 +100,22 @@ project.addDefine('arm_ui');
 project.addDefine('arm_skin');
 project.addDefine('arm_particles');
 // --------------------------------------------------------
-const RELEASE = false;
-const HTML5_ELECTRON = false;
+let RELEASE = false;
+let ELECTRON = false;
 // --------------------------------------------------------
 
-console.info(project.name+"-"+project.version+" "+platform);
+var args = process.argv.slice(2);
+console.info(args);
+process.argv.forEach( (val,index,array) => {
+    if (val === '-release') {
+        RELEASE = true;
+    }
+    if (val === '-electron') {
+        ELECTRON = true;
+    }
+});
+
+console.info(project.name + "-" + project.version + " " + platform);
 
 project.addParameter("-main superposition.App");
 
@@ -121,7 +132,7 @@ if (platform === Platform.HTML5) {
     project.targetOptions.html5.disableContextMenu = true;
     project.targetOptions.html5.canvasId = "viewport";
     project.addAssets("Data/icon.svg");
-    if (HTML5_ELECTRON ) {
+    if (ELECTRON) {
         project.addAssets("Assets/electron/**");
         project.addLibrary("electron");
         //callbacks.postHaxeCompilation = () => {};
