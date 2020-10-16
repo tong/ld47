@@ -19,7 +19,6 @@ class Settings extends Trait {
 		rp_motionblur: true,
 		rp_dynres : false, 
 		rp_gi : false, 
-		rp_motionblur : false, 
 		rp_shadowmap_cascade : 1024, 
 		rp_shadowmap_cube : 512, 
 		rp_ssgi : true, 
