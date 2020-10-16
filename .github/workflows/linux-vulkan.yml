@@ -1,4 +1,4 @@
-name: Krom
+name: Linux (Vulkan)
 
 on:
   push:
@@ -14,10 +14,15 @@ jobs:
     - uses: actions/setup-node@v2-beta
       with:
         node-version: '12.19.0'
+    - name: Apt Update
+      run: sudo apt-get update
+    - name: Apt Install
+      run: sudo apt-get install libasound2-dev libxinerama-dev libxrandr-dev libgl1-mesa-dev libxi-dev libxcursor-dev libvulkan-dev --yes --quiet
     - name: Get Submodules
       run: git submodule update --init --recursive
     - name: Install armsdk
       run: |
         git clone --recursive https://github.com/armory3d/armsdk.git
     - name: Build
-      run: node armsdk/Kha/make.js krom
+      run: |
+        node armsdk/Kha/make.js -g vulkan --compile
