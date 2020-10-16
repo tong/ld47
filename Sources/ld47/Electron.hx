@@ -31,7 +31,7 @@ class Electron extends Trait {
         this.player = player;
         this.core = core;
         notifyOnInit( () -> {
-            Scene.active.spawnObject( EnumValueTools.getName( core )+'ElectronMesh', object, obj -> {
+            Scene.active.spawnObject( 'ElectronCore'+EnumValueTools.getName( core ), object, obj -> {
                 mesh = cast obj;
                 mesh.visible = true;
                 mesh.transform.loc.set(0,0,0);
