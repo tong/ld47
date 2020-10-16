@@ -1,6 +1,8 @@
 _*
 *.blend[0-9]
-/build*
-khafile.js
+build*/
+Data/svg/
 Sources/Main.hx
+khafile.js
+
 
