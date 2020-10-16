@@ -1,6 +1,6 @@
-package ld47;
+package superposition;
 
-import ld47.Electron.Core;
+import superposition.Electron.Core;
 
 typedef MapData = {
 	var name: String;

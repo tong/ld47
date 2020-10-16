@@ -1,7 +1,7 @@
-package ld47;
+package superposition;
 
-import ld47.Game;
-import ld47.UI.*;
+import superposition.Game;
+import superposition.UI.*;
 import zui.*;
 import zui.Themes;
 

@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 import zui.Id;
 import zui.Themes;
@@ -12,7 +12,7 @@ class UI {
 	public static inline var COLOR_DISABLED = 0xff505050;
 
 	public static var THEME_1 : TTheme = {
-		NAME: "LD47.1",
+		NAME: "Superposition.1",
 		ACCENT_COL: 0xff000000,
 		ACCENT_HOVER_COL: 0xfff0f0f0,
 		ACCENT_SELECT_COL: 0xffffffff,
@@ -46,7 +46,7 @@ class UI {
 	};
 
 	public static var THEME_2 : TTheme = cast {
-		NAME: "LD47.2",
+		NAME: "Superposition.2",
 		ACCENT_COL: 0xff444444,
 		ACCENT_HOVER_COL: 0xff494949,
 		ACCENT_SELECT_COL: 0xff606060,

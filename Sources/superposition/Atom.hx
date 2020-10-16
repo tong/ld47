@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 private class Marker extends Trait {
 	

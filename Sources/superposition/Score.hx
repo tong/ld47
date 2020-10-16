@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 class Score {
 	public var spawnedElectrons(default, null):Int = 0;

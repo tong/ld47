@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 #if kha_html5
 import js.Browser.document;

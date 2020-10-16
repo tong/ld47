@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 import kha.graphics2.Graphics;
 import zui.*;

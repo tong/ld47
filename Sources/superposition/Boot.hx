@@ -1,4 +1,4 @@
-package ld47;
+package superposition;
 
 class Boot extends Trait {
 	@prop
@@ -8,7 +8,7 @@ class Boot extends Trait {
 		super();
 		Log.info('Boot');
 		notifyOnInit(() -> {
-			ld47.UI.init(() -> {
+			UI.init(() -> {
 				var kb = Input.getKeyboard();
 				var mouse = Input.getMouse();
 				var images = ['process','sulfur','syn','tong','topy','vril'];

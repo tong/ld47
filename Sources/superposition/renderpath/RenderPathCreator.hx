@@ -1,4 +1,4 @@
-package ld47.renderpath;
+package superposition.renderpath;
 
 import armory.renderpath.Inc;
 import armory.renderpath.RenderPathForward;
@@ -43,7 +43,7 @@ class RenderPathCreator {
 
 		#if rp_pp
 		iron.App.notifyOnInit( () -> {
-			ld47.renderpath.Postprocess.init();
+			superposition.renderpath.Postprocess.init();
 		});
 		#end
 

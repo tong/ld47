@@ -1,9 +1,4 @@
-package ld47.renderpath;
-
-import iron.Scene;
-import iron.data.MaterialData;
-import iron.math.Vec4;
-import iron.object.Object;
+package superposition.renderpath;
 
 class Postprocess {
 

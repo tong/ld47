@@ -1,6 +1,4 @@
-package ld47;
-
-import iron.data.MaterialData;
+package superposition;
 
 enum Core {
     None;

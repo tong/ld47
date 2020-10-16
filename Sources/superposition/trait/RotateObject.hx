@@ -1,4 +1,4 @@
-package ld47.trait;
+package superposition.trait;
 
 class RotateObject extends Trait {
 	

@@ -1,6 +1,6 @@
-package ld47;
+package superposition;
 
-import ld47.Game.MapData;
+import superposition.Game.MapData;
 
 class MapStore {
 
