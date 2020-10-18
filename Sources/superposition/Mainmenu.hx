@@ -42,24 +42,17 @@ class Mainmenu extends Trait {
 
 	function update() {
 		var kb = Input.getKeyboard();
-		if( kb.started( "escape" ) ) {
-			Scene.setActive('Quit');
-			return;
-		}
-		if( kb.started( "c" ) ) {
-			Scene.setActive('Credits');
-			return;
-		}
+		if( kb.started( "escape" ) ) Scene.setActive('Quit');
+		if( kb.started( "c" ) ) Scene.setActive('Credits');
 		for( i in 0...4 ) {
 			var gp = Input.getGamepad(i);
 			/* if( gp.started( 'start' ) ) {
 				loadGame();
 				return;
 			} */
-			if( gp.started( 'share' ) ) {
-				Scene.setActive('Quit');
-				return;
-			}
+			if( gp.started( 'home' ) ) Scene.setActive('Quit');
+			if( gp.started( 'a' ) ) loadGame();
+			
 		}
 	}
 

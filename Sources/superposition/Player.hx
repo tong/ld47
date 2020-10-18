@@ -37,9 +37,8 @@ class Score {
 		);
 	}
 	
-	public function reset() {
+	public inline function reset() {
 		spawnedElectrons = shotsFired = shotsHitAtom = shotsDestroyedByEnemyElectron = ownershipsTaken = ownershipsLost = 0;
-		return this;
 	}
 }
 
@@ -53,21 +52,19 @@ class Player extends Trait {
 	public var atom(default,null) : Atom;
 	public var mesh(default,null) : MeshObject;
 	public var score(default,null) = Score.empty;
-	public var moveSpeed(default,null) : FastFloat = 1.0;
+	public var moveSpeed : FastFloat = 1.0;
 
-	var soundMove : AudioChannel; 
+	var soundMove : AudioChannel;
+	var moveTween : TAnim;
 
 	public function new( index : Int ) {
 		super();
 		this.index = index;
-		//score = Score.empty;
 		color = COLORS[index];
 		notifyOnInit( () -> {
 
 			mesh = cast object.getChild('PlayerMesh');
 			mesh.visible = true;
-
-			trace(object.getChild('PlayerLight') );
 
 			DataTools.loadMaterial('Game','Player'+(index+1), m -> {
 				mesh.materials = m;
@@ -82,8 +79,6 @@ class Player extends Trait {
 	}
 
 	public function update() {
-
-		//atoms = Game.active.atoms.filter(a -> return a.player == this );
 
 		if (atom == null) {
 			final atoms = Game.active.atoms.filter(a -> return a.player == this);
@@ -112,8 +107,13 @@ class Player extends Trait {
 
 		if( gp.started("left") ) dir.x = -1;
 		else if (gp.started("right")) dir.x = 1;
-		else if (gp.started("up")) dir.y = -1;
-		else if (gp.started("down")) dir.y = 1;
+		else if (gp.started("up")) dir.y = 1;
+		else if (gp.started("down")) dir.y = -1;
+
+		if( gp.started("left") ) trace("LEFT");
+		if( gp.started("right") ) trace("RIGHT");
+		if( gp.started("up") ) trace("UP");
+		if( gp.started("down") ) trace("DOWN");
 
 		switch index {
 		case 0:
@@ -145,25 +145,21 @@ class Player extends Trait {
 
 	public function selectAtom( newAtom : Atom ) {
 
-		if ( atom != null ) {
-			//atom.deselect();
-		} else {
-			
-		}
 		atom = newAtom;
-		//atom.select();
-		
+
 		if( soundMove != null ) soundMove.play();
 		
-		// var s = 1.3;
-		// var scaleFactor = atom.scale * s;
 		var destination = atom.object.transform.world.getLoc();
-		var duration = (object.transform.world.getLoc().distanceTo( destination ) / 20) * moveSpeed;
-		var values : { x : FastFloat, y : FastFloat, z : FastFloat, sx : FastFloat, sy : FastFloat, sz : FastFloat } = {
+		var duration = (object.transform.world.getLoc().distanceTo(destination ) / 20) / moveSpeed;
+		var values = {
 			x : object.transform.loc.x, y : object.transform.loc.y, z : object.transform.loc.z,
 			sx : object.transform.scale.x, sy : object.transform.scale.y, sz : object.transform.scale.z,
 		}
-		Tween.to({
+		if( moveTween != null ) {
+			Tween.stop( moveTween );
+			moveTween = null;
+		}
+		moveTween = Tween.to({
 			props: {
 				x : destination.x, y : destination.y, z : destination.z,
 				sx : atom.mesh.transform.scale.x, sy : atom.mesh.transform.scale.y, sz : atom.mesh.transform.scale.z
@@ -182,7 +178,7 @@ class Player extends Trait {
 				mesh.transform.buildMatrix();
 			},
 			done: () -> {
-				//if( soundMove != null ) soundMove.play();
+				moveTween = null;
 			}
 		});
 	}

@@ -66,6 +66,7 @@ class Game extends Trait {
 	}
 
 	public function create( ?data : GameData, ?onReady : Void->Void ) {
+		trace( 'Game create' );
 		if( data == null && this.data == null ) {
 			trace('Cannot start game, no data');
 			return;
@@ -74,11 +75,22 @@ class Game extends Trait {
 		players = [];
 		atoms = [];
 		flyingElectrons = [];
+		var ts = Time.realTime ();
 		trace( 'Spawning ${ this.data.players.length} players' );
 		spawnPlayers( this.data.players, () -> {
 			trace( 'Spawning map: ${ this.data.map.name}' );
 			spawnMap( this.data.map, () -> {
-				if( onReady != null ) onReady() else start();
+				trace('Loading ambient sound');
+				//SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
+				/* SoundEffect.loadSet( 'atom_ambient_', 8, sounds -> {
+					trace(sounds);
+					trace(Time.realTime ()-ts);
+				}); */
+				SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 1.0, a -> {
+					soundAmbient = a;
+					soundAmbient.pause();
+					if( onReady != null ) onReady() else start();
+				});
 			});
 		});
 	}
@@ -110,6 +122,7 @@ class Game extends Trait {
 			},
 			done: () -> {
 				Postprocess.chromatic_aberration_uniforms[0] = 0.03;
+				//soundAmbient.play();
 			}
 		});
 	}
@@ -143,22 +156,6 @@ class Game extends Trait {
 		object.addTrait( menu );
 		//Scene.active.root.addTrait( menu );
 		//atomContainer.addTrait( menu );
-		
-		//Scene.setActive( 'Mainmenu' );
-
-		/*
-		if( status == null ) {
-			var winner = status.winner;
-			var others = status.others;
-			if(status.hasWinner){
-				trace('the game is finished, winner is player ${winner.index} with a score of ${winner.score}' );						
-			} else {
-				trace('the game ended in a draw');
-			}
-			var menu = new ResultMenu( status );
-			Scene.active.root.addTrait( menu );
-		}
-		*/
 
 		/*
 		//trace('status others:' + status.others.length );
@@ -246,7 +243,7 @@ class Game extends Trait {
 
 		var ownedAtoms = atoms.filter( a -> return a.player != null );
 		if( ownedAtoms.length == 0 && flyingElectrons.length == 0 ) {
-			trace('no electrons left -> everybody looses');
+			trace('no electrons left -> everybody loses');
 			// game draw
 			finish();
 			return;
@@ -255,23 +252,17 @@ class Game extends Trait {
 			var losers = new Array<Player>();
 			for( i in 0...players.length ) {
 				var player = players[i];
-				//if( !player.enabled ) continue;
 				var playerAtomsOwned = atoms.filter( a -> return a.player == player );
 				var playerElectronsFlying = flyingElectrons.filter( e -> return e.player == player );
 				//trace( player.index+': PlayerAtoms: '+playerAtomsOwned.length+', flying: '+playerElectronsFlying.length );
 				if( playerAtomsOwned.length == 0 && playerElectronsFlying.length == 0 ) {
-					//trace("player "+ player.index +" has no electrons left -> he looses	");
+					//trace("player "+ player.index +" has no electrons left -> he loses	");
 					winners.splice( i, 1 );
 					losers.push(player);
 					//finish();
 					//return;
 				}
 			}
-			/*
-			if( losers.length > 0 ) {
-				finish();
-			}
-			*/
 			if( winners.length == 1 ) {
 				finish( winners[0] );
 			}
@@ -323,8 +314,6 @@ class Game extends Trait {
 				size.y/2 < Math.abs(locElectron.y)){
 					//the electron leaves the game area
 					electronOK=false;
-					//object.removeChild(electron.object);
-					//electron.object.remove();
 					electron.dispose();	
 					//SoundEffect.play( 'electron_death', 0.1 );
 			}

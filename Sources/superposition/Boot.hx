@@ -9,25 +9,23 @@ class Boot extends Trait {
 		Log.info('Boot');
 		notifyOnInit(() -> {
 			UI.init(() -> {
-				var mouse = Input.getMouse();
-				var images = ['process','syn','tong','topy'];
-				var img = images[Std.int(Math.random()*(images.length-1))];
-				Data.getImage('$img.png', img -> {
-					var kb = Input.getKeyboard();
+				Data.getImage('process.png', img -> {
+					var keyboard = Input.getKeyboard();
+					var mouse = Input.getMouse();
 					notifyOnUpdate(() -> {
-						if (kb.started("space") || kb.started("return") || mouse.started("left")) {
+						if (keyboard.started("space") || keyboard.started("return") || mouse.started("left")) {
 							proceed();
 							return;
 						}
 						for (i in 0...4) {
 							var gp = Input.getGamepad(i);
-							if (gp.started('cross')) {
+							if (gp.started('a')) {
 								proceed();
 								return;
 							}
 						}
 					});
-					notifyOnRender2D((g) -> {
+					notifyOnRender2D( g -> {
 						var sw = System.windowWidth(), sh = System.windowHeight();
 						g.end();
 						g.color = 0xff000000;
@@ -37,7 +35,7 @@ class Boot extends Trait {
 						g.begin(false);
 					});
 					#if !kha_html5
-					Tween.timer( 0.2, proceed );
+					//Tween.timer( 0.2, proceed );
 					#end
 				});
 			});

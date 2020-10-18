@@ -180,7 +180,8 @@ class Atom extends Trait {
 					marker.mesh.materials = m;
 				} else {
 					marker.notifyOnInit( () -> {
-						marker.mesh.materials = m;
+						if( marker.mesh != null )
+							marker.mesh.materials = m;
 					});
 				}
 				marker.show();

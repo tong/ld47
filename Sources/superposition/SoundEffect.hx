@@ -6,6 +6,18 @@ class SoundEffect {
         Data.getSound( '$id.ogg', cb );
     }
 
+    public static inline function loadSet( baseName : String, count : Int, cb : Array<kha.Sound>->Void ) {
+        var loaded = new Array<kha.Sound>();
+        function loadNext() {
+            trace('$baseName${loaded.length+1}.ogg');
+            load( '$baseName${loaded.length+1}', s -> {
+                loaded.push(s);
+                if( loaded.length == count ) cb( loaded ) else loadNext();
+            } );
+        }
+        loadNext();
+    }
+
     public static function play( id : String, ?loop : Bool, ?stream : Bool, volume = 0.8, ?cb : AudioChannel->Void ) {
         load( id, s -> {
             var c = Audio.play( s, loop, stream );

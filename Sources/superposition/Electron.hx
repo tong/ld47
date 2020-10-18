@@ -50,10 +50,16 @@ class Electron extends Trait {
     }
 
     public function update() {
-       // if( Game.active.state == Play ) return;
         //mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
         if (velocity != null) {
             object.transform.translate( velocity.x/50, velocity.y/50, 0 );
+        }
+        switch core {
+        case Bomber:
+            var wr = new Quat().fromMat( mesh.transform.world ); 
+            mesh.transform.rotate( Vec4.zAxis(), -wr.z );
+            mesh.transform.buildMatrix();
+        default:
         }
     } 
 

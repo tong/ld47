@@ -43,11 +43,12 @@ class PauseMenu extends Trait {
 		ui.begin( g );
 		if( ui.window( Id.handle(), 32, 32, 400, 400, false ) ) {
 			if( ui.button( 'RESUME', Left ) ) Game.active.resume();
-			if( ui.button( 'RESTART', Left ) ) {
+			/* if( ui.button( 'RESTART', Left ) ) {
 				//Game.active.abort();
 				//Game.active.create();
-			}
-            if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Mainmenu' );
+			} */
+            if( ui.button( 'EXIT', Left ) ) Scene.setActive( 'Mainmenu' );
+            if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();
         g.begin( false );
