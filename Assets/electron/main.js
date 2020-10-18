@@ -25,11 +25,13 @@ app.on("ready", () => {
     webPreferences: {
       webgl: true,
       nodeIntegration: true,
-      nodeIntegrationInWorker: true
+      nodeIntegrationInWorker: true,
+      devTools: true
     }
   });
   //mainWindow.setContentSize
   //win.setTitle("Superposition");
+  //win.webContents.openDevTools();
   win.loadFile(__dirname + '/index.html')
   win.on("closed", () => {
     win = null;

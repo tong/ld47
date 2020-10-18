@@ -9,7 +9,7 @@ class Mainmenu extends Trait {
 	
 	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
 	static var selectedMap = 0;
-	static var sound : AudioChannel;
+	//static var sound : AudioChannel;
 
 	var ui : Zui;
 
@@ -23,20 +23,21 @@ class Mainmenu extends Trait {
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
 			notifyOnRemove( () -> {
-				if( sound != null ) {
+				/* if( sound != null ) {
 					sound.pause();
 					sound.volume = 0;
-				}
+				} */
 			});
-			if( sound == null ) {
-				SoundEffect.play( 'game_ambient_3', true, true, 0.0, s -> {
+			/* if( sound == null ) {
+				var ts = Time.realTime ();
+				SoundEffect.play( 'game_ambient_1', true, false, 0.0, s -> {
+					trace(Time.realTime ()-ts);
 					sound = s;
-					sound.fadeIn( 1.0, 3.0 );
+					sound.fadeIn( 1.0, 0.5 );
 				});
 			} else {
-				sound.fadeIn( 1.0, 3.0 );
-				sound.play();
-			}
+				sound.fadeIn( 1.0, 0.5 ).play();
+			} */
 		});
 	}
 
@@ -51,7 +52,7 @@ class Mainmenu extends Trait {
 				return;
 			} */
 			if( gp.started( 'home' ) ) Scene.setActive('Quit');
-			if( gp.started( 'a' ) ) loadGame();
+			if( gp.started( 'start' ) || gp.started( 'a' ) ) loadGame();
 			
 		}
 	}
@@ -146,13 +147,6 @@ class Mainmenu extends Trait {
 					}); 
 				});
 			} );
-			/* var game = Scene.active.getTrait( superposition.Game );
-			trace(game);
-			game.notifyOnInit( () -> {
-				game.create( { players : playerData, map : mapData }, () -> {
-					game.start();
-				}); 
-			}); */
 		}
 	}
 	

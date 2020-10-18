@@ -26,14 +26,19 @@ class SoundEffect {
         });
     }
 
-    public static inline function fade( sound : AudioChannel, volume : Float, duration : Float, ?ease : iron.system.Ease, delay = 0.0 ) : AudioChannel {
-        Tween.to( { target: sound, props: { volume: volume }, duration: duration , delay: delay, ease: ease } );
+    public static inline function fade( sound : AudioChannel, volume : Float, duration : Float, ?ease : iron.system.Ease, ?delay : Float, ?done : Void->Void  ) : AudioChannel {
+        Tween.to( { target: sound, props: { volume: volume }, duration: duration, ease: ease, delay: delay, done: done } );
         return sound;
     }
 
-    public static inline function fadeIn( sound : AudioChannel, volume : Float, duration : Float, ?ease : iron.system.Ease, delay = 0.0 ) : AudioChannel {
+    public static inline function fadeIn( sound : AudioChannel, volume = 1.0, duration : Float, ?ease : iron.system.Ease, ?delay : Float, ?done : Void->Void ) : AudioChannel {
         sound.volume = 0;
-        Tween.to( { target: sound, props: { volume: volume }, duration: duration , delay: delay, ease: ease } );
+        Tween.to( { target: sound, props: { volume: volume }, duration: duration, ease: ease, delay: delay, done: done } );
+        return sound;
+    }
+    
+    public static inline function fadeOut( sound : AudioChannel, volume = 0.0, duration : Float, ?ease : iron.system.Ease, ?delay : Float, ?done : Void->Void ) : AudioChannel {
+        Tween.to( { target: sound, props: { volume: volume }, duration: duration, ease: ease, delay: delay, done: done } );
         return sound;
     }
 

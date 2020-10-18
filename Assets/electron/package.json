@@ -1,10 +1,11 @@
 {
 	"name": "superposition",
-	"productName": "Superposition",
+	"productName": "superposition",
 	"version": "0.3.10",
-	"description": "",
-	"author": "https://disktree.net",
-	"license": "GPL",
+	"description": "Multiplayer strategy game",
+	"repository": "https://github.com/tong/ld47",
+	"author": "tong@disktree.net",
+	"license": "gpl",
 	"main": "main.js",
 	"scripts": {
 		"build": "cd ../../; node $ARMSDK/Kha/Tools/khamake/khamake.js",

@@ -7,6 +7,8 @@ import haxe.io.Bytes;
 #if !macro
 
 import armory.system.Event;
+import armory.trait.physics.PhysicsWorld;
+import armory.trait.physics.RigidBody;
 
 import iron.Scene;
 import iron.Trait;

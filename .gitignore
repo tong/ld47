@@ -1,4 +1,7 @@
 _*
 *.blend[0-9]
 build*/
+Bundled/config.arm
+Data/incoming/
+Data/**/*.zip
 Data/svg/

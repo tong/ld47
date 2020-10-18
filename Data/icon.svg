@@ -26,17 +26,17 @@
                            borderopacity="1.0"
                            inkscape:pageopacity="0.0"
                            inkscape:pageshadow="2"
-                           inkscape:zoom="1.829405"
-                           inkscape:cx="364.63998"
-                           inkscape:cy="510.86604"
+                           inkscape:zoom="1.2792544"
+                           inkscape:cx="776.51442"
+                           inkscape:cy="625.34893"
                            inkscape:document-units="px"
                            inkscape:current-layer="layer1"
                            showgrid="true"
                            units="px"
                            inkscape:window-width="3840"
-                           inkscape:window-height="2127"
+                           inkscape:window-height="2160"
                            inkscape:window-x="0"
-                           inkscape:window-y="33"
+                           inkscape:window-y="0"
                            inkscape:window-maximized="0"
                            inkscape:document-rotation="0"
                            showguides="true"
@@ -99,28 +99,28 @@
                                         cy="405.73764"
                                         r="126.72931" />
                           <circle
+                                        style="fill:#d33682;fill-opacity:1;stroke:none;stroke-width:0.538533"
+                                        id="circle857"
+                                        cx="135.46667"
+                                        cy="406.0083"
+                                        r="73.025009" />
+                          <circle
                                         style="fill:#268bd2;fill-opacity:1;stroke:none;stroke-width:0.351217"
                                         id="path850"
-                                        cx="87.84169"
-                                        cy="358.38333"
+                                        cx="135.46667"
+                                        cy="406.0083"
                                         r="47.624989" />
                           <circle
-                                        style="fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:0.351217"
-                                        id="circle832"
-                                        cx="183.09167"
-                                        cy="358.38333"
-                                        r="47.624989" />
-                          <circle
-                                        style="fill:#859900;fill-opacity:1;stroke:none;stroke-width:0.351217"
+                                        style="fill:#859900;fill-opacity:1;stroke:none;stroke-width:0.296583"
                                         id="path850-3"
-                                        cx="87.84169"
-                                        cy="453.63333"
-                                        r="47.624989" />
+                                        cx="135.46666"
+                                        cy="406.0083"
+                                        r="40.216682" />
                           <circle
-                                        style="fill:#d33682;fill-opacity:1;stroke:none;stroke-width:0.351217"
-                                        id="circle857"
-                                        cx="183.09167"
-                                        cy="453.63333"
-                                        r="47.624989" />
+                                        style="fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:0.0936578"
+                                        id="circle832"
+                                        cx="135.46667"
+                                        cy="406.0083"
+                                        r="12.699984" />
              </g>
 </svg>

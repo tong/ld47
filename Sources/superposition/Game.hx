@@ -16,20 +16,22 @@ typedef PlayerData = {
 
 typedef MapData = {
 	name: String,
+	//?theme : String,
 	atoms : Array<AtomData>,
 }
 
 typedef AtomData = {
+	//?name: String, //TODO explicit atom name
+	//?type: String, //TODO atom type
 	slots : Int,
-	loc : { x : Float, y : Float },
+	?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> },
+	//?rot: Float,
 	?player : Null<Int>,
 	?electrons : Array<Core>,
+	//?atoms : Array<Atom> // sub atoms
 }
 
 class Game extends Trait {
-
-	//static inline var CAM_Z = 265;
-	static inline var CAM_Z = 24.5;
 
 	public static var active(default,null) : Game;
 
@@ -37,8 +39,8 @@ class Game extends Trait {
 	public var time(default,null) : Float;
 	public var paused(default,null) = false;
 	public var finished(default,null) = false;
+	public var dim = new Vec3( 19.2, 10.8, 10 );
 
-	public var size(default,null) = new Vec2( 19.2, 10.8 );
 	public var players(default, null):Array<Player>;
 	public var atoms(default, null):Array<Atom>;
 	public var flyingElectrons(default,null):Array<Electron>;
@@ -47,7 +49,7 @@ class Game extends Trait {
 	var timePauseStart:Null<Float>;
 	var minAtomDistance = 3;
 	var atomContainer:Object;
-	var soundAmbient : AudioChannel;
+	//var soundAmbient : AudioChannel;
 
 	public function new() {
 		super();
@@ -56,7 +58,7 @@ class Game extends Trait {
 		notifyOnInit( () -> {
 			atomContainer = Scene.active.getEmpty('AtomContainer');
 			notifyOnRemove( () -> {
-				if( soundAmbient != null ) soundAmbient.stop();
+				//if( soundAmbient != null ) soundAmbient.stop();
 				for( p in players ) p.dispose();
 				for( a in atoms ) a.dispose();
 			});
@@ -76,23 +78,42 @@ class Game extends Trait {
 		atoms = [];
 		flyingElectrons = [];
 		var ts = Time.realTime ();
-		trace( 'Spawning ${ this.data.players.length} players' );
-		spawnPlayers( this.data.players, () -> {
-			trace( 'Spawning map: ${ this.data.map.name}' );
-			spawnMap( this.data.map, () -> {
-				trace('Loading ambient sound');
-				//SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
-				/* SoundEffect.loadSet( 'atom_ambient_', 8, sounds -> {
-					trace(sounds);
-					trace(Time.realTime ()-ts);
-				}); */
-				SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 1.0, a -> {
-					soundAmbient = a;
-					soundAmbient.pause();
-					if( onReady != null ) onReady() else start();
-				});
+
+		//trace("Loading materials");
+		//for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
+		//ElectronCoreNone
+
+		trace('Preloading electron core meshes');
+		//for( m in Data.cachedMeshes.keys() ) trace(m);
+		var numMeshesLoaded = 0;
+		var meshesToLoad = EnumTools.getConstructors(Electron.Core);
+		for( name in meshesToLoad ) {
+			var meshName = 'ElectronCore'+name;
+			Data.getMesh( 'mesh_'+meshName, meshName, m -> {
+				if( ++numMeshesLoaded == meshesToLoad.length ) {
+					trace( 'Spawning ${ this.data.players.length} players' );
+					spawnPlayers( this.data.players, () -> {
+						trace( 'Spawning map: ${ this.data.map.name}' );
+						spawnMap( this.data.map, () -> {
+							//trace('Loading ambient sound');
+							//SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
+							/* SoundEffect.loadSet( 'atom_ambient_', 8, sounds -> {
+								trace(sounds);
+								trace(Time.realTime ()-ts);
+							}); */
+							//SoundEffect.play( 'game_ambient_'+(1+Std.int(Math.random()*3)), true, true, 1.0, a -> {
+							/* SoundEffect.play( 'game_ambient_1', true, true, 1.0, a -> {
+								trace(Time.realTime ()-ts);
+								soundAmbient = a;
+								soundAmbient.pause();
+								if( onReady != null ) onReady() else start();
+							}); */
+							if( onReady != null ) onReady() else start();
+						});
+					});
+				}
 			});
-		});
+		} 
 	}
 
 	public function start() {
@@ -107,14 +128,13 @@ class Game extends Trait {
 		////cam.transform.loc.z = CAM_Z;
 		////cam.transform.buildMatrix();
 
-		//SoundEffect.play( 'game_start', false, true, 0.07 );
+		//soundAmbient.fadeIn( 1.0, 1.0 ).play();
 		
-		Postprocess.chromatic_aberration_uniforms[0] = 16.0;
-		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0] };
+		var values = { chromatic : Postprocess.chromatic_aberration_uniforms[0] = 12.0 };
 		Tween.to({
 			target: values,
-			delay: 0.2,
-			duration: 1.0,
+			//delay: 0.2,
+			duration: 0.7,
 			props: { chromatic: 0.03 },
 			ease: QuartOut,
 			tick: () -> {
@@ -122,7 +142,6 @@ class Game extends Trait {
 			},
 			done: () -> {
 				Postprocess.chromatic_aberration_uniforms[0] = 0.03;
-				//soundAmbient.play();
 			}
 		});
 	}
@@ -195,9 +214,8 @@ class Game extends Trait {
 	function spawnMap( mapData : MapData, onReady : Void->Void ) {
 		function spawnNext() {
 			var dat = mapData.atoms[atoms.length];
-			spawnAtom( new Vec2( dat.loc.x, dat.loc.y ), dat.slots, a -> {
+			spawnAtom( dat.loc, dat.slots, a -> {
 				if( dat.player != null ) {
-					//if( dat.electrons == null || dat.electrons.length == 0 ) {
 					a.setPlayer(players[dat.player]);
 					var electrons = dat.electrons;
 					if( dat.electrons == null || dat.electrons.length == 0 ) electrons = [None];
@@ -212,15 +230,21 @@ class Game extends Trait {
 		spawnNext();
 	}
 
-	function spawnAtom( pos : Vec2, numSlots : Int, cb : Atom->Void ) {
+	function spawnAtom( ?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> }, numSlots : Int, cb : Atom->Void ) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.visible = true;
 			var atom = new Atom( atoms.length, numSlots );
 			atom.notifyOnInit( ()->{
 				cb(atom);
 			});
-			obj.addTrait(atom);
-			atom.setPostion( new Vec2( pos.x*size.x/2, pos.y*size.y/2 ) );
+			obj.addTrait( atom );
+			var v = new Vec3();
+			if( loc != null ) {
+				if( loc.x != null ) v.x = loc.x*dim.x/2;
+				if( loc.y != null ) v.y = loc.y*dim.y/2;
+				if( loc.z != null ) v.z = loc.z*dim.z/2;
+			}
+			atom.setPostion(v);
 			atoms.push(atom);			
 		});
 	}
@@ -310,8 +334,8 @@ class Game extends Trait {
 				}
 				if(!electronOK) break;
 			}
-			if (size.x/2 < Math.abs(locElectron.x) || 
-				size.y/2 < Math.abs(locElectron.y)){
+			if (dim.x/2 < Math.abs(locElectron.x) || 
+				dim.y/2 < Math.abs(locElectron.y)){
 					//the electron leaves the game area
 					electronOK=false;
 					electron.dispose();	

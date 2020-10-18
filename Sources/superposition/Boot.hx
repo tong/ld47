@@ -1,6 +1,7 @@
 package superposition;
 
 class Boot extends Trait {
+	
 	@prop
 	public var scene:String = "Mainmenu";
 
@@ -25,7 +26,7 @@ class Boot extends Trait {
 							}
 						}
 					});
-					notifyOnRender2D( g -> {
+					function render( g : kha.graphics2.Graphics ) {
 						var sw = System.windowWidth(), sh = System.windowHeight();
 						g.end();
 						g.color = 0xff000000;
@@ -33,9 +34,13 @@ class Boot extends Trait {
 						g.color = 0xffffffff;
 						g.drawImage(img, sw / 2 - img.width / 2, sh / 2 - img.height / 2);
 						g.begin(false);
+					}
+					notifyOnRender2D( g -> {
+						render( g );
+						removeRender2D( render );
 					});
 					#if !kha_html5
-					//Tween.timer( 0.2, proceed );
+					Tween.timer( 0.2, proceed );
 					#end
 				});
 			});

@@ -53,8 +53,9 @@ class Atom extends Trait {
 	public final scale : FastFloat;
 	public final electrons : Array<Electron> = [];
 
-	public var player(default,null) : Player;
 	public var mesh(default,null) : MeshObject;
+	public var body(default,null) : RigidBody;
+	public var player(default,null) : Player;
 	public var selectedElectron(default,null) : Electron;
 
 	public var rotationSpeed(default,null) : FastFloat = 1.0;
@@ -86,27 +87,31 @@ class Atom extends Trait {
 
 			defaultMaterials = mesh.materials;
 			
+			body = mesh.getTrait(RigidBody);
+			//body.setAngularFactor( 0, 0, 0 );
+			//PhysicsWorld.active.notifyOnPreUpdate( preUpdate );
+			
 			var markerObject = cast object.getChild('ElectronMarker');
 			markerObject.visible = true;
 			marker = new Marker();
 			markerObject.addTrait( marker );
 
-			/* var speaker = object.getChildOfType( SpeakerObject );
-			trace(speaker); */
-			
-			/*
-			SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
+			/* SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
 				soundAmbient = a;
 				soundAmbient.pause();
-				//Tween.to( { target: soundAmbient, props: { volume: 0.3 }, duration: 2.0 } );
-			});
-			*/
+			}); */
+		});
+		
+		notifyOnRemove( () -> {
+			//if( soundAmbient != null ) soundAmbient.stop();
+			//PhysicsWorld.active.removePreUpdate( preUpdate );
 		});
 	}
 
-	public function setPostion( v : Vec2 ) {
+	public inline function setPostion( v : Vec3 ) {
 		object.transform.loc.x = v.x;
 		object.transform.loc.y = v.y;
+		object.transform.loc.z = v.z;
 		object.transform.buildMatrix();
 	}
 
@@ -186,15 +191,68 @@ class Atom extends Trait {
 				}
 				marker.show();
 			});
-			//soundAmbient.play();
+			/* if( soundAmbient != null ) {
+				soundAmbient.play();
+				soundAmbient.fadeIn( 1.0, 1.0 );
+			} */
 		} else {
 			mesh.materials = defaultMaterials;
 			//marker.hide();
-			//soundAmbient.stop();
+			//if( soundAmbient != null ) soundAmbient.stop();
 		}
 	}
 
+	/*
+	function preUpdate() {
+		if( !body.ready ) return;
+		body.syncTransform();
+		var contacts = PhysicsWorld.active.getContactPairs( body );
+		if( contacts != null ) {
+			var normal : Vec4 = null;
+			for( contact in contacts ) {
+				var rba = PhysicsWorld.active.rbMap.get( contact.a );
+				trace(rba.object);
+				normal = contact.normOnB.clone();
+				if( body != PhysicsWorld.active.rbMap.get( contact.a ) ) {
+					//trace("TODO check");
+					normal = normal.mult( -1 );
+				}
+				*/
+				/*
+				slope = Math.abs( Math.asin( Math.abs( normal.z ) / normal.length() ) - HALF_PI );
+				//trace( contact.distance );
+				if( Math.abs( contact.distance ) <= contactThreshold ) {
+					if( normal.z > 0 ) {
+						onGround = true;
+						//isJumping = false;
+						framesOffGround = 0;
+						//groundSlope = slope;
+					} else if( normal.z < 0 ) {
+						onCeiling = true;
+					}
+				}
+			}
+		}
+	}
+	*/
+
 	public function update() {
+
+		/* if( index == 1 ) {
+			object.transform.translate( 0.01, 0, 0 );
+		} */
+		/* if( body == null || !body.ready ) return;
+		body.syncTransform(); */
+		/* var contacts = PhysicsWorld.active.getContactPairs( body );
+		if( contacts != null && contacts.length > 0 ) {
+			//trace(contacts);
+			for( contact in contacts ) {
+				var ca = PhysicsWorld.active.rbMap.get( contact.a );
+				var cb = PhysicsWorld.active.rbMap.get( contact.b );
+				trace( ca.object.name+" : "+cb.object.name );
+			}
+		}
+		return; */
 
 		if( player != null ) {
 
@@ -205,7 +263,6 @@ class Atom extends Trait {
 				switch e.core {
 				case Spawner(v): spawnTimeFactor += v;
 				case Speeder(v): rotSpeed *= v;
-				//case Speeder(v): rotSpeed += v;
 				case _:
 				}
 			}
@@ -221,13 +278,12 @@ class Atom extends Trait {
 				if( Game.active.time - lastSpawnTime >= spawnTime ) {
 					lastSpawnTime = Game.active.time;
 					//TODO core type spawn ratios
-					var core : Electron.Core = None;
-					/*
+					//var core : Electron.Core = None;
 					var type = Math.floor( Math.random() * (EnumTools.getConstructors(Electron.Core).length) );
 					var core : Electron.Core = switch type {
 					case 0: None;
-					case 1: Spawner(1+Math.random()*2);
-					case 2: Speeder(1+Math.random()*2);
+					case 1: Spawner(Math.random()*1);
+					case 2: Speeder(1+Math.random()*1);
 					case 3: Bomber;
 					case 4: Shield;
 					case 5: Laser;
@@ -236,7 +292,6 @@ class Atom extends Trait {
 					//case 8: Occupier;
 					case _: null;
 					}
-					*/
 					if( core != null ) {
 						spawnElectron(core);
 					}
