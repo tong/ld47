@@ -16,13 +16,15 @@ class Credits extends Trait {
         } );
         ui = new Zui( { font : UI.fontTitle, theme: UI.THEME } );
         notifyOnRender2D( g -> {
-            var sw = System.windowWidth();
-		    var sh = System.windowHeight();
+            var sw = System.windowWidth(), sh = System.windowHeight();
             g.end();
             ui.begin( g );
             if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
-                ui.text( 'Developed by shadow & tong at disktree.net'.toUpperCase() );
-                ui.text( 'Sound by stritter.audio'.toUpperCase() );
+                ui.button( 'Developed by shadow & tong at disktree.net'.toUpperCase(), Left );
+                if( ui.button( 'Sound by stritter.audio'.toUpperCase(), Left ) ) {
+                    trace('visit wbsite');
+                    kha.System.loadUrl('https://stritter.audio/');
+                }
             }
             ui.end();
             g.begin(false);

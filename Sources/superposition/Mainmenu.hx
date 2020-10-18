@@ -7,13 +7,8 @@ import zui.Themes;
 
 class Mainmenu extends Trait {
 	
+	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
 	static var selectedMap = 0;
-	static var playerData : Array<PlayerData> = [for(i in 0...4) {
-		name: 'P'+(i+1),
-		enabled: i < 2,
-		color: Player.COLORS[i]
-	}];
-
 	static var sound : AudioChannel;
 
 	var ui : Zui;
@@ -22,71 +17,67 @@ class Mainmenu extends Trait {
 		super();
 		Log.info( 'Mainmenu' );
 		notifyOnInit( () -> {
-			//Music.play('game_ambient_3');
-			if( sound == null ) {
-				SoundEffect.play( 'game_ambient_3', true, true, 0.0, s -> {
-					sound = s;
-					Tween.to( { target: sound, props: { volume: 0.9 }, delay: 0.2, duration: 2.0 } );
-				});
-			} else {
-				Tween.to( { target: sound, props: { volume: 0.9 }, delay: 0.2, duration: 1.0 } );
-			}
 			var theme : TTheme = Reflect.copy( UI.THEME );
 			ui = new Zui( { font : UI.fontTitle, theme: theme } );
 			//ui.alwaysRedraw = true;
 			notifyOnUpdate( update );
 			notifyOnRender2D( render2D );
+			notifyOnRemove( () -> {
+				if( sound != null ) {
+					sound.pause();
+					sound.volume = 0;
+				}
+			});
+			if( sound == null ) {
+				SoundEffect.play( 'game_ambient_3', true, true, 0.0, s -> {
+					sound = s;
+					sound.fadeIn( 1.0, 3.0 );
+				});
+			} else {
+				sound.fadeIn( 1.0, 3.0 );
+				sound.play();
+			}
 		});
 	}
 
 	function update() {
-		final kb = Input.getKeyboard();
+		var kb = Input.getKeyboard();
 		if( kb.started( "escape" ) ) {
-			//Scene.setActive( 'Quit' );
-			loadScene('Quit');
+			Scene.setActive('Quit');
 			return;
 		}
 		if( kb.started( "c" ) ) {
-			//Scene.setActive( 'Credits' );
-			loadScene('Credits');
+			Scene.setActive('Credits');
 			return;
 		}
-		/* if( kb.started( "enter" ) ) {
-			loadGame();
-			return;
-		} */
-		var gp : Gamepad = null;
 		for( i in 0...4 ) {
-			gp = Input.getGamepad(i);
+			var gp = Input.getGamepad(i);
 			/* if( gp.started( 'start' ) ) {
 				loadGame();
 				return;
 			} */
 			if( gp.started( 'share' ) ) {
-				loadScene('Quit');
+				Scene.setActive('Quit');
 				return;
 			}
 		}
-		notifyOnRemove( () -> {
-			//if( sound != null ) sound.stop();
-        });
 	}
 
 	function render2D( g : kha.graphics2.Graphics ) {
 
 		if( ui == null ) return;
 
-		final sw = System.windowWidth();
-		final sh = System.windowHeight();
-		final numPlayers = playerData.filter( p -> return p.enabled ).length;
+		var sw = System.windowWidth(), sh = System.windowHeight();
+		var numPlayers = playerData.filter( p -> return p.enabled ).length;
 		
 		g.end();
-		
 		ui.begin( g );
+		//ui.beginRegion( g );
 		g.opacity = 1;
 
 		var hwin = Id.handle();
 		hwin.redraws = 1;
+
 		if( ui.window( hwin, 32, 32, sw-64, sh-64, false ) ) {
 
 			ui.ops.theme.TEXT_COL = COLOR_ENABLED;
@@ -106,12 +97,14 @@ class Mainmenu extends Trait {
 			ui.ops.theme.BUTTON_TEXT_COL = playerData[3].enabled ? playerData[3].color : COLOR_DISABLED;
 			if( ui.button( playerData[3].name, Left ) ) playerData[3].enabled = !playerData[3].enabled;
 			
-			var maps = MapStore.MAPS.get( numPlayers );
-			ui.row( [for(i in 0...maps.length) 1/18] );
-			for( i in 0...maps.length ) {
-				ui.ops.theme.BUTTON_TEXT_COL = ( i == selectedMap ) ? COLOR_ENABLED : COLOR_DISABLED;
-				if( ui.button( 'M$i', Left ) ) {
-					selectedMap = i;
+			if( numPlayers >= 2 ) {
+				var maps = MapStore.MAPS.get( numPlayers );
+				ui.row( [for(i in 0...maps.length) 1/18] );
+				for( i in 0...maps.length ) {
+					ui.ops.theme.BUTTON_TEXT_COL = ( i == selectedMap ) ? COLOR_ENABLED : COLOR_DISABLED;
+					if( ui.button( 'M$i', Left ) ) {
+						selectedMap = i;
+					}
 				}
 			}
 			/*
@@ -122,15 +115,15 @@ class Mainmenu extends Trait {
 			}
 			*/
 			
-			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
-			final canPlay = playerData.filter( p -> return p.enabled ).length >= 2;
-			if( !canPlay ) ui.ops.theme.BUTTON_TEXT_COL = COLOR_DISABLED;
+			var canPlay = playerData.filter( p -> return p.enabled ).length >= 2;
+			ui.ops.theme.BUTTON_TEXT_COL = canPlay ? COLOR_ENABLED : COLOR_DISABLED;
 			if( ui.button( 'PLAY', Left ) ) loadGame();
+
 			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
-			if( ui.button( 'SETTINGS', Left ) ) loadScene( 'Settings' );
-			if( ui.button( 'HELP', Left ) ) loadScene( 'Help' );
-			if( ui.button( 'CREDITS', Left ) ) loadScene( 'Credits' );
-			if( ui.button( 'QUIT', Left ) ) loadScene( 'Quit' );
+			//if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
+			if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
+			//if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
+			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
 		ui.end();
 
@@ -144,41 +137,30 @@ class Mainmenu extends Trait {
 		g.begin( false );
 	}
 
-	function loadScene( name : String ) {
-		Scene.setActive( name );
-		Tween.to( { target: sound, props: { volume: 0.0 }, duration: 2.0,
-			/* tick: () -> {
-				//	ui.g.opacity = sound.b
-			},
-			done: () -> {
-				//sound.stop();
-			} */
-		} );
-	}
-
 	function loadGame() {
-		final numPlayers = playerData.filter( p -> return p.enabled ).length;
-		if( numPlayers >= 2 ) {
-
-			final maps = MapStore.MAPS[numPlayers];
-			final mapData = maps[selectedMap];
-			//final maps = MapStore.MAPS[numPlayers];
-			//final mapData = maps[Std.int(maps.length*Math.random())];
-
-			Scene.setActive( 'Game' );
-			final game = new Game( playerData, mapData, () -> {
-				Tween.to( { target: sound, props: { volume: 0.0 }, duration: 1.5,
-					tick: () -> {
-					//	ui.g.opacity = sound.b
-					},
-					done: () -> {
-						//sound.stop();
-					}
-				} );
+		var playerData = Mainmenu.playerData.filter( p -> return p.enabled );
+		if( playerData.length >= 2 ) {
+			var availableMaps = MapStore.MAPS[playerData.length];
+			var mapData = availableMaps[selectedMap];
+			/* Scene.active.notifyOnInit( () -> {
+				trace("Scene init");
+			} ); */
+			Scene.setActive( 'Game', obj -> {
+				var game = obj.getTrait( superposition.Game );
+				game.notifyOnInit( () -> {
+					game.create( { players : playerData, map : mapData }, () -> {
+						game.start();
+					}); 
+				});
 			} );
-			Scene.active.root.addTrait( game );
-
+			/* var game = Scene.active.getTrait( superposition.Game );
+			trace(game);
+			game.notifyOnInit( () -> {
+				game.create( { players : playerData, map : mapData }, () -> {
+					game.start();
+				}); 
+			}); */
 		}
 	}
-
+	
 }

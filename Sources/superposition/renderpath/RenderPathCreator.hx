@@ -17,15 +17,24 @@ class RenderPathCreator {
 	public static var setTargetMeshes = RenderPathDeferred.setTargetMeshes;
 	public static var drawMeshes = RenderPathDeferred.drawMeshes;
 	public static var applyConfig = RenderPathDeferred.applyConfig;
+
 	#else
 	public static var setTargetMeshes = () -> {};
 	public static var drawMeshes = () -> {};
 	public static var applyConfig = () -> {};
 	#end
 
+	#if rp_voxelao
+	public static var voxelFrame = 0;
+	public static var voxelFreq = 6; // Revoxelizing frequency
+	#end
+
+	// Last target before drawing to framebuffer
+	public static var finalTarget : RenderTarget = null;
+
 	public static function get() : RenderPath {
 
-		path = new RenderPath();
+		path = new iron.RenderPath();
 		Inc.init( path );
 
 		#if (rp_renderer == "Forward")
@@ -50,11 +59,4 @@ class RenderPathCreator {
 		return path;
 	}
 
-	#if rp_voxelao
-	public static var voxelFrame = 0;
-	public static var voxelFreq = 6; // Revoxelizing frequency
-	#end
-
-	// Last target before drawing to framebuffer
-	public static var finalTarget : RenderTarget = null;
 }

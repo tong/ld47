@@ -1,5 +1,48 @@
 package superposition;
 
+class Score {
+        
+	public static var spawned = new Score(1, 0, 0, 0, 0, 0);
+	public static var fired = new Score(0, 1, 0, 0, 0, 0);	
+    public static var destroyed = new Score(0, 0, 0, 1, 0, 0);
+	public static var taken = new Score(0, 0, 0, 0, 1, 0);
+    public static var lost = new Score(0, 0, 0, 0, 0, 1);
+    public static var hit = new Score(0, 0, 1, 0, 0, 0);
+	public static var empty = new Score(0,0,0,0,0,0);
+	
+	public var spawnedElectrons(default,null) : Int;
+	public var shotsFired(default,null) : Int;
+	public var shotsHitAtom(default,null) : Int;
+	public var shotsDestroyedByEnemyElectron(default,null) : Int;
+	public var ownershipsTaken(default,null) : Int;
+    public var ownershipsLost(default,null) : Int;
+    
+	function new( spawnedElectrons:Int, shotsFired:Int, shotsHitAtom:Int, shotsDestroyedByEnemyElectron:Int, ownershipsTaken:Int, ownershipsLost:Int) {
+		this.spawnedElectrons = spawnedElectrons;
+		this.shotsFired = shotsFired;
+		this.shotsHitAtom = shotsHitAtom;
+		this.shotsDestroyedByEnemyElectron = shotsDestroyedByEnemyElectron;
+		this.ownershipsTaken = ownershipsTaken;
+		this.ownershipsLost = ownershipsLost;
+	}
+
+	public function add( s : Score ) : Score {
+		return new Score(
+			spawnedElectrons + s.spawnedElectrons, 
+			shotsFired + s.shotsFired, 
+			shotsHitAtom + s.shotsHitAtom,
+			shotsDestroyedByEnemyElectron + s.shotsDestroyedByEnemyElectron, 
+			ownershipsTaken + s.ownershipsTaken,
+			ownershipsLost + s.ownershipsLost
+		);
+	}
+	
+	public function reset() {
+		spawnedElectrons = shotsFired = shotsHitAtom = shotsDestroyedByEnemyElectron = ownershipsTaken = ownershipsLost = 0;
+		return this;
+	}
+}
+
 class Player extends Trait {
 
 	public static final COLORS:Array<Color> = [0xff268BD2, 0xffDC322F, 0xff859900, 0xffD33682];
@@ -7,65 +50,35 @@ class Player extends Trait {
 	public final index : Int;
 	public final color : Color;
 	
-	//public var atoms(default, null):Array<Atom> = [];
-	public var atom(default, null):Atom;
-	public var score(default, null):Score;
+	public var atom(default,null) : Atom;
 	public var mesh(default,null) : MeshObject;
-	public var dead(default,null) = false;
+	public var score(default,null) = Score.empty;
+	public var moveSpeed(default,null) : FastFloat = 1.0;
 
 	var soundMove : AudioChannel; 
 
-	public function new(index:Int) {
+	public function new( index : Int ) {
 		super();
 		this.index = index;
-		this.score = Score.empty;
-		this.color = COLORS[index];
-		notifyOnInit(() -> {
+		//score = Score.empty;
+		color = COLORS[index];
+		notifyOnInit( () -> {
+
 			mesh = cast object.getChild('PlayerMesh');
 			mesh.visible = true;
 
-			//Scene.active.spawnObject('PlayerLight', mesh, obj -> {});
-			
-			//var light : LightObject = cast object.getChild('PlayerLight');
-			//trace(light.data);
+			trace(object.getChild('PlayerLight') );
 
-		 	/* var d = new iron.data.LightData(cast {
-				name : "PlayerLight"+index, 
-				type : 'point', 
-				cast_shadow : true, 
-				near_plane : 0.10000000149011612, 
-				far_plane : 5, 
-				fov : 1.5707999467849731, 
-				color : [0.0193822979927063,0.25818297266960144,0.6444798111915588], 
-				strength : 56, 
-				shadows_bias : 0.00009999999747378752, 
-				shadowmap_size : 1024, 
-				shadowmap_cube : true, 
-				light_size : 2.5
-			}, (dat) -> {
-				var l = new LightObject(dat);
-				l.transform.loc.z = 5;
-				l.transform.buildMatrix();
-				object.addChild( l );
-			});  */
-
-			//var speaker = new SpeakerObject();
-
-			DataTools.loadMaterial('Game', 'Player'+(index+1), m -> {
+			DataTools.loadMaterial('Game','Player'+(index+1), m -> {
 				mesh.materials = m;
 			});
+
 			SoundEffect.load( 'player_move', s -> {
 				soundMove = Audio.play( s, false, false );
 				soundMove.pause();
 				soundMove.volume = 0.2;
 			} );
 		});
-	}
-
-	public function addToScore(s:Score) {
-		score = score.add(s);
-		// trace('new score is ' + score);
-		return;
 	}
 
 	public function update() {
@@ -130,40 +143,47 @@ class Player extends Trait {
 		if( dir.x != 0 || dir.y != 0 ) navigateSelectionTowards(dir);
 	}
 
-	public function selectAtom(newAtom:Atom) {
-		if (atom != null) {
-			atom.deselect();
+	public function selectAtom( newAtom : Atom ) {
+
+		if ( atom != null ) {
+			//atom.deselect();
 		} else {
 			
 		}
 		atom = newAtom;
-		atom.select();
-
-		final loc = atom.object.transform.world.getLoc();
-		final s = 1.3;
-		final scaleFactor = atom.scale * s;
-		final duration = object.transform.world.getLoc().distanceTo( loc ) / 20;
-
+		//atom.select();
+		
 		if( soundMove != null ) soundMove.play();
-				
+		
+		// var s = 1.3;
+		// var scaleFactor = atom.scale * s;
+		var destination = atom.object.transform.world.getLoc();
+		var duration = (object.transform.world.getLoc().distanceTo( destination ) / 20) * moveSpeed;
+		var values : { x : FastFloat, y : FastFloat, z : FastFloat, sx : FastFloat, sy : FastFloat, sz : FastFloat } = {
+			x : object.transform.loc.x, y : object.transform.loc.y, z : object.transform.loc.z,
+			sx : object.transform.scale.x, sy : object.transform.scale.y, sz : object.transform.scale.z,
+		}
 		Tween.to({
-			props: {x: loc.x, y: loc.y, z: loc.z},
+			props: {
+				x : destination.x, y : destination.y, z : destination.z,
+				sx : atom.mesh.transform.scale.x, sy : atom.mesh.transform.scale.y, sz : atom.mesh.transform.scale.z
+			},
 			duration: duration,
-			target: object.transform.loc,
+			target: values,
 			ease: Ease.QuartOut,
 			tick: () -> {
+				object.transform.loc.x = values.x;
+				object.transform.loc.y = values.y;
+				object.transform.loc.z = values.z;
 				object.transform.buildMatrix();
+				mesh.transform.scale.x = values.sx;
+				mesh.transform.scale.y = values.sy;
+				mesh.transform.scale.z = values.sz;
+				mesh.transform.buildMatrix();
 			},
 			done: () -> {
 				//if( soundMove != null ) soundMove.play();
 			}
-		});
-		Tween.to({
-			props: {x: scaleFactor, y: scaleFactor, z: scaleFactor},
-			duration: duration,
-			target: mesh.transform.scale,
-			tick: mesh.transform.buildMatrix,
-			ease: Ease.QuartOut
 		});
 	}
 
@@ -197,7 +217,7 @@ class Player extends Trait {
 		}
 	}
 
-	function fire() {
+	public function fire() {
 		atom.fire();
 		if( atom.electrons.length == 0 ) {
 			var atom : Atom = null;
@@ -212,5 +232,8 @@ class Player extends Trait {
 				selectAtom( atom );
 			}
 		}
+	}
+
+	public function dispose() {
 	}
 }

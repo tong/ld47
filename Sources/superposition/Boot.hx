@@ -9,11 +9,11 @@ class Boot extends Trait {
 		Log.info('Boot');
 		notifyOnInit(() -> {
 			UI.init(() -> {
-				var kb = Input.getKeyboard();
 				var mouse = Input.getMouse();
-				var images = ['process','sulfur','syn','tong','topy','vril'];
-           		var img = images[Std.int(Math.random()*(images.length-1))];
+				var images = ['process','syn','tong','topy'];
+				var img = images[Std.int(Math.random()*(images.length-1))];
 				Data.getImage('$img.png', img -> {
+					var kb = Input.getKeyboard();
 					notifyOnUpdate(() -> {
 						if (kb.started("space") || kb.started("return") || mouse.started("left")) {
 							proceed();
@@ -28,7 +28,7 @@ class Boot extends Trait {
 						}
 					});
 					notifyOnRender2D((g) -> {
-						final sw = System.windowWidth(), sh = System.windowHeight();
+						var sw = System.windowWidth(), sh = System.windowHeight();
 						g.end();
 						g.color = 0xff000000;
 						g.fillRect(0, 0, sw, sh);
@@ -37,7 +37,7 @@ class Boot extends Trait {
 						g.begin(false);
 					});
 					#if !kha_html5
-					Tween.timer(0.2, proceed);
+					Tween.timer( 0.2, proceed );
 					#end
 				});
 			});

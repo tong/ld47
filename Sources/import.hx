@@ -4,10 +4,7 @@ import haxe.EnumTools.EnumValueTools;
 import haxe.Json;
 import haxe.io.Bytes;
 
-#if macro
-import sys.FileSystem;
-import sys.io.File;
-#else
+#if !macro
 
 import armory.system.Event;
 
@@ -50,14 +47,15 @@ import tron.MathTools;
 import tron.MathTools.PI;
 import tron.MathTools.PI2;
 import tron.MathTools.HALF_PI;
-import tron.Music;
-import tron.PhysicsTools;
+//import tron.Music;
+//import tron.PhysicsTools;
 import tron.SpawnTools;
 import tron.sys.Path;
 
 import superposition.renderpath.Postprocess;
 
 using StringTools;
-using tron.PhysicsTools;
+using superposition.SoundEffect;
+//using tron.PhysicsTools;
 
 #end // !macro

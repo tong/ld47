@@ -8,13 +8,16 @@ enum Core {
     Shield;
     Laser;
     Swastika;
+    Topy;
+    Process;
     //Candyflip;
     //Occupier;
 }
 
 class Electron extends Trait {
 
-    public static var defaultColor = new Vec4( 0, 1, 0 );
+    public static inline var RADIUS : FastFloat = 0.1;
+    public static var COLOR_DEFAULT = new Vec4( 0, 1, 0 );
 
     public final player : Player;
     public final core : Core;
@@ -47,8 +50,7 @@ class Electron extends Trait {
     }
 
     public function update() {
-        if( Game.active.paused )
-            return;
+       // if( Game.active.state == Play ) return;
         //mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
         if (velocity != null) {
             object.transform.translate( velocity.x/50, velocity.y/50, 0 );
@@ -88,8 +90,8 @@ class Electron extends Trait {
         object.transform.buildMatrix();
     }
 
-    public function destroy() {
-        object.parent.removeChild(object);
+    public function dispose() {
+        //object.parent.removeChild(object);
         object.remove();
     }
 }

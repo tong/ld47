@@ -6,13 +6,16 @@ import zui.Zui;
 
 class ResultMenu extends Trait {
 
-	var status : GameStatus;
+	//var status : GameStatus;
+	var winner : Player;
 	var ui : Zui;
 
-	public function new( status: GameStatus ) {
+	//public function new( status: GameStatus ) {
+	public function new( winner : Player ) {
 		super();
-		this.status = status;
-		notifyOnInit(() -> {
+		this.winner = winner;
+	//	this.status = status;
+		notifyOnInit( () -> {
 			var theme:TTheme = Reflect.copy(UI.THEME_2);
 			// theme.BUTTON_TEXT_COL = 0xff00ff00;
 			// theme.FILL_WINDOW_BG = false;
@@ -23,6 +26,9 @@ class ResultMenu extends Trait {
 			notifyOnUpdate( update );
 			notifyOnRender2D( render );
 		});
+		/* notifyOnRemove( () -> {
+			removeRender2D( render );
+		}); */
 	}
 
 	function update() {
@@ -42,13 +48,25 @@ class ResultMenu extends Trait {
 	}
 
 	function render(g:kha.graphics2.Graphics) {
-		final game = Game.active;
-		final sw = System.windowWidth();
-		final sh = System.windowHeight();
+		var sw = System.windowWidth(), sh = System.windowHeight();
 		g.end();
 		g.opacity = 1;
 		ui.begin(g);
 		if (ui.window(Id.handle(), 32, 32, sw-64, sh-64, false)) {
+
+			if( winner != null ) {
+				ui.ops.theme.TEXT_COL = winner.color;
+				ui.text( 'WINNER: '+winner.index  );
+			} else {
+				ui.text( 'NO WINNER'  );
+			}
+
+			for( player in Game.active.players ) {
+				ui.ops.theme.TEXT_COL = player.color;
+				ui.text('P' + (player.index+1) );
+			}
+
+			/*
 			function printPlayer( player : Player ) {
 				ui.ops.theme.TEXT_COL = player.color;
 				ui.text('P' + (player.index+1), Left);
@@ -69,6 +87,12 @@ class ResultMenu extends Trait {
 				for (p in status.others ) printPlayer(p);
 			} else {
 				for (p in status.others ) printPlayer(p);
+			}
+			*/
+			if (ui.button('RESTART', Left)) {
+				remove();
+				Game.active.create();
+				return;
 			}
 			if (ui.button('PROCEED', Left)) {
 				Scene.setActive('Mainmenu');

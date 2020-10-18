@@ -22,22 +22,14 @@ class PauseMenu extends Trait {
 	}
 
 	function update() {
-		final kb = Input.getKeyboard();
+		var kb = Input.getKeyboard();
 		if( kb.started("escape") ) {
-			if( Game.active.paused ) {
-				Game.active.resume();
-			} else {
-				Game.active.pause();
-			}
+			Game.active.paused ? Game.active.resume() : Game.active.pause();
 		}
 		for (i in 0...4) {
-			final gp = Input.getGamepad(i);
+			var gp = Input.getGamepad(i);
 			if (gp.started('start')) {
-				if( Game.active.paused ) {
-					Game.active.resume();
-				} else {
-					Game.active.pause();
-				}
+				Game.active.paused ? Game.active.resume() : Game.active.pause();
 			}
 		}
 	}
@@ -45,22 +37,17 @@ class PauseMenu extends Trait {
 	function render( g : kha.graphics2.Graphics ) {
 		if( !Game.active.paused )
 			return;
-		final game = Game.active;
-        final sw = System.windowWidth();
-		final sh = System.windowHeight();
+        var sw = System.windowWidth(), sh = System.windowHeight();
         g.end();
 		g.opacity = 1;
 		ui.begin( g );
-		if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
-			if( ui.button( 'RESUME', Left ) ) {
-				game.resume();
-            }
-			/* if( ui.button( 'RESTART', Left ) ) {
-				game.start();
-			} */
-            if( ui.button( 'EXIT', Left ) ) {
-				Game.active.abort();
+		if( ui.window( Id.handle(), 32, 32, 400, 400, false ) ) {
+			if( ui.button( 'RESUME', Left ) ) Game.active.resume();
+			if( ui.button( 'RESTART', Left ) ) {
+				//Game.active.abort();
+				//Game.active.create();
 			}
+            if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Mainmenu' );
 		}
 		ui.end();
         g.begin( false );

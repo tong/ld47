@@ -14,4 +14,15 @@ class SoundEffect {
         });
     }
 
+    public static inline function fade( sound : AudioChannel, volume : Float, duration : Float, ?ease : iron.system.Ease, delay = 0.0 ) : AudioChannel {
+        Tween.to( { target: sound, props: { volume: volume }, duration: duration , delay: delay, ease: ease } );
+        return sound;
+    }
+
+    public static inline function fadeIn( sound : AudioChannel, volume : Float, duration : Float, ?ease : iron.system.Ease, delay = 0.0 ) : AudioChannel {
+        sound.volume = 0;
+        Tween.to( { target: sound, props: { volume: volume }, duration: duration , delay: delay, ease: ease } );
+        return sound;
+    }
+
 }

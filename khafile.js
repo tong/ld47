@@ -1,24 +1,24 @@
 // Auto-generated
-let project = new Project('Superposition');
+let project = new Project('superposition');
 
 project.addSources('Sources');
 project.addLibrary("/home/tong/sdk/armsdk/armory");
 project.addLibrary("/home/tong/sdk/armsdk/iron");
 project.addLibrary("tron");
-project.addParameter('superposition.HUD');
-project.addParameter("--macro keep('superposition.HUD')");
+project.addParameter('superposition.Game');
+project.addParameter("--macro keep('superposition.Game')");
 project.addParameter('superposition.Mainmenu');
 project.addParameter("--macro keep('superposition.Mainmenu')");
-project.addParameter('superposition.Credits');
-project.addParameter("--macro keep('superposition.Credits')");
+project.addParameter('superposition.HUD');
+project.addParameter("--macro keep('superposition.HUD')");
 project.addParameter('superposition.PauseMenu');
 project.addParameter("--macro keep('superposition.PauseMenu')");
+project.addParameter('superposition.Credits');
+project.addParameter("--macro keep('superposition.Credits')");
 project.addParameter('superposition.Quit');
 project.addParameter("--macro keep('superposition.Quit')");
 project.addParameter('superposition.Help');
 project.addParameter("--macro keep('superposition.Help')");
-project.addParameter('superposition.Settings');
-project.addParameter("--macro keep('superposition.Settings')");
 project.addParameter('superposition.Boot');
 project.addParameter("--macro keep('superposition.Boot')");
 project.addShaders("build_ld47/compiled/Shaders/*.glsl", { noembed: false});
@@ -27,15 +27,16 @@ project.addAssets("build_ld47/compiled/Shaders/*.arm", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/brdf.png", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/smaa_area.png", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/smaa_search.png", { notinlist: true });
+project.addAssets("Bundled/config.arm", { notinlist: true });
 project.addAssets("Bundled/font/mono.ttf", { notinlist: false });
 project.addAssets("Bundled/font/title.ttf", { notinlist: false });
 project.addAssets("Bundled/icon.png", { notinlist: true });
-project.addAssets("Bundled/image/disktree.png", { notinlist: true });
 project.addAssets("Bundled/image/process.png", { notinlist: true });
-project.addAssets("Bundled/image/sulfur.png", { notinlist: true });
 project.addAssets("Bundled/image/syn.png", { notinlist: true });
 project.addAssets("Bundled/image/tong.png", { notinlist: true });
 project.addAssets("Bundled/image/topy.png", { notinlist: true });
+project.addAssets("Bundled/image/vril.png", { notinlist: true });
+project.addAssets("Bundled/luttexture.jpg", { notinlist: true });
 project.addAssets("Bundled/sound/atom_ambient_1.wav", { notinlist: true , quality: 0.8999999761581421});
 project.addAssets("Bundled/sound/atom_ambient_2.wav", { notinlist: true , quality: 0.8999999761581421});
 project.addAssets("Bundled/sound/atom_ambient_3.wav", { notinlist: true , quality: 0.8999999761581421});
@@ -68,11 +69,13 @@ project.addAssets("Data/tex/Metal032/Metal032_2K_Metalness.jpg", { notinlist: tr
 project.addAssets("Data/tex/Metal032/Metal032_2K_Normal.jpg", { notinlist: true });
 project.addAssets("Data/tex/Metal032/Metal032_2K_Roughness.jpg", { notinlist: true });
 project.addAssets("Data/tex/concrete_impact.png", { notinlist: true });
+project.addAssets("Data/tex/gridbox1.png", { notinlist: true });
 project.addParameter('--times');
 project.addLibrary("/home/tong/sdk/armsdk/lib/zui");
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/font_default.ttf", { notinlist: false });
 project.addDefine('arm_deferred');
 project.addDefine('arm_csm');
+project.addDefine('arm_clusters');
 project.addDefine('rp_hdr');
 project.addDefine('rp_renderer=Deferred');
 project.addDefine('rp_shadowmap');
@@ -99,13 +102,13 @@ project.addDefine('arm_soundcompress');
 project.addDefine('arm_ui');
 project.addDefine('arm_skin');
 project.addDefine('arm_particles');
+project.addDefine('arm_config');
 // --------------------------------------------------------
 let RELEASE = false;
 let ELECTRON = false;
 // --------------------------------------------------------
 
-var args = process.argv.slice(2);
-console.info(args);
+let args = process.argv.slice(2);
 process.argv.forEach( (val,index,array) => {
     if (val === '-release') {
         RELEASE = true;
@@ -117,13 +120,19 @@ process.argv.forEach( (val,index,array) => {
 
 console.info(project.name + "-" + project.version + " " + platform);
 
+//project.addAssets("Assets/sound/**",{quality: 0.9});
 project.addParameter("-main superposition.App");
+//project.addParameter("--macro 'superposition.Build.app()'");
+project.addDefine("source-map");
+project.addDefine("source-header=");
 
 if (RELEASE) {
     project.addParameter("-dce full");
     //project.addParameter("--no-traces");
     project.addDefine("analyzer-optimize");
     project.addDefine("superposition_release");
+} else {
+    
 }
 
 //const proc = require('child_process');
