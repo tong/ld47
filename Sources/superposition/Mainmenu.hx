@@ -7,7 +7,8 @@ import zui.Themes;
 
 class Mainmenu extends Trait {
 	
-	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
+	//static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
+	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: false, color: Player.COLORS[i] }];
 	static var selectedMap = 0;
 	//static var sound : AudioChannel;
 
@@ -47,13 +48,9 @@ class Mainmenu extends Trait {
 		if( kb.started( "c" ) ) Scene.setActive('Credits');
 		for( i in 0...4 ) {
 			var gp = Input.getGamepad(i);
-			/* if( gp.started( 'start' ) ) {
-				loadGame();
-				return;
-			} */
 			if( gp.started( 'home' ) ) Scene.setActive('Quit');
-			if( gp.started( 'start' ) || gp.started( 'a' ) ) loadGame();
-			
+			if( gp.started( 'start' ) ) loadGame();
+			if( gp.started( 'a' ) ) playerData[i].enabled = !playerData[i].enabled;
 		}
 	}
 
@@ -77,7 +74,7 @@ class Mainmenu extends Trait {
 			ui.ops.theme.TEXT_COL = COLOR_ENABLED;
 			ui.text('SUPERPOSITION');
 			
-			ui.row( [ 1/20, 1/20, 1/20, 1/20 ]);
+			ui.row( [ -90, -90, -90, -90 ]);
 			
 			ui.ops.theme.BUTTON_TEXT_COL = playerData[0].enabled ? playerData[0].color : COLOR_DISABLED;
 			if( ui.button( playerData[0].name, Left ) ) playerData[0].enabled = !playerData[0].enabled;
@@ -91,16 +88,17 @@ class Mainmenu extends Trait {
 			ui.ops.theme.BUTTON_TEXT_COL = playerData[3].enabled ? playerData[3].color : COLOR_DISABLED;
 			if( ui.button( playerData[3].name, Left ) ) playerData[3].enabled = !playerData[3].enabled;
 			
-			if( numPlayers >= 2 ) {
+			switch numPlayers {
+			case 0: ui.text( 'NO ACTIVE PLAYERS' );
+			case 1: ui.text( 'REQUIRES 2 PLAYERS' );
+			default:
 				var maps = MapStore.MAPS.get( numPlayers );
-				ui.row( [for(i in 0...maps.length) 1/18] );
 				for( i in 0...maps.length ) {
 					ui.ops.theme.BUTTON_TEXT_COL = ( i == selectedMap ) ? COLOR_ENABLED : COLOR_DISABLED;
-					if( ui.button( 'M$i', Left ) ) {
-						selectedMap = i;
-					}
+					if( ui.button( 'M$i', Left ) ) selectedMap = i;
 				}
 			}
+			
 			/*
 			var hcombo = Id.handle();
 			selectedMap = ui.combo( hcombo, [for(i in 0...maps.length) '$i'], 'MAP' );
@@ -109,6 +107,8 @@ class Mainmenu extends Trait {
 			}
 			*/
 			
+			ui.row( [-180,-180,-180]);
+
 			var canPlay = playerData.filter( p -> return p.enabled ).length >= 2;
 			ui.ops.theme.BUTTON_TEXT_COL = canPlay ? COLOR_ENABLED : COLOR_DISABLED;
 			if( ui.button( 'PLAY', Left ) ) loadGame();
@@ -124,8 +124,8 @@ class Mainmenu extends Trait {
 		g.color = COLOR_ENABLED;
 		g.font = UI.font;
 		g.fontSize = Std.int(UI.fontSize*0.8);
-		final text = 'v'+Main.projectVersion;
-		final textWidth = UI.font.width( g.fontSize, text );
+		var text = 'v'+Main.projectVersion;
+		var textWidth = UI.font.width( g.fontSize, text );
 		g.drawString( text, sw-(textWidth + (g.fontSize*1.2)), sh-(g.fontSize*2) ); 
 		
 		g.begin( false );
