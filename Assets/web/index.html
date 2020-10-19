@@ -23,36 +23,24 @@
 	<title>ꙄUꟼƎЯPOϟI7IOͶ</title>
 
 	<style>
-		@font-face {
-			font-family: 'FontRegular';
-			src: url('mono.ttf') format('truetype');
-		}
-		@font-face {
-			font-family: 'FontTitle';
-			src: url('title.ttf') format('truetype');
-		}
+		@font-face { font-family: 'FontRegular'; src: url('mono.ttf') format('truetype'); }
+		@font-face { font-family: 'FontTitle'; src: url('title.ttf') format('truetype'); }
 		body {
-			overflow: hidden;
 			margin: 0;
 			padding: 0;
+			width:100%;
+			height:100%;
 			font-family: 'FontRegular';
-			background: #000;
+			background: #222;
 			color: #fff;
 		}
 		canvas#viewport {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			width: 100vw;
-			min-width: 1280px;
-			min-height: 720px;
-			display: block;
-			margin: 0 auto;
-			outline: none;
-			border: none;
+			width: 100%;
+			display:block;
+			border:none;
+			outline:none;
 			background: #000;
 			user-select: none;
-			z-index: 1000;
 		}
 	</style>
 	<link rel="icon" type="image/svg+xml" href="icon.svg">
