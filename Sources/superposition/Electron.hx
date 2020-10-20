@@ -84,6 +84,17 @@ class Electron extends Trait {
                             object.remove();
                             atom.hit( this );
                         }
+                    } else if( rb.object.name.startsWith('ElectronCore') ) {
+                        ///TODO
+                        var electron = rb.object.parent.getTrait(Electron);
+                        if( electron != null ) {
+                            trace('electron from player ${player.index} hit an enemy ('+electron.player.index+') electron' );
+                            trace("HIT ELECTRON");
+                            object.remove();
+                            electron.object.remove();
+                        }
+                    } else {
+                        trace('electron has hit an unknown object');
                     }
                 }
             }
@@ -114,7 +125,7 @@ class Electron extends Trait {
 		object.transform.loc.y = v.y;
 		//object.transform.loc.z = 0;
         object.transform.buildMatrix();
-        body.syncTransform();
+        if( body != null ) body.syncTransform();
     }
 
     public function setDirection(dir:Vec4){
@@ -124,7 +135,7 @@ class Electron extends Trait {
         if( dir.x < 0 ) angleZ += Math.PI;
         object.transform.setRotation( angleX, 0, angleZ );
         object.transform.buildMatrix();
-        body.syncTransform();
+        if( body != null )body.syncTransform();
     }
 
     public function fire( dir : Vec4 ) {

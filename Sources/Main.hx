@@ -8,6 +8,8 @@ class Main {
         iron.object.BoneAnimation.skinMaxBones = 8;
         iron.object.LightObject.cascadeCount = 4;
         iron.object.LightObject.cascadeSplitFactor = 0.800000011920929;
+        armory.system.Starter.numAssets = 75;
+        armory.system.Starter.drawLoading = superposition.LoadingScreen.render;
         armory.system.Starter.main(
             'Boot',
             0,

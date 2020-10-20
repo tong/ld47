@@ -83,6 +83,27 @@ class Game extends Trait {
 		//for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
 		//ElectronCoreNone
 
+		trace( 'Spawning ${ this.data.players.length} players' );
+		spawnPlayers( this.data.players, () -> {
+			trace( 'Spawning map: ${ this.data.map.name}' );
+			spawnMap( this.data.map, () -> {
+				//trace('Loading ambient sound');
+				//SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
+				/* SoundEffect.loadSet( 'atom_ambient_', 8, sounds -> {
+					trace(sounds);
+					trace(Time.realTime ()-ts);
+				}); */
+				//SoundEffect.play( 'game_ambient_'+(1+Std.int(Math.random()*3)), true, true, 1.0, a -> {
+				/* SoundEffect.play( 'game_ambient_1', true, true, 1.0, a -> {
+					trace(Time.realTime ()-ts);
+					soundAmbient = a;
+					soundAmbient.pause();
+					if( onReady != null ) onReady() else start();
+				}); */
+				if( onReady != null ) onReady() else start();
+			});
+		});
+		/*
 		trace('Preloading electron core meshes');
 		//for( m in Data.cachedMeshes.keys() ) trace(m);
 		var numMeshesLoaded = 0;
@@ -107,13 +128,14 @@ class Game extends Trait {
 								soundAmbient = a;
 								soundAmbient.pause();
 								if( onReady != null ) onReady() else start();
-							}); */
+							}); * /
 							if( onReady != null ) onReady() else start();
 						});
 					});
 				}
 			});
-		} 
+		}
+		*/
 	}
 
 	public function start() {
