@@ -2,47 +2,6 @@ package superposition;
 
 import superposition.Player.Score;
 
-private class Marker extends Trait {
-	
-	public var mesh(default,null) : MeshObject;
-	public var light(default,null) : LightObject;
-	
-	public function new() {
-		super();
-		notifyOnInit(() -> {
-			object.transform.loc.set(0,0,0);
-			object.transform.buildMatrix();
-			mesh = cast object.getChild('ElectronMarkerMesh');
-			//light = cast object.getChild('ElectronMarkerLight');
-			//trace(light);
-		});
-	}
-
-	public function show() {
-		if( mesh != null ) mesh.visible = true;
-		/*
-		object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.1;
-		object.transform.buildMatrix();
-		Tween.to({
-			props: {x: 1, y: 1, z: 1},
-			duration: 0.5,
-			target: object.transform.scale,
-			ease: Ease.QuartOut,
-			tick: () -> {
-				object.transform.buildMatrix();
-			},
-			done: () -> {
-				// object.remove();
-			}
-		});
-		*/
-	}
-	
-	public function hide() {
-		if( mesh != null ) mesh.visible = false;
-	}
-}
-
 class Atom extends Trait {
 
 	public static inline var MIN_SLOTS = 3;
@@ -58,7 +17,9 @@ class Atom extends Trait {
 	public var player(default,null) : Player;
 	public var selectedElectron(default,null) : Electron;
 
-	public var rotationSpeed(default,null) : FastFloat;
+	//public var rotation(default,null) : FastFloat = 0;
+	//public var rotationOffset(default,null) : FastFloat = 90;
+	public var rotationSpeed(default,null) : FastFloat = 1.0;
 	public var orbRadius(default,null) : FastFloat;
 
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
@@ -73,9 +34,7 @@ class Atom extends Trait {
 		super();
 		this.index = index;
 		this.numSlots = numSlots;
-		
 		scale = numSlots / 10;
-		//rotationSpeed = 0.01; //numSlots * 0.001;
 		
 		notifyOnInit( () -> {
 
@@ -93,9 +52,8 @@ class Atom extends Trait {
 			//PhysicsWorld.active.notifyOnPreUpdate( preUpdate );
 			
 			var markerObject = cast object.getChild('ElectronMarker');
-			markerObject.visible = true;
-			marker = new Marker();
-			markerObject.addTrait( marker );
+			///marker = markerObject.getTrait(Marker);
+			marker = markerObject.getTrait(Marker);
 
 			/* SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
 				soundAmbient = a;
@@ -105,9 +63,20 @@ class Atom extends Trait {
 				soundFire = a;
 				soundFire.pause();
 			}); */
+
+			/* mesh.transform.scale.x = mesh.transform.scale.y = mesh.transform.scale.z = 0.001;
+			Tween.to({
+				props: {x: scale, y: scale, z: scale},
+				duration: 4.0,
+				target: mesh.transform.scale,
+				ease: Ease.ElasticOut,
+				tick: mesh.transform.buildMatrix,
+				//done: () -> { body = mesh.getTrait(RigidBody); }
+			}); */
 		});
 		
 		notifyOnRemove( () -> {
+			body.removeFromWorld();
 			//if( soundAmbient != null ) soundAmbient.stop();
 			//PhysicsWorld.active.removePreUpdate( preUpdate );
 		});
@@ -140,15 +109,16 @@ class Atom extends Trait {
 
 			trace('shot electron from $wlocElectron now only ${electrons.length} electrons left');
 			
-			
 			SoundEffect.play( 'electron_fire_p'+(player.index+1), 0.1 );
 			
 			if (electrons.length == 0) {
 				player.navigateSelectionTowards(new Vec2(dir.x, dir.y));
 				setPlayer(null);
+				//marker.hide();
 			} else {
 			}
-			selectElectron(getNextElectron(el));
+
+			selectElectron( getNextElectron( el ) );
 
 			/*
 			player.score.add( Score.fired );
@@ -179,44 +149,55 @@ class Atom extends Trait {
 			SoundEffect.play('electron_fire_deny', 0.2 );
 		}
 	}
-
+	
 	public function hit( electron : Electron ) {
+		trace('Atom$index got hit by electron '+electron.index);
+		Game.active.flyingElectrons.remove( electron );
 		if (player == null) {
 			trace('hit on neutral atom');
-			electron.player.score.add(Score.taken);
-			setPlayer(electron.player);
-			spawnElectron(electron.core);
+			setPlayer( electron.player );
+			spawnElectron( electron.core );
 		} else if (player == electron.player) {
 			trace('hit on own atom');
-			spawnElectron(electron.core);
+			spawnElectron( electron.core );
 		} else {
+
 			trace('hit on enemy atom');
-			Scene.active.spawnObject('ElectronExplosion', null, obj -> {
-				var mesh : MeshObject = cast obj;
-				//var light : LightObject = cast mesh.getChild('ElectronExplosionLight');
-				//light.visible = true;
-				mesh.transform.loc.x = electron.object.transform.loc.x;
-				mesh.transform.loc.y = electron.object.transform.loc.y;
-				mesh.transform.loc.z = electron.object.transform.loc.z + 1;
-				mesh.transform.rotate( Vec4.zAxis(), Math.random() * 100 );
-				@:privateAccess mesh.tilesheet.onActionComplete = () -> {
-					mesh.remove();
-				}
-				SoundEffect.play('electron_hit',false,true,0.5);
-			});
-			switch electron.core {
+
+			/* switch electron.core {
 			case Bomber: while( electrons.length > 0 ) hitByElectron();
 			default: hitByElectron();	
-			}
+			} */
+
+			/* var scale1 = scale - 0.2;
+			Tween.to({
+				props: {x: scale1, y: scale1, z: scale1},
+				duration: 0.2,
+				target: mesh.transform.scale,
+				ease: Ease.BackOut,
+				tick: mesh.transform.buildMatrix,
+				done: () -> {
+					Tween.to({
+						props: {x: scale, y: scale, z: scale},
+						duration: 0.2,
+						target: mesh.transform.scale,
+						ease: Ease.BackOut,
+						tick: mesh.transform.buildMatrix,
+					});
+				}
+			}); */
 		}
 	}
 
-	public function setPlayer(p:Player) {
+	public function setPlayer( p : Player ) {
+		//player = p;
 		player = p;
-		if (player != null) {
+		if (p != null) {
+			marker.show();
 			DataTools.loadMaterial('Game', 'Player'+(player.index+1), m -> {
 				materials = m;
-				if (mesh != null) mesh.materials = m;
+				mesh.materials = m;
+				for( e in electrons ) e.mesh.materials = m;
 				if( marker.mesh != null ) {
 					marker.mesh.materials = m;
 				} else {
@@ -227,22 +208,16 @@ class Atom extends Trait {
 				}
 				marker.show();
 			});
-			//SoundEffect.load( 'electron_fire_p'+(player.index+1), 0.1 );
-			/* if( soundAmbient != null ) {
-				soundAmbient.play();
-				soundAmbient.fadeIn( 1.0, 1.0 );
-			} */
+			//marker.show();
 		} else {
-			mesh.materials = defaultMaterials;
 			marker.hide();
-			//if( soundAmbient != null ) soundAmbient.stop();
+			mesh.materials = defaultMaterials;
 		}
 	}
 
 	public function update() {
 
 		if( body == null || !body.ready ) return;
-
 		body.syncTransform();
 		
 		/* var contacts = PhysicsWorld.active.getContactPairs( body );
@@ -257,27 +232,25 @@ class Atom extends Trait {
 			}
 		} */
 
-		//trace(object.name+': '+electrons.length);
-		//for(e in electrons) e.update();
-		
 		if( player != null ) {
 
 			var spawnTimeFactor = 0.0;
-			var rotSpeed = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
+			var rotAccelerate = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
 			for( e in electrons ) {
 				switch e.core {
 				case Spawner(v): spawnTimeFactor += v;
-				case Speeder(v): rotSpeed *= v;
+				case Speeder(v): rotAccelerate *= v;
 				case _:
 				}
 			}
 			
-			var baseSpeed = 1.0; //TODO
-			rotationSpeed = rotSpeed/ (100/baseSpeed);
-			object.transform.rotate( Vec4.zAxis(), rotationSpeed );
-	
-		//	for(e in electrons) e.update();
+			var rot = rotAccelerate * rotationSpeed;
+			object.transform.rotate( Vec4.zAxis(), MathTools.degToRad( rot ) );
 			
+			/* var q = new Quat().fromAxisAngle( Vec4.zAxis(), MathTools.degToRad( rot ) );
+			object.transform.rot.multquats( q, new Quat() );
+			object.transform.buildMatrix(); */
+		
 			if( electrons.length < numSlots && spawnTimeFactor > 0 ) {
 				var spawnTime = 10 / spawnTimeFactor;
 				if( Game.active.time - lastSpawnTime >= spawnTime ) {
@@ -306,11 +279,14 @@ class Atom extends Trait {
 			//trace(rotationSpeed);
 			//rotationSpeed = 1.0;
 			//object.transform.rotate( Vec4.zAxis(), rotationSpeed );
+			//marker.hide();
 		}
 
-		if( electrons.length == 0 ) {
+		/* if( selectedElectron == null ) {
 			marker.hide();
-		}
+		} else {
+			marker.show();
+		} */
 	}
 
 	public function dispose() {
@@ -351,6 +327,12 @@ class Atom extends Trait {
 		});
 	}
 
+	public function removeElectron( electron : Electron ) {
+		if( electron != null && electrons.remove( electron ) ) {
+			electron.object.remove();
+		}
+	}
+
 	public function selectPreviousElectron() {
 		if (electrons.length > 0) {
 			if (rotationSpeed < 0) {
@@ -375,7 +357,7 @@ class Atom extends Trait {
 		if ( (selectedElectron = electron) != null) {
 			var loc = electron.object.transform.loc;
 			var rot = electron.object.transform.rot;
-			trace('change selection to electron at $loc with rot: $rot');
+			trace('selectElectron '+electron );
 			Tween.to({
 				props: { x: loc.x, y: loc.y, z: loc.z },
 				duration: 0.2,
@@ -384,17 +366,17 @@ class Atom extends Trait {
 				tick: object.transform.buildMatrix
 			});
 		} else {
-			trace('change electron selection to $electron');
+			//trace('change electron selection to $electron');
 		}
 	}
 
-	function hitByElectron(){
+	function hitByElectron() {
 		var e = electrons.pop();
 		Tween.to({
 			props: {x: 0.01, y: 0.01, z: 0.01},
-			duration: 1.0,
+			duration: 0.5,
 			target: e.mesh.transform.scale,
-			ease: Ease.ElasticOut,
+			ease: Ease.BackInOut,
 			tick: e.mesh.transform.buildMatrix,
 			done: () -> e.object.remove()
 		});
@@ -403,31 +385,36 @@ class Atom extends Trait {
 			setPlayer(null);
 		}
 	}
+
+	/*
+	function removeElectronAt( index : Int ) : Electron {
+	}
+	*/
 	
-	function getNextElectron(electron:Electron):Electron {
-		trace('getNextElectron for index ${electron.position}');
+	function getNextElectron( electron : Electron ) : Electron {
+		//trace('getNextElectron for index ${electron.position}');
 		switch electrons.length {
 		case 0: return null;
 		case 1: return electrons[0];
 		default:
-			var i = electron.position;
+			var i = electron.index;
 			do {
 				if (++i > numSlots) i = 0;
-				for (e in electrons) if (e.position == i) return e;
+				for (e in electrons) if (e.index == i) return e;
 			} while (true);
 		}
 	}
 
-	function getPrevElectron(electron:Electron) : Electron {
-		trace('getPrevElectron for index ${electron.position}');
+	function getPrevElectron( electron : Electron ) : Electron {
+		//trace('getPrevElectron for index ${electron.position}');
 		switch electrons.length {
 		case 0: return null;
 		case 1: return electrons[0];
 		default:
-			var i = electron.position;
+			var i = electron.index;
 			do {
 				if (--i < 0) i = numSlots;
-				for (e in electrons) if (e.position == i) return e;
+				for (e in electrons) if (e.index == i) return e;
 			} while (true);
 		}
 	}
@@ -436,7 +423,7 @@ class Atom extends Trait {
 		for( i in 0...numSlots ) {
 			var isFree = true;
 			for (e in electrons) {
-				if (e.position == i) {
+				if (e.index == i) {
 					isFree = false;
 					break;
 				}
@@ -447,7 +434,7 @@ class Atom extends Trait {
 	}
 
 	function getElectronPosition( electron : Electron ) : Vec2 {
-		var angle = 2 * PI * electron.position / numSlots;
+		var angle = 2 * PI * electron.index / numSlots;
 		if( rotationSpeed < 0 ) angle = -angle;
 		var orbRadius = (mesh.transform.dim.y / 2) + Electron.RADIUS* 3;
 		return new Vec2( orbRadius * Math.sin(angle), orbRadius * Math.cos(angle) );

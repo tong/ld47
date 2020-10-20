@@ -147,7 +147,12 @@ class Player extends Trait {
 
 	public function selectAtom( newAtom : Atom ) {
 
+		if( newAtom == atom ) return;
+		
+		//if( atom != null ) atom.setPlayer( null );
+
 		atom = newAtom;
+		//atom.select();
 
 		//if( soundMove != null ) soundMove.play();
 		//soundAmbient.play();
@@ -182,6 +187,7 @@ class Player extends Trait {
 			},
 			done: () -> {
 				moveTween = null;
+				atom.setPlayer( this );
 			}
 		});
 	}

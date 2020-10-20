@@ -77,29 +77,27 @@ class Game extends Trait {
 		players = [];
 		atoms = [];
 		flyingElectrons = [];
+
+		//TODO
+
 		var ts = Time.realTime ();
 
-		//trace("Loading materials");
-		//for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
-		//ElectronCoreNone
+		trace("Preloading materials");
+		for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
 
 		trace( 'Spawning ${ this.data.players.length} players' );
 		spawnPlayers( this.data.players, () -> {
 			trace( 'Spawning map: ${ this.data.map.name}' );
 			spawnMap( this.data.map, () -> {
 				//trace('Loading ambient sound');
-				//SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
-				/* SoundEffect.loadSet( 'atom_ambient_', 8, sounds -> {
-					trace(sounds);
-					trace(Time.realTime ()-ts);
-				}); */
 				//SoundEffect.play( 'game_ambient_'+(1+Std.int(Math.random()*3)), true, true, 1.0, a -> {
-				/* SoundEffect.play( 'game_ambient_1', true, true, 1.0, a -> {
-					trace(Time.realTime ()-ts);
-					soundAmbient = a;
-					soundAmbient.pause();
+					/* SoundEffect.play( 'game_ambient_1', true, true, 1.0, a -> {
+						trace(Time.realTime ()-ts);
+						soundAmbient = a;
+						soundAmbient.pause();
 					if( onReady != null ) onReady() else start();
 				}); */
+				trace(Time.realTime ()-ts);
 				if( onReady != null ) onReady() else start();
 			});
 		});
@@ -217,7 +215,8 @@ class Game extends Trait {
 					a.setPlayer(players[dat.player]);
 					var electrons = dat.electrons;
 					if( dat.electrons == null || dat.electrons.length == 0 ) electrons = [None];
-					a.spawnElectrons( electrons , spawned -> {						
+					a.spawnElectrons( electrons , spawned -> {
+						//a.setPlayer(players[dat.player]);						
 						if (atoms.length == mapData.atoms.length ) onReady() else spawnNext();
 					});
 				} else {
@@ -265,15 +264,6 @@ class Game extends Trait {
 			}
 		}
 
-		/* var ownedAtoms = atoms.filter( a -> return a.electrons.length > 0 );
-		if( ownedAtoms.length == 0 ) {
-			if( flyingElectrons.length == 0 ) {
-				finish();
-				return;
-			}
-		}
-		*/
-
 		//var ownedAtoms = atoms.filter( a -> return a.player != null );
 		var ownedAtoms = atoms.filter( a -> return a.electrons.length > 0 );
 		if( ownedAtoms.length == 0 && flyingElectrons.length == 0 ) {
@@ -301,63 +291,6 @@ class Game extends Trait {
 				return;
 			}
 		}
-		
-		/*
-		var newFlyingElectrons = new Array<Electron>();
-		for (electron in flyingElectrons){	
-			//trace('check flying electron from player ' + electron.player.index);
-			var locElectron = new Vec4(electron.object.transform.worldx(), electron.object.transform.worldy());
-			var radiusElectron = electron.mesh.transform.dim.x/2;							
-			var electronOK = true;
-			
-			electron.update();
-
-			for (atom in atoms){
-				var distance = atom.object.transform.loc.distanceTo(locElectron);
-				var radiusAtom = atom.mesh.transform.dim.x/2;
-				//trace('test atom in a distance of '+ distance + ' with radius of ' + radiusAtom + ' and in e-radius of ' + radiusElectron );
-				if (distance < radiusAtom+radiusElectron) {		
-					//the electron hits an atom				
-					trace('electron from player ${electron.player.index} hit an atom');
-					electronOK = false;						
-					object.removeChild(electron.object);
-					electron.object.remove();
-					electron.player.score.add( Score.hit );
-					atom.hit(electron);	
-				} else if (distance < radiusAtom*4 && 
-							atom.player != electron.player &&
-							atom.electrons.length>0){
-					trace('electron from player ${electron.player.index} is in outer area of an atom, lets check electrons');
-
-					for (targetElectron in atom.electrons){
-						var locTarget = new Vec4(targetElectron.object.transform.worldx(), targetElectron.object.transform.worldy());
-						var distElectron = locTarget.distanceTo(locElectron);
-						if (distElectron < radiusElectron*2){
-							//the electron hits an enemy electron attached to an atom
-							trace('electron from player ${electron.player.index} hit an enemy electron orbiting an atom' );
-							electron.player.score.add( Score.destroyed );
-							electronOK = false;								
-							object.removeChild(electron.object);
-							electron.object.remove();
-							break;
-						}								
-					}						
-				}
-				if(!electronOK) break;
-			}
-			if (dim.x/2 < Math.abs(locElectron.x) || 
-				dim.y/2 < Math.abs(locElectron.y)){
-					//the electron leaves the game area
-					electronOK=false;
-					electron.dispose();	
-					//SoundEffect.play( 'electron_death', 0.1 );
-			}
-			if (electronOK) {
-				newFlyingElectrons.push(electron);
-			}
-		}
-		flyingElectrons = newFlyingElectrons;
-		*/
 	}
 
 	/*
