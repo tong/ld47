@@ -11,19 +11,21 @@ class MapStore {
             {
                 name: 'mostsimple',
                 atoms: [
-                    { slots: 16, player: 0, loc: { x: -0.2, y: 0.0 }, electrons: [None,None,None,None,None,None,Swastika,None,Bomber,Shield,Topy,Process,Swastika] },
-                    { slots: 20, player: 0, loc: { x: -0.6, y: 0.5 }, electrons: [None,Spawner(1.1),Spawner(1.1)] },
+                    { slots: 16, player: 0, loc: { x: -0.2, y: -0.3 }, rotationSpeed: -2.0 , electrons: [None,None,None,None,None,None,Swastika,None,Bomber,Shield,Topy,Process,Swastika] },
+                    { slots: 20, player: 0, loc: { x: -0.6, y: 0.5 }, rotationSpeed: 0.5, electrons: [None,Spawner(1.1),Spawner(1.1)] },
                     
-                    { slots: 16, player: 1, loc: { x: 0.2, y: 0.0 }, electrons: [None,None,None,None,None,None,Swastika,None,Bomber,Shield,Topy,Process,Swastika] },
-                    { slots: 20, player: 1, loc: { x: 0.6, y: 0.5 }, electrons: [None,Spawner(1.1),Spawner(1.1)] },
+                    { slots: 16, player: 1, loc: { x: 0.2, y: -0.3 }, rotationSpeed: 2.0, electrons: [None,None,None,None,None,None,Swastika,None,Bomber,Shield,Topy,Process,Swastika] },
+                    { slots: 20, player: 1, loc: { x: 0.6, y: 0.5 }, rotationSpeed: -0.5, electrons: [None,Spawner(1.1),Spawner(1.1)] },
                     //{ slots: 20, player: 1, loc: { x: 0.6, y: 0.5 }, electrons: [None,Bomber,Shield,Topy,Process,Swastika,Swastika,Swastika,Swastika,Swastika] },
 
                     /* { slots:  10, player: 0, loc: { x: -0.5, y: 0.6 }, electrons: [None,None] },
                     { slots:  10, player: 1, loc: { x: 0.5, y: 0.6 }, electrons: [None,None] },
                     
                     */
-                    { slots: 20, loc: { x: 0, y: -0.6 } },
-                    { slots: 0, loc: { x: 0, y: 0.6 } },
+                    { slots: 20, loc: { x: -0.7, y: -0.5 }, rotationSpeed: 2.0 },
+                    { slots: 20, loc: { x: 0.7, y: -0.5 }, rotationSpeed: -2.0 },
+                    { slots: 32, loc: { x: 0, y: 0.3 }, rotationSpeed: .2 },
+                    //{ slots: 14, loc: { x: 0, y: 0.6 }, rotationSpeed: -2.0 },
                 ],
                 //blackholes: []
             },

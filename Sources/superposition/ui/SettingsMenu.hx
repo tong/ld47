@@ -1,4 +1,4 @@
-package superposition;
+package superposition.ui;
 
 //import superposition.Config;
 import zui.Id;

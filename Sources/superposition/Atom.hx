@@ -17,9 +17,9 @@ class Atom extends Trait {
 	public var player(default,null) : Player;
 	public var selectedElectron(default,null) : Electron;
 
+	public var rotationSpeed : FastFloat;
 	//public var rotation(default,null) : FastFloat = 0;
 	//public var rotationOffset(default,null) : FastFloat = 90;
-	public var rotationSpeed(default,null) : FastFloat = 1.0;
 	public var orbRadius(default,null) : FastFloat;
 
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
@@ -29,11 +29,12 @@ class Atom extends Trait {
 	//var soundAmbient : AudioChannel;
 	//var soundFire : AudioChannel;
 
-	public function new( index : Int, numSlots : Int ) {
+	public function new( index : Int, numSlots : Int, rotationSpeed : FastFloat = 1.0 ) {
 
 		super();
 		this.index = index;
 		this.numSlots = numSlots;
+		this.rotationSpeed = rotationSpeed;
 		scale = numSlots / 10;
 		
 		notifyOnInit( () -> {
@@ -232,10 +233,14 @@ class Atom extends Trait {
 			}
 		} */
 
+		var rotAccelerate = 1.0;
+
 		if( player != null ) {
 
+			//if((player.index+1) % 2 == 0) rotAccelerate = -1;
+			//var rotAccelerate = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
+
 			var spawnTimeFactor = 0.0;
-			var rotAccelerate = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
 			for( e in electrons ) {
 				switch e.core {
 				case Spawner(v): spawnTimeFactor += v;
@@ -244,8 +249,8 @@ class Atom extends Trait {
 				}
 			}
 			
-			var rot = rotAccelerate * rotationSpeed;
-			object.transform.rotate( Vec4.zAxis(), MathTools.degToRad( rot ) );
+			//var rot = rotAccelerate * rotationSpeed;
+			//object.transform.rotate( Vec4.zAxis(), MathTools.degToRad( rot ) );
 			
 			/* var q = new Quat().fromAxisAngle( Vec4.zAxis(), MathTools.degToRad( rot ) );
 			object.transform.rot.multquats( q, new Quat() );
@@ -282,12 +287,17 @@ class Atom extends Trait {
 			//marker.hide();
 		}
 
+		var rot = rotAccelerate * rotationSpeed;
+		object.transform.rotate( Vec4.zAxis(), MathTools.degToRad( rot ) );
+		
+
 		/* if( selectedElectron == null ) {
 			marker.hide();
 		} else {
 			marker.show();
 		} */
 	}
+	
 
 	public function dispose() {
 		//if( soundAmbient != null ) soundAmbient.stop();

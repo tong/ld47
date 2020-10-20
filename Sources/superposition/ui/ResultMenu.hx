@@ -1,4 +1,4 @@
-package superposition;
+package superposition.ui;
 
 import zui.Id;
 import zui.Themes;

@@ -26,6 +26,7 @@ typedef AtomData = {
 	slots : Int,
 	?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> },
 	//?rot: Float,
+	?rotationSpeed: Float,
 	?player : Null<Int>,
 	?electrons : Array<Core>,
 	//?atoms : Array<Atom> // sub atoms
@@ -191,7 +192,7 @@ class Game extends Trait {
 		if( finished ) return;
 		trace('Finish game');
 		finished = true;
-		var menu = new ResultMenu( winner );
+		var menu = new superposition.ui.ResultMenu( winner );
 		object.addTrait( menu );
 	}
 
@@ -210,7 +211,7 @@ class Game extends Trait {
 	function spawnMap( mapData : MapData, onReady : Void->Void ) {
 		function spawnNext() {
 			var dat = mapData.atoms[atoms.length];
-			spawnAtom( dat.loc, dat.slots, a -> {
+			spawnAtom( dat, a -> {
 				if( dat.player != null ) {
 					a.setPlayer(players[dat.player]);
 					var electrons = dat.electrons;
@@ -227,20 +228,21 @@ class Game extends Trait {
 		spawnNext();
 	}
 
-	function spawnAtom( ?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> }, numSlots : Int, cb : Atom->Void ) {
+	//function spawnAtom( ?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> }, numSlots : Int, cb : Atom->Void ) {
+	function spawnAtom( data : AtomData, cb : Atom->Void ) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
 			obj.name = 'Atom'+atoms.length;
 			obj.visible = true;
-			var atom = new Atom( atoms.length, numSlots );
+			var atom = new Atom( atoms.length, data.slots, data.rotationSpeed );
 			atom.notifyOnInit( ()->{
 				cb(atom);
 			});
 			obj.addTrait( atom );
 			var v = new Vec3();
-			if( loc != null ) {
-				if( loc.x != null ) v.x = loc.x*dim.x/2;
-				if( loc.y != null ) v.y = loc.y*dim.y/2;
-				if( loc.z != null ) v.z = loc.z*dim.z/2;
+			if( data.loc != null ) {
+				if( data.loc.x != null ) v.x = data.loc.x*dim.x/2;
+				if( data.loc.y != null ) v.y = data.loc.y*dim.y/2;
+				if( data.loc.z != null ) v.z = data.loc.z*dim.z/2;
 			}
 			atom.setPostion(v);
 			atoms.push(atom);			
