@@ -5,3 +5,4 @@ Bundled/config.arm
 Data/incoming/
 Data/**/*.zip
 Data/svg/
+Sources/**/*[0-9].hx
