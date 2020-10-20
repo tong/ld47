@@ -39,6 +39,11 @@ class Electron extends Trait {
                 mesh.visible = true;
                 mesh.transform.loc.set(0,0,0);
                 mesh.transform.buildMatrix();
+                body = mesh.getTrait(RigidBody);
+                // body.setAngularFactor( 0, 0, 0 );
+                // body.setLinearVelocity( 0, 0, 0 );
+                // body.syncTransform();
+                //body.notifyOnContact( a -> trace(a) );
                 object.transform.scale.x = object.transform.scale.y = object.transform.scale.z = 0.001;
                 Tween.to({
                     props: {x: 1, y: 1, z: 1},
@@ -50,11 +55,6 @@ class Electron extends Trait {
                         //trace(body);
                     }
                 });
-                body = mesh.getTrait(RigidBody);
-                // body.setAngularFactor( 0, 0, 0 );
-                // body.setLinearVelocity( 0, 0, 0 );
-                // body.syncTransform();
-                //body.notifyOnContact( a -> trace(a) );
             });
         });
         notifyOnUpdate( update );
@@ -80,7 +80,6 @@ class Electron extends Trait {
                         if( atom != null ) {
                             //TODO
                             trace("ATOM HIT");
-                            //SoundEffect.play('electron_hit',false,true,0.3);
                             object.remove();
                             atom.hit( this );
                         }
@@ -88,10 +87,19 @@ class Electron extends Trait {
                         ///TODO
                         var electron = rb.object.parent.getTrait(Electron);
                         if( electron != null ) {
-                            trace('electron from player ${player.index} hit an enemy ('+electron.player.index+') electron' );
-                            trace("HIT ELECTRON");
-                            object.remove();
-                            electron.object.remove();
+                            if( electron.atom == null ) {
+                                trace('hit an flying electron');
+                                //TODO
+                            } else {
+                                if( electron.player == player ) {
+                                    trace('hit own atom' );
+                                    //TODO
+                                } else {
+                                    trace('electron from player ${player.index} hit an enemy ('+electron.player.index+') electron' );
+                                    object.remove();
+                                    electron.object.remove();
+                                }
+                            }
                         }
                     } else {
                         trace('electron has hit an unknown object');
@@ -100,14 +108,14 @@ class Electron extends Trait {
             }
         }
 
-        /*
         switch core {
         case Bomber:
             var wr = new Quat().fromMat( mesh.transform.world ); 
             mesh.transform.rotate( Vec4.zAxis(), -wr.z );
             mesh.transform.buildMatrix();
+            body.syncTransform();
         default:
-        } */
+        }
     } 
 
     public function setAtom( a : Atom, index : Int ) {
