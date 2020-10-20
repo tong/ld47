@@ -232,6 +232,7 @@ class Game extends Trait {
 
 	function spawnAtom( ?loc : { ?x : Null<Float> , ?y : Null<Float> , ?z : Null<Float> }, numSlots : Int, cb : Atom->Void ) {
 		Scene.active.spawnObject('Atom', atomContainer, obj -> {
+			obj.name = 'Atom'+atoms.length;
 			obj.visible = true;
 			var atom = new Atom( atoms.length, numSlots );
 			atom.notifyOnInit( ()->{
@@ -257,14 +258,28 @@ class Game extends Trait {
 		for( p in players ) p.update();
 		for( a in atoms ) a.update();
 
+		for( electron in flyingElectrons ) {
+			if( dim.x/2 < Math.abs( electron.object.transform.worldx() ) || dim.y/2 < Math.abs( electron.object.transform.worldy() ) ) {
+				trace("electron has left the world");
+				electron.object.remove();
+				flyingElectrons.remove( electron );
+				return;
+			}
+		}
+
 		/* var status = getGameStatus();
 		if( status.isFinished ) {
 			finish( status );
 			return;
 		} */
 
+		/* for( electron in flyingElectrons ) {
+			electron.update();
+		} */
+		
 		//trace("----------------------------------------------------");
 
+		/*
 		var ownedAtoms = atoms.filter( a -> return a.player != null );
 		if( ownedAtoms.length == 0 && flyingElectrons.length == 0 ) {
 			trace('no electrons left -> everybody loses');
@@ -346,6 +361,7 @@ class Game extends Trait {
 			}
 		}
 		flyingElectrons = newFlyingElectrons;
+		*/
 	}
 
 	/* function render2D(g:kha.graphics2.Graphics) {

@@ -11,14 +11,17 @@ class MapStore {
             {
                 name: 'mostsimple',
                 atoms: [
-                    { slots: 24, player: 1, loc: { x: 0.2, y: 0.0 }, electrons: [None] },
-                    { slots: 24, player: 0, loc: { x: -0.2, y: 0.0 }, electrons: [None,None] },
+                    { slots: 16, player: 0, loc: { x: -0.2, y: 0.0 }, electrons: [None,Bomber,Shield,Topy,Process,Swastika] },
+                    { slots: 20, player: 0, loc: { x: -0.6, y: 0.5 }, electrons: [None,Bomber,Shield,Topy,Process,Swastika,Swastika,Swastika,Swastika,Swastika] },
+                    
+                    { slots: 16, player: 1, loc: { x: 0.2, y: 0.0 }, electrons: [None,None,None,None,Spawner(1.1)] },
+                    { slots: 20, player: 1, loc: { x: 0.6, y: 0.5 }, electrons: [None,Bomber,Shield,Topy,Process,Swastika,Swastika,Swastika,Swastika,Swastika] },
 
                     /* { slots:  10, player: 0, loc: { x: -0.5, y: 0.6 }, electrons: [None,None] },
                     { slots:  10, player: 1, loc: { x: 0.5, y: 0.6 }, electrons: [None,None] },
                     
-                    { slots: 20, loc: { x: -0.2, y: 0.6 } },
-                    { slots: 20, loc: { x: 0.2, y: 0.6 } }, */
+                    */
+                    { slots: 20, loc: { x: 0, y: -0.6 } },
                 ],
                 //blackholes: []
             },
@@ -126,12 +129,13 @@ class MapStore {
                 atoms: [
                     { slots: 10, player: 0, electrons:[None,Spawner(0.5),Spawner(0.5)], loc: { x: -0.8,y: 0.6 } },
                     { slots: 10, player: 0, electrons:[None,None,Spawner(0.5),Bomber], loc: { x: -0.6,y: 0.6 } },
-                    { slots: 10, player: 2, electrons:[None,Spawner(0.5),Spawner(0.5)], loc: { x: 0.8,y: 0.6 } },
-                    { slots: 10, player: 2, electrons:[None,None,Spawner(0.5),Bomber], loc: { x: 0.6, y: 0.6 } },
+                    { slots: 10, player: 1, electrons:[None,Spawner(0.5),Spawner(0.5)], loc: { x: 0.8,y: 0.6 } },
+                    { slots: 10, player: 1, electrons:[None,None,Spawner(0.5),Bomber], loc: { x: 0.6, y: 0.6 } },
 
                     //{ slots: 16, player: 2, electrons:[None,None,Spawner(0.5),Bomber], loc: { x: 0.0, y: -0.6 } },
 
-                    { slots: 14, loc: { y: 0.7 }  },
+                    { slots: 14, loc: { y: 0.7 }, player: 0, electrons:[None,Spawner(10.5),Bomber,Process] },
+                    // { slots: 24, loc: { y: 0.1 }  },
                     { slots: 24, loc: { y: 0.1 }  },
                     { slots: 16, loc: { x: -0.5, y: -0.2 } },
                     { slots: 16, loc: { x: 0.5 , y: -0.2 } },

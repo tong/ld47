@@ -58,14 +58,15 @@ class Atom extends Trait {
 	public var player(default,null) : Player;
 	public var selectedElectron(default,null) : Electron;
 
-	public var rotationSpeed(default,null) : FastFloat = 1.0;
+	public var rotationSpeed(default,null) : FastFloat;
 	public var orbRadius(default,null) : FastFloat;
 
-	var marker : Marker;
 	var defaultMaterials : haxe.ds.Vector<MaterialData>;
 	var materials : haxe.ds.Vector<MaterialData>;
+	var marker : Marker;
 	var lastSpawnTime : Float;
 	//var soundAmbient : AudioChannel;
+	//var soundFire : AudioChannel;
 
 	public function new( index : Int, numSlots : Int ) {
 
@@ -74,7 +75,7 @@ class Atom extends Trait {
 		this.numSlots = numSlots;
 		
 		scale = numSlots / 10;
-		rotationSpeed = 0.01; //numSlots * 0.001;
+		//rotationSpeed = 0.01; //numSlots * 0.001;
 		
 		notifyOnInit( () -> {
 
@@ -88,7 +89,7 @@ class Atom extends Trait {
 			defaultMaterials = mesh.materials;
 			
 			body = mesh.getTrait(RigidBody);
-			//body.setAngularFactor( 0, 0, 0 );
+			//body.notifyOnContact( a -> trace(a.name) );
 			//PhysicsWorld.active.notifyOnPreUpdate( preUpdate );
 			
 			var markerObject = cast object.getChild('ElectronMarker');
@@ -99,6 +100,10 @@ class Atom extends Trait {
 			/* SoundEffect.play( 'atom_ambient_'+(1+Std.int(Math.random()*8)), true, true, 0.9, a -> {
 				soundAmbient = a;
 				soundAmbient.pause();
+			}); */
+			/* SoundEffect.play( 'electron_fire', false, false, 0.1, a -> {
+				soundFire = a;
+				soundFire.pause();
 			}); */
 		});
 		
@@ -113,11 +118,33 @@ class Atom extends Trait {
 		object.transform.loc.y = v.y;
 		object.transform.loc.z = v.z;
 		object.transform.buildMatrix();
+		if( body != null ) body.syncTransform();
 	}
 
 	public function fire() {
-		var oldCount = electrons.length;
-		if (oldCount > 0) {
+		if( electrons.length > 0 ) {
+
+			var el = selectedElectron;
+			var wlocElectron = new Vec2( el.object.transform.worldx(), el.object.transform.worldy() );
+			var wlocAtom = new Vec4(object.transform.worldx(), object.transform.worldy());
+			var dir = new Vec4( wlocElectron.x - wlocAtom.x, wlocElectron.y - wlocAtom.y ).normalize();
+			
+			//el.object.remove();
+			object.removeChild(el.object);
+        	Scene.active.root.addChild( el.object );
+			el.setPostion( wlocElectron );
+			el.fire( dir );
+
+			electrons.remove( el );
+			Game.active.flyingElectrons.push( el );
+
+			trace('shot electron from $wlocElectron now only ${electrons.length} electrons left');
+			
+			selectElectron( getNextElectron( el ) );
+
+			SoundEffect.play( 'electron_fire_p'+(player.index+1), 0.1 );
+
+			/*
 			player.score.add( Score.fired );
 			var electron = selectedElectron;
 			var wlocElectron = new Vec2(electron.object.transform.worldx(), electron.object.transform.worldy());
@@ -125,26 +152,29 @@ class Atom extends Trait {
 			object.removeChild(electron.object);
 			Scene.active.root.addChild(electron.object);
 			electron.setPostion(wlocElectron);
-			electrons.splice(electrons.indexOf(electron), 1);
-			Game.active.flyingElectrons.push(electron);
+			electrons.splice( electrons.indexOf(electron), 1 );
+			Game.active.flyingElectrons.push( electron );
 			trace('shot electron from $wlocElectron now only ${electrons.length} electrons left');
 			var locElectron = electron.object.transform.loc.clone();
-			var direction = new Vec4(wlocElectron.x - wlocAtom.x, wlocElectron.y - wlocAtom.y).normalize();
-			electron.setVelocity(direction);
-			SoundEffect.play('electron_fire_p'+(player.index+1), 0.05 );
+			var dir = new Vec4(wlocElectron.x - wlocAtom.x, wlocElectron.y - wlocAtom.y).normalize();
+			electron.fire(dir);
+			//soundFire.play();
+			//SoundEffect.play('electron_fire_p'+(player.index+1), 0.05 );
 			if (electrons.length == 0) {
-				player.navigateSelectionTowards(new Vec2(direction.x, direction.y));
+				player.navigateSelectionTowards(new Vec2(dir.x, dir.y));
 				setPlayer(null);
 				//if( sound != null ) sound.stop();
 				marker.hide();
 			}
 			selectElectron(getNextElectron(electron));
+			*/
+
 		} else {
 			SoundEffect.play('electron_fire_deny', 0.2 );
 		}
 	}
 
-	public function hit(electron:Electron) {
+	public function hit( electron : Electron ) {
 		if (player == null) {
 			trace('hit on neutral atom');
 			electron.player.score.add(Score.taken);
@@ -191,6 +221,7 @@ class Atom extends Trait {
 				}
 				marker.show();
 			});
+			//SoundEffect.load( 'electron_fire_p'+(player.index+1), 0.1 );
 			/* if( soundAmbient != null ) {
 				soundAmbient.play();
 				soundAmbient.fadeIn( 1.0, 1.0 );
@@ -202,63 +233,28 @@ class Atom extends Trait {
 		}
 	}
 
-	/*
-	function preUpdate() {
-		if( !body.ready ) return;
-		body.syncTransform();
-		var contacts = PhysicsWorld.active.getContactPairs( body );
-		if( contacts != null ) {
-			var normal : Vec4 = null;
-			for( contact in contacts ) {
-				var rba = PhysicsWorld.active.rbMap.get( contact.a );
-				trace(rba.object);
-				normal = contact.normOnB.clone();
-				if( body != PhysicsWorld.active.rbMap.get( contact.a ) ) {
-					//trace("TODO check");
-					normal = normal.mult( -1 );
-				}
-				*/
-				/*
-				slope = Math.abs( Math.asin( Math.abs( normal.z ) / normal.length() ) - HALF_PI );
-				//trace( contact.distance );
-				if( Math.abs( contact.distance ) <= contactThreshold ) {
-					if( normal.z > 0 ) {
-						onGround = true;
-						//isJumping = false;
-						framesOffGround = 0;
-						//groundSlope = slope;
-					} else if( normal.z < 0 ) {
-						onCeiling = true;
-					}
-				}
-			}
-		}
-	}
-	*/
-
 	public function update() {
 
-		/* if( index == 1 ) {
-			object.transform.translate( 0.01, 0, 0 );
-		} */
-		/* if( body == null || !body.ready ) return;
-		body.syncTransform(); */
-		/* var contacts = PhysicsWorld.active.getContactPairs( body );
-		if( contacts != null && contacts.length > 0 ) {
-			//trace(contacts);
-			for( contact in contacts ) {
-				var ca = PhysicsWorld.active.rbMap.get( contact.a );
-				var cb = PhysicsWorld.active.rbMap.get( contact.b );
-				trace( ca.object.name+" : "+cb.object.name );
-			}
-		}
-		return; */
+		if( body == null || !body.ready ) return;
 
+		body.syncTransform();
+		
+		/* var contacts = PhysicsWorld.active.getContactPairs( body );
+		if( contacts != null ) {
+			// var b = PhysicsWorld.active.get
+			if( contacts[0] != null ) {
+				var rb = PhysicsWorld.active.rbMap.get( contacts[0].a );
+				// trace(rb.object.name);
+				trace(rb.object.parent.name);
+				// var e = rb.object.getTrait( Electron );
+				// if( e != null ) trace(e.atom);
+			}
+		} */
+		
 		if( player != null ) {
 
-			var rotSpeed = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
 			var spawnTimeFactor = 0.0;
-			
+			var rotSpeed = ((player.index+1) % 2 == 0) ? -1.0 : 1.0;
 			for( e in electrons ) {
 				switch e.core {
 				case Spawner(v): spawnTimeFactor += v;
@@ -267,11 +263,11 @@ class Atom extends Trait {
 				}
 			}
 			
-			var baseSpeed = 0.6; //TODO
+			var baseSpeed = 1.0; //TODO
 			rotationSpeed = rotSpeed/ (100/baseSpeed);
 			object.transform.rotate( Vec4.zAxis(), rotationSpeed );
 	
-			for(e in electrons) e.update();
+		//	for(e in electrons) e.update();
 			
 			if( electrons.length < numSlots && spawnTimeFactor > 0 ) {
 				var spawnTime = 10 / spawnTimeFactor;
@@ -297,6 +293,10 @@ class Atom extends Trait {
 					}
 				}
 			}
+		} else {
+			//trace(rotationSpeed);
+			//rotationSpeed = 1.0;
+			//object.transform.rotate( Vec4.zAxis(), rotationSpeed );
 		}
 
 		if( electrons.length == 0 ) {
@@ -306,7 +306,7 @@ class Atom extends Trait {
 
 	public function dispose() {
 		//if( soundAmbient != null ) soundAmbient.stop();
-		for( e in electrons ) e.dispose();
+		//for( e in electrons ) e.dispose();
 		object.remove();
 	}
 
@@ -326,6 +326,7 @@ class Atom extends Trait {
 
 	function spawnElectron( core : Electron.Core, ?cb : Electron->Void ) {
 		Scene.active.spawnObject('Electron', object, obj -> {
+			obj.name = 'Electron'+electrons.length + '_' + object.name;
 			var e = new Electron( player, core );
 			e.notifyOnInit(() -> {
 				e.setAtom( this, getFirstFreeElectronIndex() );

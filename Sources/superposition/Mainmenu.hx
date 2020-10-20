@@ -7,8 +7,7 @@ import zui.Themes;
 
 class Mainmenu extends Trait {
 	
-	//static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
-	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: false, color: Player.COLORS[i] }];
+	static var playerData : Array<PlayerData> = [for(i in 0...4) { name: 'P'+(i+1), enabled: i < 2, color: Player.COLORS[i] }];
 	static var selectedMap = 0;
 	//static var sound : AudioChannel;
 

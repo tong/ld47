@@ -56,6 +56,7 @@ class Player extends Trait {
 
 	var moveTween : TAnim;
 	var soundMove : AudioChannel;
+	var soundFire : AudioChannel;
 
 	public function new( index : Int ) {
 		super();
@@ -73,7 +74,12 @@ class Player extends Trait {
 			SoundEffect.load( 'player_move', s -> {
 				soundMove = Audio.play( s, false, false );
 				soundMove.pause();
-			} );
+			});
+			SoundEffect.load( 'electron_fire_p'+(index+1), s-> {
+				soundFire = Audio.play( s, false, false );
+				soundFire.pause();
+			});
+
 			/* SoundEffect.play( 'atom_ambient_'+index, true, true, 1.0, s -> {
 				soundAmbient = s;
 			} ); */
@@ -111,11 +117,6 @@ class Player extends Trait {
 		else if (gp.started("right")) dir.x = 1;
 		else if (gp.started("up")) dir.y = 1;
 		else if (gp.started("down")) dir.y = -1;
-
-		// if( gp.started("left") ) trace("LEFT");
-		// if( gp.started("right") ) trace("RIGHT");
-		// if( gp.started("up") ) trace("UP");
-		// if( gp.started("down") ) trace("DOWN");
 
 		switch index {
 		case 0:
@@ -217,6 +218,7 @@ class Player extends Trait {
 	}
 
 	public function fire() {
+		soundFire.play();
 		atom.fire();
 		if( atom.electrons.length == 0 ) {
 			var atom : Atom = null;

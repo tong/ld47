@@ -2,7 +2,7 @@
 package ;
 class Main {
     public static inline var projectName = 'superposition';
-    public static inline var projectVersion = '0.3.19';
+    public static inline var projectVersion = '0.3.20';
     public static inline var projectPackage = 'superposition';
     public static function main() {
         iron.object.BoneAnimation.skinMaxBones = 8;

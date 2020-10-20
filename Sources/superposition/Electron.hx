@@ -10,6 +10,7 @@ enum Core {
     Swastika;
     Topy;
     Process;
+    //Freezer;
     //Candyflip;
     //Occupier;
 }
@@ -24,8 +25,8 @@ class Electron extends Trait {
     public var atom(default,null) : Atom;
     public var position(default,null): Int;
     public var mesh(default,null) : MeshObject;
-    public var velocity(default,null) : Vec4;    
-   
+    
+    var velocity : Vec4;    
     var body : RigidBody;
 
     public function new( player : Player, core : Core )  {
@@ -46,58 +47,61 @@ class Electron extends Trait {
                     ease: Ease.ElasticOut,
                     tick: object.transform.buildMatrix,
                     done: () -> {
-                        body = mesh.getTrait(RigidBody);
                         //trace(body);
                     }
                 });
-                //body.setAngularFactor( 0, 0, 0 );
-                //body.syncTransform();
-                // body.notifyOnContact( (rb) -> trace(mesh.name+'::'+rb.object.name) );
+                body = mesh.getTrait(RigidBody);
+                // body.setAngularFactor( 0, 0, 0 );
+                // body.setLinearVelocity( 0, 0, 0 );
+                // body.syncTransform();
+                //body.notifyOnContact( a -> trace(a) );
             });
         });
+        notifyOnUpdate( update );
     }
 
-    /* function preUpdate() {
-        if( !body.ready ) return;
-		body.syncTransform();
-	}
- */
-    public function update() {
+    function update() {
 
-        //if( !body.ready ) return;
-        //mesh.transform.rotate( new Vec4(0,1,0,1), 0.01 );
-
-       /*  if( body == null || !body.ready ) return;
-        body.syncTransform(); */
+        if( body == null || !body.ready ) return;
+        body.syncTransform();
 
         if (velocity != null) {
+       
             object.transform.translate( velocity.x/50, velocity.y/50, 0 );
+
+            var contacts = PhysicsWorld.active.getContactPairs( body );
+            if( contacts != null ) {
+                if( contacts[0] != null ) {
+                    var rb = PhysicsWorld.active.rbMap.get( contacts[0].a );
+                    if( rb == body ) rb = PhysicsWorld.active.rbMap.get( contacts[0].b );
+                    trace(rb.object.name);
+                    if( rb.object.name.startsWith('Atom') ) {
+                        var atom = rb.object.parent.getTrait(Atom);
+                        if( atom != null ) {
+                            //TODO
+                            trace("ATOM HIT");
+                            //SoundEffect.play('electron_hit',false,true,0.3);
+                            object.remove();
+                            atom.hit( this );
+                        }
+                    }
+                }
+            }
         }
+
+       // body.syncTransform();
+
+        /*
         switch core {
         case Bomber:
             var wr = new Quat().fromMat( mesh.transform.world ); 
             mesh.transform.rotate( Vec4.zAxis(), -wr.z );
             mesh.transform.buildMatrix();
         default:
-        }
-
-       /*  var contacts = PhysicsWorld.active.getContactPairs( body );
-        if( contacts != null && contacts.length > 0 ) {
-            for( contact in contacts ) {
-                var other = PhysicsWorld.active.rbMap.get( contact.a );
-                trace( other.object.name );
-            }
         } */
     } 
 
-    public function setPostion( v : Vec2 ) {
-        object.transform.loc.x = v.x;
-		object.transform.loc.y = v.y;
-		//object.transform.loc.z = 0;
-		object.transform.buildMatrix();
-    }
-
-    public function setAtom(a:Atom, index:Int) {
+    public function setAtom( a : Atom, index : Int ) {
         trace('attach electron to atom of player ${a.player.index} at index $index');
         atom = a;
         position = index;
@@ -105,13 +109,14 @@ class Electron extends Trait {
         DataTools.loadMaterial('Game', 'Player'+(player.index+1), n -> {
             if( mesh != null ) mesh.materials = n;
         });
-    } 
+    }
 
-    public function setVelocity(v:Vec4) {
-        trace('fire electron: $v');
-        setDirection(v);
-        atom = null;
-        velocity = v;
+    public function setPostion( v : Vec2 ) {
+        object.transform.loc.x = v.x;
+		object.transform.loc.y = v.y;
+		//object.transform.loc.z = 0;
+        object.transform.buildMatrix();
+        body.syncTransform();
     }
 
     public function setDirection(dir:Vec4){
@@ -121,10 +126,19 @@ class Electron extends Trait {
         if( dir.x < 0 ) angleZ += Math.PI;
         object.transform.setRotation( angleX, 0, angleZ );
         object.transform.buildMatrix();
-        //body.syncTransform();
+        body.syncTransform();
     }
 
-    public function dispose() {
-        object.remove();
+    public function fire( dir : Vec4 ) {
+        //trace('fire: $v');
+        //body.applyImpulse( new Vec4(40,66,0) );
+        //body.setLinearVelocity( 0, 100, 0 );
+        setDirection( dir );
+        atom = null;
+        velocity = dir;
     }
+
+   /*  public function dispose() {
+        object.remove();
+    } */
 }
