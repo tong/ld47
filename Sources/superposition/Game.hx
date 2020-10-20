@@ -173,30 +173,6 @@ class Game extends Trait {
 		finished = true;
 		var menu = new ResultMenu( winner );
 		object.addTrait( menu );
-		//Scene.active.root.addTrait( menu );
-		//atomContainer.addTrait( menu );
-
-		/*
-		//trace('status others:' + status.others.length );
-		SoundEffect.play( 'game_finish', false, true, 0.1, s -> {
-			//Tween.to( { target: s, props: { volume: 0.5 }, delay: 0.1, duration: 0.8 } );
-		});
-		finished = true;
-		var winner = status.winner;
-		var others = status.others;
-		if (status.hasWinner){
-			var score = winner.score;
-			trace('the game is finished, winner is player ${winner.index} with a score of $score' );						
-		} else {
-			trace('the game ended in a draw');
-		}
-		//if( soundAmbient != null ) soundAmbient.stop();
-		//for( a in atoms ) a.destroy();
-//		Event.send( GameEvent.End );
-		//Scene.setActive( 'Result' );
-		//var menu = new ResultMenu( status );
-		//Scene.active.root.addTrait( menu );
-		*/
 	}
 
 	function spawnPlayers( playerData : Array<PlayerData>, cb : Void->Void ) {
@@ -267,24 +243,20 @@ class Game extends Trait {
 			}
 		}
 
-		/* var status = getGameStatus();
-		if( status.isFinished ) {
-			finish( status );
-			return;
-		} */
+		/* var ownedAtoms = atoms.filter( a -> return a.electrons.length > 0 );
+		if( ownedAtoms.length == 0 ) {
+			if( flyingElectrons.length == 0 ) {
+				finish();
+				return;
+			}
+		}
+		*/
 
-		/* for( electron in flyingElectrons ) {
-			electron.update();
-		} */
-		
-		//trace("----------------------------------------------------");
-
-		/*
-		var ownedAtoms = atoms.filter( a -> return a.player != null );
+		//var ownedAtoms = atoms.filter( a -> return a.player != null );
+		var ownedAtoms = atoms.filter( a -> return a.electrons.length > 0 );
 		if( ownedAtoms.length == 0 && flyingElectrons.length == 0 ) {
 			trace('no electrons left -> everybody loses');
-			// game draw
-			finish();
+			finish(); // game draw
 			return;
 		} else {
 			var winners = players.slice(0);
@@ -304,9 +276,11 @@ class Game extends Trait {
 			}
 			if( winners.length == 1 ) {
 				finish( winners[0] );
+				return;
 			}
 		}
-
+		
+		/*
 		var newFlyingElectrons = new Array<Electron>();
 		for (electron in flyingElectrons){	
 			//trace('check flying electron from player ' + electron.player.index);
@@ -363,12 +337,6 @@ class Game extends Trait {
 		flyingElectrons = newFlyingElectrons;
 		*/
 	}
-
-	/* function render2D(g:kha.graphics2.Graphics) {
-		if( finished ) {
-
-		}
-	} */
 
 	/*
 	function getGameStatus():GameStatus{

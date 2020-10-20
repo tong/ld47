@@ -89,11 +89,11 @@ class ResultMenu extends Trait {
 				for (p in status.others ) printPlayer(p);
 			}
 			*/
-			if (ui.button('RESTART', Left)) {
+			/* if (ui.button('RESTART', Left)) {
 				remove();
 				Game.active.create();
 				return;
-			}
+			} */
 			if (ui.button('PROCEED', Left)) {
 				Scene.setActive('Mainmenu');
 			}

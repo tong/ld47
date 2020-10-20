@@ -6,6 +6,9 @@ using kha.graphics2.GraphicsExtension;
 
 class HUD extends Trait {
 
+	static inline var PADDING_X = 3;
+	static inline var PADDING_Y = 0;
+
 	public var visible = true;
 
 	public function new() {
@@ -21,8 +24,8 @@ class HUD extends Trait {
 			return;
 
 		final sw = System.windowWidth(), sh = System.windowHeight();
-		final paddingX = 3, paddingY = 0;
-		final height = UI.fontSize + paddingY * 2;
+		//final paddingX = 3, paddingY = 0;
+		final height = UI.fontSize + PADDING_Y * 2;
 
 		g.end();
 
@@ -37,36 +40,50 @@ class HUD extends Trait {
 		var px = 0.0;
 		//var cx = 8.0;
 
-		if( Game.active.players != null ) {
+		for (i in 0...Game.active.players.length) {
 
-			for (i in 0...Game.active.players.length) {
+			var player = Game.active.players[i];
+			var color = Player.COLORS[player.index];
+			var atoms = Game.active.atoms.filter(a -> a.player == player);
+			var numElectrons = 0;
+			var numFlyingElectrons = 0;
+			for( a in atoms ) numElectrons += a.electrons.length;
+			for( e in Game.active.flyingElectrons ) if( e.player == player ) numFlyingElectrons++;
+			//trace('P'+player.index+': '+atoms.length+" :: "+player.atoms.length);
 
-				var player = Game.active.players[i];
-				var color = Player.COLORS[player.index];
-				var atoms = Game.active.atoms.filter(a -> a.player == player);
-				
-				var percentAtoms = atoms.length / Game.active.atoms.length;
-				var width = sh * percentAtoms;
-				g.color = color;
-				g.fillRect(px, 0, sh * percentAtoms, height);
-	
-				//var text = 'P' + (i + 1) + ' A' + atoms.length;
-				var text = 'P' + (i + 1);
-				var textWidth = UI.font.width( g.fontSize, text );
-				g.color = 0xff000000;
-				g.drawString(text, px + paddingX, paddingY);
-				
-				/* //var cx = px + textWidth + paddingX*4;
-				//var cx = px + paddingX*4;
-				var cr = 6;
-				g.color = color;
-				for( i in 0...atoms.length ) {
-					g.fillCircle( cx, height/2 + paddingY*2, cr );
-					cx += (i*(cr*2));
-				} */
-	
-				px += width;
+			g.color = color;
+			g.fillRect( px, 0, 200, height );
+
+			var text = 'P' + (i + 1) + ' A' + atoms.length+' E'+numElectrons+'/'+numFlyingElectrons;
+			g.color = 0xff000000;
+			g.drawString(text, px + PADDING_X, PADDING_Y );
+			
+			px += 200;
+
+			/*
+			var percentAtoms = atoms.length / Game.active.atoms.length;
+			var width = sh * percentAtoms;
+			g.color = color;
+			g.fillRect(px, 0, sh * percentAtoms, height);
+
+			var text = 'P' + (i + 1) + ' A' + atoms.length+' E'+numElectrons+'/'+numFlyingElectrons;
+			//var text = 'P' + (i + 1);
+			var textWidth = UI.font.width( g.fontSize, text );
+			g.color = 0xff000000;
+			g.drawString(text, px + paddingX, paddingY);
+			*/
+			
+			/* //var cx = px + textWidth + paddingX*4;
+			//var cx = px + paddingX*4;
+			var cr = 6;
+			g.color = color;
+			for( i in 0...atoms.length ) {
+				g.fillCircle( cx, height/2 + paddingY*2, cr );
+				cx += (i*(cr*2));
 			}
+			
+			px += width;
+			*/
 		}
 
 		//g.popTransformation();

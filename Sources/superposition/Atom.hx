@@ -140,9 +140,15 @@ class Atom extends Trait {
 
 			trace('shot electron from $wlocElectron now only ${electrons.length} electrons left');
 			
-			selectElectron( getNextElectron( el ) );
-
+			
 			SoundEffect.play( 'electron_fire_p'+(player.index+1), 0.1 );
+			
+			if (electrons.length == 0) {
+				player.navigateSelectionTowards(new Vec2(dir.x, dir.y));
+				setPlayer(null);
+			} else {
+			}
+			selectElectron(getNextElectron(el));
 
 			/*
 			player.score.add( Score.fired );
@@ -228,7 +234,7 @@ class Atom extends Trait {
 			} */
 		} else {
 			mesh.materials = defaultMaterials;
-			//marker.hide();
+			marker.hide();
 			//if( soundAmbient != null ) soundAmbient.stop();
 		}
 	}
@@ -250,6 +256,9 @@ class Atom extends Trait {
 				// if( e != null ) trace(e.atom);
 			}
 		} */
+
+		//trace(object.name+': '+electrons.length);
+		//for(e in electrons) e.update();
 		
 		if( player != null ) {
 

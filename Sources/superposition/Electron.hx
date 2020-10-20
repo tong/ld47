@@ -60,7 +60,7 @@ class Electron extends Trait {
         notifyOnUpdate( update );
     }
 
-    function update() {
+    public function update() {
 
         if( body == null || !body.ready ) return;
         body.syncTransform();
@@ -88,8 +88,6 @@ class Electron extends Trait {
                 }
             }
         }
-
-       // body.syncTransform();
 
         /*
         switch core {

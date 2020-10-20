@@ -53,6 +53,7 @@ class Player extends Trait {
 	public var mesh(default,null) : MeshObject;
 	public var score(default,null) = Score.empty;
 	public var moveSpeed : FastFloat = 1.0;
+	//public var dead(default,null) = false;
 
 	var moveTween : TAnim;
 	var soundMove : AudioChannel;
@@ -92,6 +93,9 @@ class Player extends Trait {
 			final atoms = Game.active.atoms.filter(a -> return a.player == this);
 			if( atoms.length > 0 ) {
 				selectAtom( atoms[0] );
+				return;
+			} else {
+				object.visible = false;
 				return;
 			}
 		}
@@ -144,6 +148,7 @@ class Player extends Trait {
 		}
 		
 		if( dir.x != 0 || dir.y != 0 ) navigateSelectionTowards(dir);
+		//navigateSelectionTowards( dir );
 	}
 
 	public function selectAtom( newAtom : Atom ) {
@@ -188,7 +193,7 @@ class Player extends Trait {
 	}
 
 	public function navigateSelectionTowards(dir:Vec2) {
-		if (atom == null || dir.x == 0 && dir.y == 0) {
+		if (atom == null || (dir.x == 0 && dir.y == 0)) {
 			return;
 		}
 		var shootDirection = new Vec2(dir.x, dir.y).normalize();
@@ -236,5 +241,15 @@ class Player extends Trait {
 	}
 
 	public function dispose() {
+	}
+
+	public function toString() : String {
+		var s = 'P$index(';
+		if( atom == null ) {
+			s += 'dead)';
+		} else {
+			s += 'atom=${atom.index})';
+		}
+		return s;
 	}
 }
