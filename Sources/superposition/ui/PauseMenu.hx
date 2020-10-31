@@ -4,21 +4,11 @@ import superposition.Game;
 import zui.*;
 import zui.Themes;
 
-class PauseMenu extends Trait {
-
-	var ui : Zui;
+class PauseMenu extends Menu {
 
 	public function new() {
 		super();
-		notifyOnInit( () -> {
-			var theme : TTheme = Reflect.copy( UI.THEME );
-			//theme.BUTTON_TEXT_COL = 0xff00ff00;
-			//theme.FILL_WINDOW_BG = false;
-			//theme.FILL_BUTTON_BG = false;
-			ui = new Zui( { font : UI.fontTitle, theme: theme } );
-			notifyOnUpdate( update );
-			notifyOnRender2D( render );
-		});
+		notifyOnUpdate( update );
 	}
 
 	function update() {
@@ -34,13 +24,13 @@ class PauseMenu extends Trait {
 		}
 	}
 
-	function render( g : kha.graphics2.Graphics ) {
+	override function render( g : kha.graphics2.Graphics ) {
 		if( !Game.active.paused )
 			return;
-        var sw = System.windowWidth(), sh = System.windowHeight();
-        g.end();
-		g.opacity = 1;
-		ui.begin( g );
+		super.render( g );
+	}
+
+	override function renderUI( g : kha.graphics2.Graphics ) {
 		if( ui.window( Id.handle(), 32, 32, 400, 400, false ) ) {
 			if( ui.button( 'RESUME', Left ) ) Game.active.resume();
 			/* if( ui.button( 'RESTART', Left ) ) {
@@ -50,7 +40,5 @@ class PauseMenu extends Trait {
             if( ui.button( 'EXIT', Left ) ) Scene.setActive( 'Mainmenu' );
             if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
-		ui.end();
-        g.begin( false );
 	}
 }

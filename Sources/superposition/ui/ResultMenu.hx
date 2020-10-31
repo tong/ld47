@@ -4,31 +4,17 @@ import zui.Id;
 import zui.Themes;
 import zui.Zui;
 
-class ResultMenu extends Trait {
+class ResultMenu extends Menu {
 
 	//var status : GameStatus;
 	var winner : Player;
-	var ui : Zui;
 
 	//public function new( status: GameStatus ) {
 	public function new( winner : Player ) {
 		super();
 		this.winner = winner;
 	//	this.status = status;
-		notifyOnInit( () -> {
-			var theme:TTheme = Reflect.copy(UI.THEME_2);
-			// theme.BUTTON_TEXT_COL = 0xff00ff00;
-			// theme.FILL_WINDOW_BG = false;
-			// theme.FILL_BUTTON_BG = true;
-			//theme.FONT_SIZE = 24;
-			//theme.ELEMENT_H = 26;
-			ui = new Zui({font: UI.fontTitle, theme: theme});
-			notifyOnUpdate( update );
-			notifyOnRender2D( render );
-		});
-		/* notifyOnRemove( () -> {
-			removeRender2D( render );
-		}); */
+		notifyOnUpdate( update );
 	}
 
 	function update() {
@@ -47,13 +33,9 @@ class ResultMenu extends Trait {
 		}
 	}
 
-	function render(g:kha.graphics2.Graphics) {
+	override function renderUI( g : kha.graphics2.Graphics ) {
 		var sw = System.windowWidth(), sh = System.windowHeight();
-		g.end();
-		g.opacity = 1;
-		ui.begin(g);
 		if (ui.window(Id.handle(), 32, 32, sw-64, sh-64, false)) {
-
 			if( winner != null ) {
 				ui.ops.theme.TEXT_COL = winner.color;
 				ui.text( 'WINNER: '+winner.index  );
@@ -65,7 +47,6 @@ class ResultMenu extends Trait {
 				ui.ops.theme.TEXT_COL = player.color;
 				ui.text('P' + (player.index+1) );
 			}
-
 			/*
 			function printPlayer( player : Player ) {
 				ui.ops.theme.TEXT_COL = player.color;
@@ -98,7 +79,5 @@ class ResultMenu extends Trait {
 				Scene.setActive('Mainmenu');
 			}
 		}
-		ui.end();
-		g.begin(false);
 	}
 }

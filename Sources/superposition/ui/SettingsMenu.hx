@@ -4,22 +4,15 @@ package superposition.ui;
 import zui.Id;
 import zui.Zui;
 
-class SettingsMenu extends Trait {
-
-    var ui : Zui;
+class SettingsMenu extends Menu {
 
 	public function new() {
         super();
-		Log.info( 'Settings' );
 		notifyOnInit( () -> {
 			//if( Config.raw == null )
-
 			//trace( Config.raw  );
-			ui = new Zui( { font : UI.font, theme: UI.THEME_1 } );
 			ui.alwaysRedraw = true;
-			notifyOnRender2D( render );
 			/*
-
 			load( cfg -> {
 				trace(cfg);
 				ui = new Zui( { font : UI.font, theme: UI.THEME_1 } );
@@ -27,15 +20,17 @@ class SettingsMenu extends Trait {
 				notifyOnRender2D( render );
 			} );
 			*/
-			var kb = Input.getKeyboard();
-			notifyOnUpdate( () -> {
-				if( kb.started('escape') ) Scene.setActive( 'Mainmenu' );
-				for( i in 0...4 ) if( Input.getGamepad(i).started( 'cross' ) ) Scene.setActive( 'Quit' );
-			});
+			notifyOnUpdate( update );
 		});
-    }
+	}
+	
+	function update() {
+		var kb = Input.getKeyboard();
+		if( kb.started('escape') ) Scene.setActive( 'Mainmenu' );
+		for( i in 0...4 ) if( Input.getGamepad(i).started( 'cross' ) ) Scene.setActive( 'Quit' );
+	}
     
-    function render( g : kha.graphics2.Graphics ) {
+    override function renderUI( g : kha.graphics2.Graphics ) {
 		
 		//var ocfg : TConfig = Config.raw;
 		var ocfg : armory.data.Config.TConfig = armory.data.Config.raw;
@@ -45,8 +40,6 @@ class SettingsMenu extends Trait {
 		final sw = System.windowWidth(), sh = System.windowHeight();
 		final w = 320, h = System.windowHeight();
 
-		g.end();
-		ui.begin( g );
 		if( ui.window( Id.handle(), 32, 32, w, h, false ) ) {
 
 			ui.text('GRAPHICS',Left);
@@ -100,8 +93,6 @@ class SettingsMenu extends Trait {
 				apply( Config.defaultConfig );
 			}
 		}
-		ui.end();
-		g.begin( false );
 	}
 	
 	function apply( cfg : armory.data.Config.TConfig ) {
