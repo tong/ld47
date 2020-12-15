@@ -20,10 +20,11 @@ class Credits extends Trait {
             g.end();
             ui.begin( g );
             if( ui.window( Id.handle(), 32, 32, sw-64, sh-64, false ) ) {
-                ui.button( 'Developed by shadow & tong at disktree.net'.toUpperCase(), Left );
+                if( ui.button( 'Developed by shadow & tong at disktree.net'.toUpperCase(), Left ) ) {
+                    System.loadUrl('https://disktree.net/');
+                }
                 if( ui.button( 'Sound by stritter.audio'.toUpperCase(), Left ) ) {
-                    trace('visit wbsite');
-                    kha.System.loadUrl('https://stritter.audio/');
+                    System.loadUrl('https://stritter.audio/');
                 }
             }
             ui.end();
