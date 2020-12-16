@@ -1,39 +1,37 @@
 // Auto-generated
-let project = new Project('superposition');
+let project = new Project('superposition_0_3_29');
 
 project.addSources('Sources');
 project.addLibrary("/home/tong/sdk/armsdk/armory");
 project.addLibrary("/home/tong/sdk/armsdk/iron");
 project.addLibrary("tron");
 project.addLibrary("/home/tong/sdk/armsdk/lib/haxebullet");
-project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.js", { notinlist: true });
-project.addParameter('-dce full');
-project.addParameter('superposition.HUD');
-project.addParameter("--macro keep('superposition.HUD')");
-project.addParameter('superposition.PauseMenu');
-project.addParameter("--macro keep('superposition.PauseMenu')");
-project.addParameter('superposition.electron.Bomber');
-project.addParameter("--macro keep('superposition.electron.Bomber')");
-project.addParameter('superposition.Quit');
-project.addParameter("--macro keep('superposition.Quit')");
-project.addParameter('superposition.Game');
-project.addParameter("--macro keep('superposition.Game')");
+project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.js", { notinlist: true });
+project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.wasm", { notinlist: true });
+project.addParameter('superposition.ui.PauseMenu');
+project.addParameter("--macro keep('superposition.ui.PauseMenu')");
 project.addParameter('superposition.trait.RotateObject');
 project.addParameter("--macro keep('superposition.trait.RotateObject')");
-project.addParameter('superposition.Credits');
-project.addParameter("--macro keep('superposition.Credits')");
 project.addParameter('superposition.Marker');
 project.addParameter("--macro keep('superposition.Marker')");
-project.addParameter('armory.trait.physics.bullet.RigidBody');
-project.addParameter("--macro keep('armory.trait.physics.bullet.RigidBody')");
-project.addParameter('superposition.Mainmenu');
-project.addParameter("--macro keep('superposition.Mainmenu')");
+project.addParameter('superposition.Credits');
+project.addParameter("--macro keep('superposition.Credits')");
 project.addParameter('armory.trait.physics.bullet.PhysicsWorld');
 project.addParameter("--macro keep('armory.trait.physics.bullet.PhysicsWorld')");
-project.addParameter('superposition.Help');
-project.addParameter("--macro keep('superposition.Help')");
 project.addParameter('superposition.Boot');
 project.addParameter("--macro keep('superposition.Boot')");
+project.addParameter('superposition.Mainmenu');
+project.addParameter("--macro keep('superposition.Mainmenu')");
+project.addParameter('superposition.Game');
+project.addParameter("--macro keep('superposition.Game')");
+project.addParameter('superposition.Help');
+project.addParameter("--macro keep('superposition.Help')");
+project.addParameter('superposition.electron.Bomber');
+project.addParameter("--macro keep('superposition.electron.Bomber')");
+project.addParameter('armory.trait.physics.bullet.RigidBody');
+project.addParameter("--macro keep('armory.trait.physics.bullet.RigidBody')");
+project.addParameter('superposition.Quit');
+project.addParameter("--macro keep('superposition.Quit')");
 project.addShaders("build_ld47/compiled/Shaders/*.glsl", { noembed: false});
 project.addAssets("build_ld47/compiled/Assets/**", { notinlist: true });
 project.addAssets("build_ld47/compiled/Shaders/*.arm", { notinlist: true });
@@ -94,23 +92,21 @@ project.addDefine('arm_veloc');
 project.addDefine('rp_supersampling=1');
 project.addDefine('rp_ssgi=SSAO');
 project.addDefine('rp_bloom');
-project.addDefine('rp_translucency');
 project.addDefine('rp_motionblur=Object');
 project.addDefine('rp_pp');
 project.addDefine('rp_chromatic_aberration');
 project.addDefine('rp_gbuffer2');
+project.addDefine('rp_translucency');
 project.addDefine('armory');
 project.addDefine('arm_audio');
 project.addDefine('arm_physics');
 project.addDefine('arm_bullet');
-project.addDefine('arm_published');
+project.addDefine('arm_noembed');
 project.addDefine('arm_soundcompress');
 project.addDefine('arm_ui');
 project.addDefine('arm_skin');
 project.addDefine('arm_particles');
 project.addDefine('arm_config');
-project.addDefine('arm_loadscreen');
-project.addDefine('arm_resizable');
 // --------------------------------------------------------
 let RELEASE = true;
 let ELECTRON = false;
@@ -129,7 +125,7 @@ process.argv.forEach( (val,index,array) => {
 console.info(project.name + "-" + project.version + " " + platform);
 
 //project.addAssets("Assets/sound/**",{quality: 0.9});
-project.addParameter("-main superposition.App");
+project.addParameter("-main superposition.App");0
 //project.addParameter("--macro 'superposition.Build.app()'");
 project.addDefine("source-map");
 project.addDefine("source-header=");
@@ -155,6 +151,7 @@ if (platform === Platform.HTML5) {
         //callbacks.postHaxeCompilation = () => {};
     } else {
         project.addAssets("Assets/web/**");
+        //project.targetOptions.html5.scriptName = 'app';
     }
 }
 
