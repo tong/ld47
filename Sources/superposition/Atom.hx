@@ -29,7 +29,7 @@ class Atom extends Trait {
 	//var soundAmbient : AudioChannel;
 	//var soundFire : AudioChannel;
 
-	public function new( index : Int, numSlots : Int, rotationSpeed : FastFloat = 1.0 ) {
+	public function new( index : Int, numSlots : Int, rotationSpeed : FastFloat = 0.5 ) {
 
 		super();
 		this.index = index;
@@ -115,7 +115,7 @@ class Atom extends Trait {
 			if (electrons.length == 0) {
 				player.navigateSelectionTowards(new Vec2(dir.x, dir.y));
 				setPlayer(null);
-				//marker.hide();
+				marker.hide();
 			} else {
 			}
 
@@ -165,10 +165,10 @@ class Atom extends Trait {
 
 			trace('hit on enemy atom');
 
-			/* switch electron.core {
+			switch electron.core {
 			case Bomber: while( electrons.length > 0 ) hitByElectron();
 			default: hitByElectron();	
-			} */
+			} 
 
 			/* var scale1 = scale - 0.2;
 			Tween.to({
@@ -269,8 +269,8 @@ class Atom extends Trait {
 					case 2: Speeder(1+Math.random()*1);
 					case 3: Bomber;
 					case 4: Shield;
-					case 5: Laser;
-					case 6: Swastika;
+					//case 5: Laser;
+					//case 6: Swastika;
 					//case 7: Candyflip;
 					//case 8: Occupier;
 					case _: null;
@@ -381,18 +381,19 @@ class Atom extends Trait {
 	}
 
 	function hitByElectron() {
-		var e = electrons.pop();
-		Tween.to({
-			props: {x: 0.01, y: 0.01, z: 0.01},
-			duration: 0.5,
-			target: e.mesh.transform.scale,
-			ease: Ease.BackInOut,
-			tick: e.mesh.transform.buildMatrix,
-			done: () -> e.object.remove()
-		});
 		if (electrons.length == 0) {
 			player.score.add( Score.lost );
 			setPlayer(null);
+		} else {
+			var e = electrons.pop();
+			Tween.to({
+				props: {x: 0.01, y: 0.01, z: 0.01},
+				duration: 0.5,
+				target: e.mesh.transform.scale,
+				ease: Ease.BackInOut,
+				tick: e.mesh.transform.buildMatrix,
+				done: () -> e.object.remove()
+			});
 		}
 	}
 
