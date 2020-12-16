@@ -367,7 +367,7 @@ class Atom extends Trait {
 		if ( (selectedElectron = electron) != null) {
 			var loc = electron.object.transform.loc;
 			var rot = electron.object.transform.rot;
-			trace('selectElectron '+electron );
+			trace('selectElectron ' );
 			Tween.to({
 				props: { x: loc.x, y: loc.y, z: loc.z },
 				duration: 0.2,

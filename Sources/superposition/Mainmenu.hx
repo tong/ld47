@@ -114,7 +114,7 @@ class Mainmenu extends Trait {
 
 			ui.ops.theme.BUTTON_TEXT_COL = COLOR_ENABLED;
 			//if( ui.button( 'SETTINGS', Left ) ) Scene.setActive( 'Settings' );
-			if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
+			//if( ui.button( 'HELP', Left ) ) Scene.setActive( 'Help' );
 			//if( ui.button( 'CREDITS', Left ) ) Scene.setActive( 'Credits' );
 			if( ui.button( 'QUIT', Left ) ) Scene.setActive( 'Quit' );
 		}
