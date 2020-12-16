@@ -6,10 +6,10 @@ enum Core {
     Speeder(v:Float);
     Bomber;
     Shield;
-    Laser;
-    Swastika;
-    Topy;
-    Process;
+//    Laser;
+//    Swastika;
+//    Topy;
+//    Process;
     //Freezer;
     //Candyflip;
     //Occupier;
