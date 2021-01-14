@@ -15,6 +15,7 @@ typedef PlayerData = {
 }
 
 typedef MapData = {
+	id: String,
 	name: String,
 	//?theme : String,
 	atoms : Array<AtomData>,
@@ -83,8 +84,22 @@ class Game extends Trait {
 
 		var ts = Time.realTime ();
 
-		trace("Preloading materials");
-		for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
+		var mapId = this.data.map.id;
+		if( mapId == null ) mapId = "map_1";
+		//var mapSceneName = 'map_$mapId';
+		var mapSceneName = '$mapId';
+		var mapContainer = Scene.active.getEmpty('MapContainer');
+		trace('Loading map $mapSceneName');
+		SpawnTools.spawnObjectFromScene( mapSceneName, mapSceneName+'_root', mapContainer, map -> {
+		 	//trace('Map $mapId loaded');
+			Data.getWorld( mapSceneName, mapSceneName+'_world', wd -> {
+				//trace( "World loaded" );
+				Scene.active.world = wd;
+			});
+		});
+
+		//trace("Preloading materials");
+		//for( i in 1...5 ) DataTools.loadMaterial('Game','Player$i');
 
 		trace( 'Spawning ${ this.data.players.length} players' );
 		spawnPlayers( this.data.players, () -> {

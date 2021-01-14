@@ -10,6 +10,8 @@ class MapStore {
         2 => [
             {
                 name: 'test2.1',
+                id: 'map_2',
+                //max_bomber
                 atoms: [
                     { slots: 16, player: 0, loc: { x: -0.6, y: 0.0 }, electrons: [None,None,Spawner(1.1),Bomber,Shield], rotationSpeed: 0.3 },
                     { slots: 16, player: 1, loc: { x: 0.6, y: 0 }, electrons: [None,None,Spawner(1.1),Bomber,Shield], rotationSpeed: -0.3 },
@@ -20,6 +22,7 @@ class MapStore {
             },
             {
                 name: 'test2.2',
+                id: 'map_1',
                 atoms: [
                     { slots: 10, player: 0, electrons:[None,Spawner(0.2),Spawner(0.2)], loc: { x: -0.7,y: 0.6 }, rotationSpeed: 0.5 },
                     { slots: 10, player: 1, electrons:[None,Spawner(0.2),Spawner(0.2)], loc: { x: 0.7, y: 0.6 }, rotationSpeed: -0.5 },
@@ -30,6 +33,7 @@ class MapStore {
             },
             {
                 name: 'test2.3',
+                id: 'map_1',
                 atoms: [
                     { slots: 8, player: 0, electrons:[None,Spawner(0.2),Spawner(0.2),Bomber], loc: { x: -0.8 }, rotationSpeed: 0.25 },
                     { slots: 12, player: 0, electrons:[None], loc: { x: 0.4, y: 0.4 }, rotationSpeed: -0.25 },
@@ -48,6 +52,7 @@ class MapStore {
         3 => [
             {
                 name: 'test3.1',
+                id: '1',
                 atoms: [
                     { slots: 10, player: 0, electrons:[None,Spawner(0.5)], loc: { x: -0.7,y: 0.6 }, rotationSpeed: 0.5 },
                     { slots: 10, player: 1, electrons:[None,Spawner(0.5)], loc: { x: 0.7, y: 0.6 }, rotationSpeed: -0.5 },
@@ -62,6 +67,7 @@ class MapStore {
         ],
         4 => [
             {
+                id: 'map_1',
                 name: 'test4.1',
                 atoms: [
                     { slots: 14, player: 0, electrons: [Spawner(1.2)], loc: { x: -0.7, y: 0.0 }, rotationSpeed: 0.5 },
