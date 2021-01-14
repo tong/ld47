@@ -1,8 +1,8 @@
 // Auto-generated
 package ;
 class Main {
-    public static inline var projectName = 'superposition';
-    public static inline var projectVersion = '0.3.29';
+    public static inline var projectName = 'Superposition';
+    public static inline var projectVersion = '0.3.30';
     public static inline var projectPackage = 'superposition';
     public static function main() {
         iron.object.BoneAnimation.skinMaxBones = 8;
@@ -11,9 +11,9 @@ class Main {
         armory.system.Starter.main(
             'Boot',
             0,
-            false,
             true,
-            false,
+            true,
+            true,
             1920,
             1080,
             1,

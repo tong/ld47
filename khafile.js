@@ -1,5 +1,5 @@
 // Auto-generated
-let project = new Project('superposition_0_3_29');
+let project = new Project('Superposition_0_3_30');
 
 project.addSources('Sources');
 project.addLibrary("/home/tong/sdk/armsdk/armory");
@@ -8,37 +8,38 @@ project.addLibrary("tron");
 project.addLibrary("/home/tong/sdk/armsdk/lib/haxebullet");
 project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.js", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/lib/haxebullet/ammo/ammo.wasm.wasm", { notinlist: true });
-project.addParameter('armory.trait.physics.bullet.RigidBody');
-project.addParameter("--macro keep('armory.trait.physics.bullet.RigidBody')");
-project.addParameter('superposition.Quit');
-project.addParameter("--macro keep('superposition.Quit')");
-project.addParameter('superposition.Credits');
-project.addParameter("--macro keep('superposition.Credits')");
 project.addParameter('superposition.trait.RotateObject');
 project.addParameter("--macro keep('superposition.trait.RotateObject')");
+project.addParameter('armory.trait.physics.bullet.RigidBody');
+project.addParameter("--macro keep('armory.trait.physics.bullet.RigidBody')");
 project.addParameter('superposition.electron.Bomber');
 project.addParameter("--macro keep('superposition.electron.Bomber')");
 project.addParameter('superposition.Help');
 project.addParameter("--macro keep('superposition.Help')");
-project.addParameter('superposition.Boot');
-project.addParameter("--macro keep('superposition.Boot')");
-project.addParameter('superposition.Mainmenu');
-project.addParameter("--macro keep('superposition.Mainmenu')");
-project.addParameter('superposition.ui.PauseMenu');
-project.addParameter("--macro keep('superposition.ui.PauseMenu')");
-project.addParameter('armory.trait.physics.bullet.PhysicsWorld');
-project.addParameter("--macro keep('armory.trait.physics.bullet.PhysicsWorld')");
-project.addParameter('superposition.Marker');
-project.addParameter("--macro keep('superposition.Marker')");
 project.addParameter('superposition.Game');
 project.addParameter("--macro keep('superposition.Game')");
+project.addParameter('armory.trait.WalkNavigation');
+project.addParameter("--macro keep('armory.trait.WalkNavigation')");
+project.addParameter('superposition.Mainmenu');
+project.addParameter("--macro keep('superposition.Mainmenu')");
+project.addParameter('superposition.Quit');
+project.addParameter("--macro keep('superposition.Quit')");
+project.addParameter('superposition.Boot');
+project.addParameter("--macro keep('superposition.Boot')");
+project.addParameter('superposition.Credits');
+project.addParameter("--macro keep('superposition.Credits')");
+project.addParameter('superposition.ui.PauseMenu');
+project.addParameter("--macro keep('superposition.ui.PauseMenu')");
+project.addParameter('superposition.Marker');
+project.addParameter("--macro keep('superposition.Marker')");
+project.addParameter('armory.trait.physics.bullet.PhysicsWorld');
+project.addParameter("--macro keep('armory.trait.physics.bullet.PhysicsWorld')");
 project.addShaders("build_ld47/compiled/Shaders/*.glsl", { noembed: false});
 project.addAssets("build_ld47/compiled/Assets/**", { notinlist: true });
 project.addAssets("build_ld47/compiled/Shaders/*.arm", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/brdf.png", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/smaa_area.png", { notinlist: true });
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/smaa_search.png", { notinlist: true });
-project.addAssets("Bundled/config.arm", { notinlist: true });
 project.addAssets("Bundled/font/mono.ttf", { notinlist: false });
 project.addAssets("Bundled/font/title.ttf", { notinlist: false });
 project.addAssets("Bundled/icon.png", { notinlist: true });
@@ -62,6 +63,7 @@ project.addAssets("Bundled/sound/game_start.wav", { notinlist: true , quality: 0
 project.addAssets("Bundled/sound/player_death.wav", { notinlist: true , quality: 0.8999999761581421});
 project.addAssets("Bundled/sound/player_move.wav", { notinlist: true , quality: 0.8999999761581421});
 project.addAssets("Data/hdr/shanghai_bund_1k.hdr", { notinlist: true });
+project.addAssets("Data/hdr/solitude_night_1k.hdr", { notinlist: true });
 project.addAssets("Data/tex/Metal032/Metal032_2K_Color.jpg", { notinlist: true });
 project.addAssets("Data/tex/Metal032/Metal032_2K_Displacement.jpg", { notinlist: true });
 project.addAssets("Data/tex/Metal032/Metal032_2K_Metalness.jpg", { notinlist: true });
@@ -73,6 +75,7 @@ project.addAssets("Data/tex/MetalPlates004/MetalPlates004_2K_Normal.jpg", { noti
 project.addAssets("Data/tex/MetalPlates004/MetalPlates004_2K_Roughness.jpg", { notinlist: true });
 project.addAssets("Data/tex/concrete_impact.png", { notinlist: true });
 project.addAssets("Data/tex/gridbox1.png", { notinlist: true });
+project.addAssets("Data/tex/gridbox3.png", { notinlist: true });
 project.addParameter('--times');
 project.addLibrary("/home/tong/sdk/armsdk/lib/zui");
 project.addAssets("/home/tong/sdk/armsdk/armory/Assets/font_default.ttf", { notinlist: false });
@@ -105,7 +108,7 @@ project.addDefine('arm_audio');
 project.addDefine('arm_ui');
 project.addDefine('arm_skin');
 project.addDefine('arm_particles');
-project.addDefine('arm_config');
+project.addDefine('arm_resizable');
 // --------------------------------------------------------
 let RELEASE = false;
 let ELECTRON = false;
@@ -142,7 +145,7 @@ if (RELEASE) {
 
 if (platform === Platform.HTML5) {
     project.targetOptions.html5.disableContextMenu = true;
-    project.targetOptions.html5.canvasId = "viewport";
+    //project.targetOptions.html5.canvasId = "viewport";
     project.addAssets("Data/icon.svg");
     if (ELECTRON) {
         project.addAssets("Assets/electron/**");
