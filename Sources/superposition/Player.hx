@@ -54,6 +54,7 @@ class Player extends Trait {
 	public var score(default,null) = Score.empty;
 	public var moveSpeed : FastFloat = 1.0;
 	//public var dead(default,null) = false;
+	public var inputEnabled = true;
 
 	var moveTween : TAnim;
 	var soundMove : AudioChannel;
@@ -94,54 +95,58 @@ class Player extends Trait {
 			}
 		}
 
-		final gp = Input.getGamepad(index);
-		final kb = Input.getKeyboard();
-		final dir = new Vec2();
+		if( inputEnabled ) {
 
-		if (gp.started('l1') ) {
-			atom.selectPreviousElectron();
-			return;
-		}
-		if (gp.started('r1') ) {
-			atom.selectNextElectron();
-			return;
-		}
-		if (gp.started('cross')) {
-			fire();
-			return;
-		}
+			final gp = Input.getGamepad(index);
+			final kb = Input.getKeyboard();
+			final dir = new Vec2();
 
-		if( gp.started("left") ) dir.x = -1;
-		else if (gp.started("right")) dir.x = 1;
-		else if (gp.started("up")) dir.y = 1;
-		else if (gp.started("down")) dir.y = -1;
-
-		switch index {
-		case 0:
-			if (kb.started('a')) dir.x = -1;
-			else if (kb.started('d')) dir.x = 1;
-			else if (kb.started('w')) dir.y = 1;
-			else if (kb.started('s')) dir.y = -1;
-			if (kb.started('q')) atom.selectPreviousElectron();
-			else if (kb.started('e')) atom.selectNextElectron();
-			else if (kb.started('f')) {
+			if (gp.started('l1') ) {
+				atom.selectPreviousElectron();
+				return;
+			}
+			if (gp.started('r1') ) {
+				atom.selectNextElectron();
+				return;
+			}
+			if (gp.started('cross')) {
 				fire();
 				return;
 			}
-		case 1:
-			if (kb.started('left')) dir.x = -1;
-			else if (kb.started('right')) dir.x = 1;
-			else if (kb.started('up')) dir.y = 1;
-			else if (kb.started('down')) dir.y = -1;
-			if (kb.started('n')) atom.selectPreviousElectron();
-			else if (kb.started('b')) atom.selectNextElectron();
-			else if (kb.started('m')) {
-				fire();
-				return;
+
+			if( gp.started("left") ) dir.x = -1;
+			else if (gp.started("right")) dir.x = 1;
+			else if (gp.started("up")) dir.y = 1;
+			else if (gp.started("down")) dir.y = -1;
+
+			switch index {
+			case 0:
+				if (kb.started('a')) dir.x = -1;
+				else if (kb.started('d')) dir.x = 1;
+				else if (kb.started('w')) dir.y = 1;
+				else if (kb.started('s')) dir.y = -1;
+				if (kb.started('q')) atom.selectPreviousElectron();
+				else if (kb.started('e')) atom.selectNextElectron();
+				else if (kb.started('f')) {
+					fire();
+					return;
+				}
+			case 1:
+				if (kb.started('left')) dir.x = -1;
+				else if (kb.started('right')) dir.x = 1;
+				else if (kb.started('up')) dir.y = 1;
+				else if (kb.started('down')) dir.y = -1;
+				if (kb.started('n')) atom.selectPreviousElectron();
+				else if (kb.started('b')) atom.selectNextElectron();
+				else if (kb.started('m')) {
+					fire();
+					return;
+				}
 			}
+
+			if( dir.x != 0 || dir.y != 0 ) navigateSelectionTowards(dir);
 		}
-		
-		if( dir.x != 0 || dir.y != 0 ) navigateSelectionTowards(dir);
+			
 		//navigateSelectionTowards( dir );
 	}
 
